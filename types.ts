@@ -31,6 +31,21 @@ export interface HomeConfig {
     title: string;
     description: string;
   }>;
+  sectionLabels: {
+    noticesTitle: string;
+    noticesSubtitle: string;
+    coursesTitle: string;
+    coursesSubtitle: string;
+    galleryTitle: string;
+    gallerySubtitle: string;
+  };
+  ctaBlock: {
+    title: string;
+    subtitle: string;
+    buttonText: string;
+    buttonLink: string;
+    visible: boolean;
+  };
   sections: {
     notices: boolean;
     featuredCourses: boolean;

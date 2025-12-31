@@ -52,6 +52,21 @@ export const INITIAL_CONTENT: AppState = {
         description: "Earn recognized certificates that validate your skills worldwide."
       }
     ],
+    sectionLabels: {
+      noticesTitle: "Recent Notices",
+      noticesSubtitle: "Stay updated with the latest announcements from our campus.",
+      coursesTitle: "Popular Professional Courses",
+      coursesSubtitle: "Industry-aligned programs with a focus on practical skills and employability.",
+      galleryTitle: "Our Campus Life",
+      gallerySubtitle: "Take a visual journey through our state-of-the-art facilities and events."
+    },
+    ctaBlock: {
+      title: "Ready to Start Your Career Journey?",
+      subtitle: "Join thousands of successful students who have transformed their lives through our training.",
+      buttonText: "Talk to an Advisor",
+      buttonLink: "#/enroll",
+      visible: true
+    },
     sections: {
       notices: true,
       featuredCourses: true,

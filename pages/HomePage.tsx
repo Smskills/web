@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { AppState } from '../types';
+import { AppState, Notice } from '../types';
 
 interface HomePageProps {
   content: AppState;
@@ -9,6 +9,16 @@ interface HomePageProps {
 
 const HomePage: React.FC<HomePageProps> = ({ content }) => {
   const { home, courses, notices } = content;
+
+  const getNoticeTheme = (category?: string) => {
+    switch(category) {
+      case 'Urgent': return { bg: 'bg-red-50', text: 'text-red-600', border: 'border-red-100', icon: 'fa-fire-flame-curved' };
+      case 'Event': return { bg: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-100', icon: 'fa-calendar-star' };
+      case 'Holiday': return { bg: 'bg-amber-50', text: 'text-amber-600', border: 'border-amber-100', icon: 'fa-umbrella-beach' };
+      case 'New': return { bg: 'bg-emerald-50', text: 'text-emerald-600', border: 'border-emerald-100', icon: 'fa-sparkles' };
+      default: return { bg: 'bg-slate-50', text: 'text-slate-600', border: 'border-slate-200', icon: 'fa-bullhorn' };
+    }
+  };
 
   return (
     <div className="space-y-0">
@@ -19,13 +29,13 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
           style={{ backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.7)), url(${home.hero.bgImage})` }}
         >
           <div className="container mx-auto px-4 py-20 text-center max-w-4xl">
-            <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight drop-shadow-md">
+            <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight drop-shadow-md animate-fade-in-up">
               {home.hero.title}
             </h1>
-            <p className="text-lg md:text-xl text-slate-200 mb-10 leading-relaxed max-w-2xl mx-auto font-light">
+            <p className="text-lg md:text-xl text-slate-200 mb-10 leading-relaxed max-w-2xl mx-auto font-light animate-fade-in-up delay-100">
               {home.hero.subtitle}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up delay-200">
               <a 
                 href={home.hero.ctaLink}
                 className="px-8 py-4 bg-emerald-600 text-white font-bold rounded-full hover:bg-emerald-700 transition-all shadow-xl hover:shadow-emerald-600/20"
@@ -48,8 +58,8 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {home.highlights.map((item, idx) => (
-              <div key={idx} className="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-emerald-200 hover:shadow-lg transition-all text-center">
-                <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-2xl mb-6 mx-auto">
+              <div key={idx} className="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-emerald-200 hover:shadow-lg transition-all text-center group">
+                <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-2xl mb-6 mx-auto group-hover:scale-110 transition-transform">
                   <i className={`fa-solid ${item.icon}`}></i>
                 </div>
                 <h3 className="text-xl font-bold mb-3 text-slate-800">{item.title}</h3>
@@ -60,34 +70,101 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
         </div>
       </section>
 
-      {/* Notices Board */}
+      {/* Engaging Notices Board */}
       {home.sections.notices && notices.length > 0 && (
-        <section className="py-20 bg-slate-50">
-          <div className="container mx-auto px-4">
-            <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
-              <div>
-                <span className="text-emerald-600 font-bold uppercase tracking-widest text-xs mb-2 block">Updates</span>
-                <h2 className="text-3xl font-bold text-slate-800">Recent Notices</h2>
-              </div>
-              <a href="#/notices" className="text-emerald-600 font-semibold flex items-center gap-2 hover:gap-3 transition-all">
-                View All Announcements <i className="fa-solid fa-arrow-right"></i>
-              </a>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {notices.slice(0, 3).map(notice => (
-                <div key={notice.id} className="bg-white p-6 rounded-xl border border-slate-200 hover:shadow-md transition-all group">
-                  <div className="flex justify-between items-start mb-4">
-                    <span className="text-xs font-bold text-slate-400 uppercase">{new Date(notice.date).toLocaleDateString()}</span>
-                    {notice.isImportant && (
-                      <span className="px-2 py-1 bg-red-100 text-red-600 text-[10px] font-bold rounded flex items-center gap-1">
-                        <i className="fa-solid fa-circle-exclamation"></i> URGENT
-                      </span>
-                    )}
-                  </div>
-                  <h4 className="font-bold text-slate-800 mb-3 group-hover:text-emerald-600 transition-colors">{notice.title}</h4>
-                  <p className="text-sm text-slate-600 line-clamp-2">{notice.description}</p>
+        <section className="py-24 bg-slate-900 overflow-hidden relative">
+          {/* Background Decor */}
+          <div className="absolute top-0 right-0 w-1/3 h-full bg-emerald-500/5 blur-[120px] rounded-full -mr-20"></div>
+          
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
+              <div className="max-w-xl">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="w-12 h-1 bg-emerald-500 rounded-full"></span>
+                  <span className="text-emerald-400 font-black uppercase tracking-[0.3em] text-[10px]">What's New</span>
                 </div>
-              ))}
+                <h2 className="text-4xl font-black text-white tracking-tight">{home.sectionLabels.noticesTitle}</h2>
+                <p className="text-slate-400 text-lg mt-3 font-medium">{home.sectionLabels.noticesSubtitle}</p>
+              </div>
+              <Link to="/notices" className="group flex items-center gap-4 px-6 py-3 bg-white/5 hover:bg-emerald-600 text-white rounded-full transition-all border border-white/10 hover:border-emerald-500 shadow-2xl">
+                <span className="text-xs font-black uppercase tracking-widest">Full Notice Board</span>
+                <i className="fa-solid fa-arrow-right-long group-hover:translate-x-2 transition-transform"></i>
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              {/* Featured Notice */}
+              <div className="lg:col-span-7">
+                {notices.slice(0, 1).map(notice => {
+                  const theme = getNoticeTheme(notice.category);
+                  return (
+                    <div key={notice.id} className="h-full bg-slate-800/50 backdrop-blur-xl border border-white/10 rounded-[2.5rem] p-10 flex flex-col justify-between group hover:border-emerald-500/50 transition-all shadow-2xl relative overflow-hidden">
+                      <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+                         <i className={`fa-solid ${theme.icon} text-9xl text-white`}></i>
+                      </div>
+                      <div>
+                        <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6 ${theme.bg} ${theme.text} text-[10px] font-black uppercase tracking-widest`}>
+                          <i className={`fa-solid ${theme.icon}`}></i>
+                          {notice.category || 'Announcement'}
+                        </div>
+                        <h3 className="text-3xl md:text-4xl font-black text-white mb-6 leading-tight group-hover:text-emerald-400 transition-colors">
+                          {notice.title}
+                        </h3>
+                        <p className="text-slate-400 text-lg leading-relaxed line-clamp-4">
+                          {notice.description}
+                        </p>
+                      </div>
+                      <div className="mt-12 flex items-center justify-between border-t border-white/5 pt-8">
+                         <div className="flex items-center gap-3">
+                           <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-slate-300">
+                             <i className="fa-regular fa-clock"></i>
+                           </div>
+                           <span className="text-xs font-bold text-slate-500">{new Date(notice.date).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+                         </div>
+                         {notice.link && (
+                           <a href={notice.link} className="text-emerald-500 font-black uppercase text-[10px] tracking-widest flex items-center gap-2 hover:text-emerald-400 transition-colors">
+                             View Details <i className="fa-solid fa-chevron-right"></i>
+                           </a>
+                         )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Sidebar Notices */}
+              <div className="lg:col-span-5 flex flex-col gap-6">
+                {notices.slice(1, 4).map(notice => {
+                  const theme = getNoticeTheme(notice.category);
+                  return (
+                    <div key={notice.id} className="bg-slate-800/30 border border-white/5 rounded-3xl p-6 flex gap-6 hover:bg-slate-800/60 transition-all group cursor-pointer hover:border-white/10">
+                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ${theme.bg} ${theme.text} text-xl shadow-inner group-hover:scale-110 transition-transform`}>
+                        <i className={`fa-solid ${theme.icon}`}></i>
+                      </div>
+                      <div className="flex flex-col justify-center">
+                        <div className="flex items-center gap-3 mb-1">
+                          <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{new Date(notice.date).toLocaleDateString()}</span>
+                          <span className={`text-[8px] font-black uppercase tracking-tighter px-2 py-0.5 rounded ${theme.bg} ${theme.text}`}>
+                            {notice.category}
+                          </span>
+                        </div>
+                        <h4 className="text-white font-bold text-lg group-hover:text-emerald-400 transition-colors line-clamp-1">{notice.title}</h4>
+                      </div>
+                    </div>
+                  );
+                })}
+                {notices.length > 4 && (
+                   <div className="mt-auto py-8 px-6 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-3xl text-white flex items-center justify-between shadow-xl shadow-emerald-900/20">
+                      <div className="flex flex-col">
+                        <span className="text-xs font-black uppercase tracking-widest opacity-80">And {notices.length - 4} more updates</span>
+                        <span className="text-lg font-bold">Stay fully informed</span>
+                      </div>
+                      <Link to="/notices" className="w-12 h-12 bg-white text-emerald-600 rounded-full flex items-center justify-center hover:scale-110 transition-transform">
+                        <i className="fa-solid fa-arrow-right"></i>
+                      </Link>
+                   </div>
+                )}
+              </div>
             </div>
           </div>
         </section>
@@ -99,8 +176,8 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
           <div className="container mx-auto px-4">
             <div className="text-center mb-16 max-w-3xl mx-auto">
               <span className="text-emerald-600 font-bold uppercase tracking-widest text-xs mb-4 block">Our Curriculum</span>
-              <h2 className="text-4xl font-extrabold text-slate-800 mb-6">Popular Professional Courses</h2>
-              <p className="text-slate-500">Industry-aligned programs with a focus on practical skills and employability.</p>
+              <h2 className="text-4xl font-extrabold text-slate-800 mb-6">{home.sectionLabels.coursesTitle}</h2>
+              <p className="text-slate-500">{home.sectionLabels.coursesSubtitle}</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {courses.filter(c => c.status === 'Active').slice(0, 3).map(course => (
@@ -135,18 +212,20 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
       )}
 
       {/* CTA Block */}
-      <section className="py-20 bg-emerald-600 overflow-hidden relative">
-        <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-96 h-96 bg-emerald-500 rounded-full blur-3xl opacity-20"></div>
-        <div className="container mx-auto px-4 text-center relative z-10">
-          <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-8">Ready to Start Your Career Journey?</h2>
-          <p className="text-emerald-100 max-w-2xl mx-auto mb-10 text-lg">
-            Join thousands of successful students who have transformed their lives through our training.
-          </p>
-          <Link to="/enroll" className="inline-block px-10 py-5 bg-white text-emerald-600 font-bold rounded-full hover:bg-slate-50 transition-all shadow-xl text-lg">
-            Talk to an Advisor <i className="fa-solid fa-headset ml-2"></i>
-          </Link>
-        </div>
-      </section>
+      {home.ctaBlock.visible && (
+        <section className="py-20 bg-emerald-600 overflow-hidden relative">
+          <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-96 h-96 bg-emerald-500 rounded-full blur-3xl opacity-20"></div>
+          <div className="container mx-auto px-4 text-center relative z-10">
+            <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-8">{home.ctaBlock.title}</h2>
+            <p className="text-emerald-100 max-w-2xl mx-auto mb-10 text-lg">
+              {home.ctaBlock.subtitle}
+            </p>
+            <a href={home.ctaBlock.buttonLink} className="inline-block px-10 py-5 bg-white text-emerald-600 font-bold rounded-full hover:bg-slate-50 transition-all shadow-xl text-lg">
+              {home.ctaBlock.buttonText} <i className="fa-solid fa-arrow-right ml-2"></i>
+            </a>
+          </div>
+        </section>
+      )}
     </div>
   );
 };

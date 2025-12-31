@@ -139,6 +139,19 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
     }));
   };
 
+  const updateHomeSubField = (parent: string, field: string, value: any) => {
+    setLocalContent(prev => ({
+      ...prev,
+      home: {
+        ...prev.home,
+        [parent]: {
+          ...(prev.home as any)[parent],
+          [field]: value
+        }
+      }
+    }));
+  };
+
   const updateSectionVisibility = (sectionName: string, value: boolean) => {
     setLocalContent(prev => ({
       ...prev,
@@ -278,7 +291,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
   };
 
   const galleryCategories = Array.from(new Set([
-    'Classroom', 'Achievement', 'Project', 'Event', 
+    'Campus', 'Events', 'Classroom', 'Achievement', 'Project', 
     ...localContent.gallery.map(item => item.category)
   ]));
 
@@ -289,6 +302,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
       <input type="file" ref={courseInputRef} className="hidden" accept="image/*" onChange={handleCourseImageUpload} />
       <input type="file" ref={heroBgInputRef} className="hidden" accept="image/*" onChange={handleHeroBgUpload} />
 
+      {/* Admin Header */}
       <div className="bg-slate-800 border-b border-slate-700 p-6 sticky top-16 z-40 shadow-2xl">
         <div className="container mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
@@ -303,7 +317,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
               onClick={handleSave}
               className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg text-xs font-black shadow-lg shadow-emerald-600/20 transition-all active:scale-95"
             >
-              <i className="fa-solid fa-check mr-2"></i> SAVE CHANGES
+              <i className="fa-solid fa-check mr-2"></i> SAVE ALL CHANGES
             </button>
           </div>
         </div>
@@ -315,6 +329,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
       </div>
 
       <div className="container mx-auto px-4 mt-8 flex flex-col md:flex-row gap-8">
+        {/* Sidebar Navigation */}
         <div className="w-full md:w-64 space-y-2 shrink-0">
           {(['site', 'home', 'courses', 'notices', 'gallery', 'form'] as const).map(tab => (
             <button
@@ -333,17 +348,121 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
                 tab === 'notices' ? 'bullhorn' : 
                 tab === 'gallery' ? 'images' : 'wpforms'
               } text-lg`}></i>
-              {tab === 'form' ? 'Application Form' : tab}
+              {tab === 'form' ? 'Apply Form' : tab}
             </button>
           ))}
         </div>
 
+        {/* Content Area */}
         <div className="flex-grow bg-slate-800 rounded-[2.5rem] p-8 md:p-12 border border-slate-700 shadow-3xl overflow-hidden min-h-[70vh]">
           
+          {/* HOME TAB - EXHAUSTIVE CUSTOMIZATION */}
+          {activeTab === 'home' && (
+            <div className="space-y-16 animate-fade-in">
+              <SectionHeader title="Home Experience" />
+
+              {/* Hero Banner */}
+              <div className="space-y-8 bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-700">
+                <div className="flex justify-between items-center">
+                   <h3 className="text-emerald-500 font-black text-lg flex items-center gap-3">
+                     <i className="fa-solid fa-wand-magic-sparkles"></i> HERO BANNER
+                   </h3>
+                   <button 
+                    onClick={() => updateNestedField('home', 'hero', 'visible', !localContent.home.hero.visible)}
+                    className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${localContent.home.hero.visible ? 'bg-emerald-600 text-white' : 'bg-slate-700 text-slate-400'}`}
+                  >
+                    {localContent.home.hero.visible ? 'VISIBLE' : 'HIDDEN'}
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  <div className="lg:col-span-1 space-y-4">
+                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest block">Background Image</label>
+                    <div className="relative aspect-video rounded-2xl overflow-hidden border-2 border-slate-700 bg-slate-800 group">
+                      <img src={localContent.home.hero.bgImage} className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" />
+                      <button onClick={() => heroBgInputRef.current?.click()} className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity font-black text-xs uppercase">
+                        <i className="fa-solid fa-camera mr-2 text-xl"></i> Change Image
+                      </button>
+                    </div>
+                  </div>
+                  <div className="lg:col-span-2 space-y-4">
+                    <input value={localContent.home.hero.title} onChange={e => updateNestedField('home', 'hero', 'title', e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-5 py-3 text-white font-black" placeholder="Main Headline" />
+                    <textarea value={localContent.home.hero.subtitle} onChange={e => updateNestedField('home', 'hero', 'subtitle', e.target.value)} rows={2} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-5 py-3 text-slate-300 font-medium resize-none" placeholder="Subtitle" />
+                    <div className="grid grid-cols-2 gap-4">
+                      <input value={localContent.home.hero.ctaText} onChange={e => updateNestedField('home', 'hero', 'ctaText', e.target.value)} className="bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-xs text-white" placeholder="CTA Text" />
+                      <input value={localContent.home.hero.ctaLink} onChange={e => updateNestedField('home', 'hero', 'ctaLink', e.target.value)} className="bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-xs text-emerald-400" placeholder="CTA Link" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section Labels (Titles/Subtitles) */}
+              <div className="space-y-8 bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-700">
+                <h3 className="text-emerald-500 font-black text-lg flex items-center gap-3">
+                  <i className="fa-solid fa-heading"></i> SECTION TITLES & LABELS
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {/* Notices Labels */}
+                  <div className="space-y-4">
+                    <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest border-l-2 border-emerald-500 pl-2">Notices Section</h4>
+                    <input value={localContent.home.sectionLabels.noticesTitle} onChange={e => updateHomeSubField('sectionLabels', 'noticesTitle', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-sm text-white font-bold" placeholder="Title" />
+                    <input value={localContent.home.sectionLabels.noticesSubtitle} onChange={e => updateHomeSubField('sectionLabels', 'noticesSubtitle', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-xs text-slate-400" placeholder="Subtitle" />
+                  </div>
+                  {/* Courses Labels */}
+                  <div className="space-y-4">
+                    <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest border-l-2 border-emerald-500 pl-2">Courses Section</h4>
+                    <input value={localContent.home.sectionLabels.coursesTitle} onChange={e => updateHomeSubField('sectionLabels', 'coursesTitle', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-sm text-white font-bold" placeholder="Title" />
+                    <input value={localContent.home.sectionLabels.coursesSubtitle} onChange={e => updateHomeSubField('sectionLabels', 'coursesSubtitle', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-xs text-slate-400" placeholder="Subtitle" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom CTA Block */}
+              <div className="space-y-8 bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-700">
+                <div className="flex justify-between items-center">
+                   <h3 className="text-emerald-500 font-black text-lg flex items-center gap-3">
+                     <i className="fa-solid fa-bullhorn"></i> BOTTOM CTA BANNER
+                   </h3>
+                   <button 
+                    onClick={() => updateHomeSubField('ctaBlock', 'visible', !localContent.home.ctaBlock.visible)}
+                    className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${localContent.home.ctaBlock.visible ? 'bg-emerald-600 text-white' : 'bg-slate-700 text-slate-400'}`}
+                  >
+                    {localContent.home.ctaBlock.visible ? 'VISIBLE' : 'HIDDEN'}
+                  </button>
+                </div>
+                <div className="space-y-4">
+                  <input value={localContent.home.ctaBlock.title} onChange={e => updateHomeSubField('ctaBlock', 'title', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-5 py-3 text-white font-black" placeholder="Main CTA Title" />
+                  <textarea value={localContent.home.ctaBlock.subtitle} onChange={e => updateHomeSubField('ctaBlock', 'subtitle', e.target.value)} rows={2} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-5 py-3 text-slate-300 font-medium resize-none" placeholder="CTA Subtitle" />
+                  <div className="grid grid-cols-2 gap-4">
+                    <input value={localContent.home.ctaBlock.buttonText} onChange={e => updateHomeSubField('ctaBlock', 'buttonText', e.target.value)} className="bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-xs text-white" placeholder="Button Text" />
+                    <input value={localContent.home.ctaBlock.buttonLink} onChange={e => updateHomeSubField('ctaBlock', 'buttonLink', e.target.value)} className="bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-xs text-emerald-400" placeholder="Button Link" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Highlights Manager */}
+              <div className="space-y-8 bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-700">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-emerald-500 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-list-check"></i> HIGHLIGHT CARDS</h3>
+                  <button onClick={addHighlight} className="text-xs font-black bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-full shadow-lg transition-all">ADD HIGHLIGHT</button>
+                </div>
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                  {localContent.home.highlights.map((item, idx) => (
+                    <div key={idx} className="bg-slate-800 p-6 rounded-3xl border border-slate-700 space-y-4 group relative">
+                      <button onClick={() => deleteHighlight(idx)} className="absolute -top-2 -right-2 w-8 h-8 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center shadow-xl z-10"><i className="fa-solid fa-xmark"></i></button>
+                      <input value={item.title} onChange={e => updateHighlight(idx, 'title', e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white font-black" placeholder="Title" />
+                      <textarea value={item.description} onChange={e => updateHighlight(idx, 'description', e.target.value)} rows={2} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-xs text-slate-400 resize-none" placeholder="Description" />
+                      <input value={item.icon} onChange={e => updateHighlight(idx, 'icon', e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-[10px] font-mono text-emerald-500" placeholder="FontAwesome Class" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* SITE TAB */}
           {activeTab === 'site' && (
             <div className="space-y-12 animate-fade-in">
-              <SectionHeader title="Global Brand" />
+              <SectionHeader title="Global Brand Settings" />
               <div className="bg-slate-900/50 p-10 rounded-[2rem] border border-slate-700 text-center">
                  <div className="relative inline-block group mb-6">
                    <div className="w-40 h-40 rounded-full border-8 border-slate-800 overflow-hidden bg-slate-800 flex items-center justify-center transition-all group-hover:border-emerald-500/50 shadow-2xl">
@@ -364,83 +483,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
                 <div className="space-y-3">
                   <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Brand Tagline</label>
                   <input value={localContent.site.tagline} onChange={e => updateField('site', 'tagline', e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-2xl px-6 py-4 text-slate-200 font-bold focus:ring-2 focus:ring-emerald-500/20 outline-none" />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* HOME TAB */}
-          {activeTab === 'home' && (
-            <div className="space-y-16 animate-fade-in">
-              <SectionHeader title="Home Page Experience" />
-
-              {/* 1. Hero Section */}
-              <div className="space-y-8 bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-700">
-                <div className="flex justify-between items-center">
-                   <h3 className="text-emerald-500 font-black text-lg flex items-center gap-3">
-                     <i className="fa-solid fa-wand-magic-sparkles"></i> HERO BANNER
-                   </h3>
-                   <button 
-                    onClick={() => updateNestedField('home', 'hero', 'visible', !localContent.home.hero.visible)}
-                    className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${localContent.home.hero.visible ? 'bg-emerald-600 text-white' : 'bg-slate-700 text-slate-400'}`}
-                  >
-                    {localContent.home.hero.visible ? 'VISIBLE' : 'HIDDEN'}
-                  </button>
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                  <div className="lg:col-span-1 space-y-4">
-                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest block">Background Image</label>
-                    <div className="relative aspect-video rounded-2xl overflow-hidden border-2 border-slate-700 bg-slate-800 group">
-                      <img src={localContent.home.hero.bgImage} className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" />
-                      <button 
-                        onClick={() => heroBgInputRef.current?.click()}
-                        className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity font-black text-xs uppercase"
-                      >
-                        <i className="fa-solid fa-camera mr-2 text-xl"></i> Change Background
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="lg:col-span-2 space-y-6">
-                    <div className="grid grid-cols-1 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Main Title Headline</label>
-                        <input value={localContent.home.hero.title} onChange={e => updateNestedField('home', 'hero', 'title', e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-5 py-3 text-white font-black" />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Subtitle Description</label>
-                        <textarea value={localContent.home.hero.subtitle} onChange={e => updateNestedField('home', 'hero', 'subtitle', e.target.value)} rows={2} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-5 py-3 text-slate-300 font-medium resize-none" />
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">CTA Button Text</label>
-                          <input value={localContent.home.hero.ctaText} onChange={e => updateNestedField('home', 'hero', 'ctaText', e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-5 py-3 text-white font-bold" />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">CTA Button Link</label>
-                          <input value={localContent.home.hero.ctaLink} onChange={e => updateNestedField('home', 'hero', 'ctaLink', e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-5 py-3 text-emerald-400 font-mono text-xs" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Highlights Editor */}
-              <div className="space-y-8 bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-700">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-emerald-500 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-list-check"></i> FEATURE HIGHLIGHTS</h3>
-                  <button onClick={addHighlight} className="text-xs font-black bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-full shadow-lg transition-all">ADD CARD</button>
-                </div>
-                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                  {localContent.home.highlights.map((item, idx) => (
-                    <div key={idx} className="bg-slate-800 p-6 rounded-3xl border border-slate-700 space-y-4 group relative">
-                      <button onClick={() => deleteHighlight(idx)} className="absolute -top-2 -right-2 w-8 h-8 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center shadow-xl z-10"><i className="fa-solid fa-xmark"></i></button>
-                      <input value={item.title} onChange={e => updateHighlight(idx, 'title', e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white font-black" placeholder="Title" />
-                      <textarea value={item.description} onChange={e => updateHighlight(idx, 'description', e.target.value)} rows={2} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-xs text-slate-400 resize-none" placeholder="Description" />
-                    </div>
-                  ))}
                 </div>
               </div>
             </div>
@@ -468,7 +510,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
               </div>
               <div className="grid grid-cols-1 gap-8">
                 {localContent.courses.map(course => (
-                  <div key={course.id} className="bg-slate-900/50 p-8 rounded-[2rem] border border-slate-700 group">
+                  <div key={course.id} className="bg-slate-900/50 p-8 rounded-[2rem] border border-slate-700 group transition-all hover:border-emerald-500/30">
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                       <div className="lg:col-span-1">
                          <div className="relative aspect-video rounded-2xl overflow-hidden border border-slate-800 bg-slate-800 mb-4 group/img cursor-pointer" onClick={() => triggerCourseUpload(course.id)}>
@@ -477,19 +519,19 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
                          </div>
                       </div>
                       <div className="lg:col-span-3 space-y-4">
-                        <div className="flex justify-between">
-                          <input value={course.name} onChange={e => updateCourseItem(course.id, 'name', e.target.value)} className="text-xl font-black bg-transparent border-b border-slate-700 text-white w-full mr-4" />
-                          <button onClick={() => deleteItem('courses', course.id)} className="text-red-500"><i className="fa-solid fa-trash-can"></i></button>
+                        <div className="flex justify-between items-center">
+                          <input value={course.name} onChange={e => updateCourseItem(course.id, 'name', e.target.value)} className="text-xl font-black bg-transparent border-b border-slate-700 text-white w-full mr-4 focus:border-emerald-500 outline-none" />
+                          <button onClick={() => deleteItem('courses', course.id)} className="text-red-500 hover:text-red-400 p-2"><i className="fa-solid fa-trash-can"></i></button>
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                           <input value={course.duration} onChange={e => updateCourseItem(course.id, 'duration', e.target.value)} className="bg-slate-800 p-2 rounded text-sm" placeholder="Duration" />
-                           <input value={course.price} onChange={e => updateCourseItem(course.id, 'price', e.target.value)} className="bg-slate-800 p-2 rounded text-sm" placeholder="Price" />
-                           <select value={course.status} onChange={e => updateCourseItem(course.id, 'status', e.target.value)} className="bg-slate-800 p-2 rounded text-sm">
+                           <input value={course.duration} onChange={e => updateCourseItem(course.id, 'duration', e.target.value)} className="bg-slate-800 p-2 rounded text-sm text-white" placeholder="Duration" />
+                           <input value={course.price} onChange={e => updateCourseItem(course.id, 'price', e.target.value)} className="bg-slate-800 p-2 rounded text-sm text-white" placeholder="Price" />
+                           <select value={course.status} onChange={e => updateCourseItem(course.id, 'status', e.target.value)} className="bg-slate-800 p-2 rounded text-sm text-white">
                              <option value="Active">Active</option>
                              <option value="Inactive">Inactive</option>
                            </select>
                         </div>
-                        <textarea value={course.description} onChange={e => updateCourseItem(course.id, 'description', e.target.value)} className="w-full bg-slate-800 p-3 rounded text-sm resize-none" rows={2} />
+                        <textarea value={course.description} onChange={e => updateCourseItem(course.id, 'description', e.target.value)} className="w-full bg-slate-800 p-3 rounded text-sm text-slate-300 resize-none" rows={2} />
                       </div>
                     </div>
                   </div>
@@ -502,7 +544,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
           {activeTab === 'notices' && (
             <div className="space-y-12 animate-fade-in">
               <div className="flex justify-between items-center">
-                <SectionHeader title="Announcements & Notices" />
+                <SectionHeader title="Board Management" />
                 <button 
                   onClick={() => addItem('notices', {
                     date: new Date().toISOString().split('T')[0],
@@ -516,13 +558,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
                   <i className="fa-solid fa-plus"></i> NEW NOTICE
                 </button>
               </div>
-
               <div className="space-y-6">
                 {localContent.notices.map(notice => (
-                  <div key={notice.id} className="bg-slate-900/50 p-6 rounded-[1.5rem] border border-slate-700">
+                  <div key={notice.id} className="bg-slate-900/50 p-6 rounded-[1.5rem] border border-slate-700 group hover:border-emerald-500/30 transition-all">
                     <div className="flex justify-between items-start gap-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow">
-                        <input value={notice.title} onChange={e => updateNoticeItem(notice.id, 'title', e.target.value)} className="font-bold text-white bg-transparent border-b border-slate-700 outline-none w-full" />
+                        <input value={notice.title} onChange={e => updateNoticeItem(notice.id, 'title', e.target.value)} className="font-bold text-white bg-transparent border-b border-slate-700 outline-none w-full focus:border-emerald-500" />
                         <div className="flex gap-2">
                            <input type="date" value={notice.date} onChange={e => updateNoticeItem(notice.id, 'date', e.target.value)} className="bg-slate-800 rounded px-2 text-xs text-slate-400" />
                            <select value={notice.category} onChange={e => updateNoticeItem(notice.id, 'category', e.target.value as any)} className="bg-slate-800 rounded px-2 text-xs text-slate-400">
@@ -547,13 +588,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
           {activeTab === 'gallery' && (
             <div className="space-y-12 animate-fade-in">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                <SectionHeader title="Media Library & Albums" />
+                <SectionHeader title="Media Albums" />
                 <div className="flex gap-2 w-full md:w-auto">
-                  <input type="text" placeholder="New Category Name..." value={newCategoryName} onChange={(e) => setNewCategoryName(e.target.value)} className="bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm focus:ring-1 focus:ring-emerald-500 outline-none w-full" />
-                  <button onClick={() => { if(newCategoryName.trim()) { triggerGalleryUpload(newCategoryName.trim()); setNewCategoryName(''); } }} className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-xl text-xs font-bold shrink-0 transition-all border border-slate-600"><i className="fa-solid fa-folder-plus mr-2"></i> Create Section</button>
+                  <input type="text" placeholder="New Album Name..." value={newCategoryName} onChange={(e) => setNewCategoryName(e.target.value)} className="bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm focus:ring-1 focus:ring-emerald-500 outline-none w-full" />
+                  <button onClick={() => { if(newCategoryName.trim()) { triggerGalleryUpload(newCategoryName.trim()); setNewCategoryName(''); } }} className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-xl text-xs font-bold shrink-0 border border-slate-600">CREATE</button>
                 </div>
               </div>
-
               <div className="space-y-16">
                 {galleryCategories.map(category => {
                   const items = localContent.gallery.filter(item => item.category === category);
@@ -567,17 +607,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
                           </div>
                           <div>
                             <h3 className="text-xl font-black text-white">{category}</h3>
-                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{items.length} Photos Stored</p>
+                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{items.length} Photos</p>
                           </div>
                         </div>
                         <div className="flex gap-3">
-                           <button onClick={() => triggerThumbnailUpload(category)} className="bg-slate-700 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border border-slate-600"><i className="fa-solid fa-camera mr-2"></i> Cover</button>
-                           <button onClick={() => triggerGalleryUpload(category)} className="bg-emerald-600 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-tighter transition-all"><i className="fa-solid fa-plus mr-2"></i> Add Photo</button>
+                           <button onClick={() => triggerThumbnailUpload(category)} className="bg-slate-700 px-4 py-2 rounded-xl text-[10px] font-black uppercase border border-slate-600 hover:bg-slate-600">Cover</button>
+                           <button onClick={() => triggerGalleryUpload(category)} className="bg-emerald-600 px-4 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-emerald-500">Add Photo</button>
                         </div>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                         {items.map(item => (
-                          <div key={item.id} className="bg-slate-900/40 p-4 rounded-[1.5rem] border border-slate-700/50 group relative">
+                          <div key={item.id} className="bg-slate-900/40 p-4 rounded-[1.5rem] border border-slate-700/50 group relative hover:border-emerald-500/20 transition-all">
                             <img src={item.url} className="w-full aspect-video object-cover rounded-xl" />
                             <button onClick={() => deleteItem('gallery', item.id)} className="absolute top-6 right-6 w-8 h-8 bg-red-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"><i className="fa-solid fa-trash-can text-xs"></i></button>
                             <input value={item.title} onChange={e => updateGalleryItem(item.id, 'title', e.target.value)} className="w-full bg-slate-800/50 mt-4 border border-slate-700 rounded px-2 py-1 text-xs text-white" placeholder="Caption..." />
@@ -595,7 +635,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
           {activeTab === 'form' && (
             <div className="space-y-12 animate-fade-in">
               <div className="flex justify-between items-center">
-                <SectionHeader title="Application Form Builder" />
+                <SectionHeader title="Admission Form Builder" />
                 <button onClick={addFormField} className="bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-3 rounded-full text-xs font-black shadow-xl transition-all flex items-center gap-2"><i className="fa-solid fa-plus"></i> ADD FIELD</button>
               </div>
               <div className="space-y-6">
