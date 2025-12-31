@@ -1,21 +1,21 @@
 
 import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { INITIAL_CONTENT } from './data/defaultContent';
-import { AppState } from './types';
+import { INITIAL_CONTENT } from './data/defaultContent.ts';
+import { AppState } from './types.ts';
 
 // Components
-import Header from './components/Header';
-import Footer from './components/Footer';
+import Header from './components/Header.tsx';
+import Footer from './components/Footer.tsx';
 
 // Pages
-import HomePage from './pages/HomePage';
-import AboutPage from './pages/AboutPage';
-import CoursesPage from './pages/CoursesPage';
-import NoticesPage from './pages/NoticesPage';
-import GalleryPage from './pages/GalleryPage';
-import ContactPage from './pages/ContactPage';
-import AdminDashboard from './pages/AdminDashboard';
+import HomePage from './pages/HomePage.tsx';
+import AboutPage from './pages/AboutPage.tsx';
+import CoursesPage from './pages/CoursesPage.tsx';
+import NoticesPage from './pages/NoticesPage.tsx';
+import GalleryPage from './pages/GalleryPage.tsx';
+import ContactPage from './pages/ContactPage.tsx';
+import AdminDashboard from './pages/AdminDashboard.tsx';
 
 const App: React.FC = () => {
   const [content, setContent] = useState<AppState>(() => {
