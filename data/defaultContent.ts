@@ -32,7 +32,7 @@ export const INITIAL_CONTENT: AppState = {
       reachUsLabel: "Reach Us",
       bottomText: "Design & Architecture by Senior Architect",
       supportLinks: [
-        { label: "Privacy Policy", path: "#" },
+        { label: "Privacy Policy", path: "#/privacy-policy" },
         { label: "Terms of Service", path: "#" },
         { label: "Career Guidance", path: "#" },
         { label: "Affiliate Program", path: "#" }

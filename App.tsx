@@ -17,6 +17,7 @@ import GalleryPage from './pages/GalleryPage.tsx';
 import ContactPage from './pages/ContactPage.tsx';
 import AdminDashboard from './pages/AdminDashboard.tsx';
 import EnrollmentPage from './pages/EnrollmentPage.tsx';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage.tsx';
 
 const App: React.FC = () => {
   const [content, setContent] = useState<AppState>(() => {
@@ -42,8 +43,6 @@ const App: React.FC = () => {
       };
 
       // CRITICAL VALIDATION:
-      // If the saved 'social' is an old object format or missing, force it to the new array format
-      // This prevents the 'social.map is not a function' error which causes blank pages.
       if (!Array.isArray(mergedState.site.social)) {
         mergedState.site.social = INITIAL_CONTENT.site.social;
       }
@@ -84,6 +83,7 @@ const App: React.FC = () => {
             <Route path="/contact" element={<ContactPage config={content.site.contact} social={content.site.social} />} />
             <Route path="/admin" element={<AdminDashboard content={content} onUpdate={updateContent} />} />
             <Route path="/enroll" element={<EnrollmentPage content={content} />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicyPage siteName={content.site.name} />} />
           </Routes>
         </main>
 
