@@ -1,0 +1,7 @@
+{
+  "name": "EduInsta-CMS",
+  "description": "A modular, JSON-driven educational institute website with a built-in admin panel for non-technical users to manage content without code.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
