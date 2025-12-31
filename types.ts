@@ -67,13 +67,27 @@ export interface GalleryItem {
   title: string;
 }
 
+export interface FormField {
+  id: string;
+  label: string;
+  type: 'text' | 'email' | 'tel' | 'course-select' | 'textarea' | 'select';
+  placeholder: string;
+  required: boolean;
+  options?: string[]; // For custom select types
+}
+
 export interface AppState {
   site: SiteConfig;
   home: HomeConfig;
   courses: Course[];
   notices: Notice[];
   gallery: GalleryItem[];
-  galleryMetadata?: Record<string, string>; // Stores category name -> thumbnail URL mapping
+  galleryMetadata?: Record<string, string>;
+  enrollmentForm: {
+    title: string;
+    description: string;
+    fields: FormField[];
+  };
   about: {
     intro: string;
     mission: string;

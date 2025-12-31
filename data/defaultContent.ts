@@ -59,6 +59,18 @@ export const INITIAL_CONTENT: AppState = {
       contact: true
     }
   },
+  enrollmentForm: {
+    title: "Begin Your Application",
+    description: "Fill out the form below to apply for your preferred professional program. Our advisors are here to support your journey.",
+    fields: [
+      { id: "f1", label: "Full Legal Name", type: "text", placeholder: "e.g. Michael Smith", required: true },
+      { id: "f2", label: "Email Address", type: "email", placeholder: "mike@example.com", required: true },
+      { id: "f3", label: "Contact Number", type: "tel", placeholder: "+1 (555) 000-0000", required: true },
+      { id: "f4", label: "Program of Interest", type: "course-select", placeholder: "Select a Program", required: true },
+      { id: "f5", label: "Highest Qualification", type: "text", placeholder: "e.g. Bachelor in Computer Science", required: true },
+      { id: "f6", label: "Additional Information", type: "textarea", placeholder: "Any specific goals or questions?", required: false }
+    ]
+  },
   courses: [
     {
       id: "1",
