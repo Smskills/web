@@ -16,9 +16,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
   const logoInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
+  const courseInputRef = useRef<HTMLInputElement>(null);
   
   const activeUploadCategory = useRef<string>('General');
   const activeThumbnailCategory = useRef<string | null>(null);
+  const activeCourseId = useRef<string | null>(null);
 
   const handleSave = () => {
     onUpdate(localContent);
@@ -47,6 +49,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
     thumbnailInputRef.current?.click();
   };
 
+  const triggerCourseUpload = (id: string) => {
+    activeCourseId.current = id;
+    courseInputRef.current?.click();
+  };
+
   const handleThumbnailUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     const category = activeThumbnailCategory.current;
@@ -60,6 +67,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
             [category]: reader.result as string
           }
         }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleCourseImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    const id = activeCourseId.current;
+    if (file && id) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        updateCourseItem(id, 'image', reader.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -135,7 +154,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
       label: 'New Field Label',
       type: 'text',
       placeholder: 'Enter placeholder...',
-      required: false
+      required: false,
+      options: []
     };
     setLocalContent(prev => ({
       ...prev,
@@ -154,6 +174,28 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
         fields: prev.enrollmentForm.fields.map(f => f.id === id ? { ...f, ...updates } : f)
       }
     }));
+  };
+
+  const addSelectOption = (fieldId: string) => {
+    const field = localContent.enrollmentForm.fields.find(f => f.id === fieldId);
+    if (!field) return;
+    const currentOptions = field.options || [];
+    updateFormField(fieldId, { options: [...currentOptions, `New Option ${currentOptions.length + 1}`] });
+  };
+
+  const updateSelectOption = (fieldId: string, index: number, value: string) => {
+    const field = localContent.enrollmentForm.fields.find(f => f.id === fieldId);
+    if (!field || !field.options) return;
+    const newOptions = [...field.options];
+    newOptions[index] = value;
+    updateFormField(fieldId, { options: newOptions });
+  };
+
+  const deleteSelectOption = (fieldId: string, index: number) => {
+    const field = localContent.enrollmentForm.fields.find(f => f.id === fieldId);
+    if (!field || !field.options) return;
+    const newOptions = field.options.filter((_, i) => i !== index);
+    updateFormField(fieldId, { options: newOptions });
   };
 
   const deleteFormField = (id: string) => {
@@ -189,6 +231,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
     <div className="min-h-screen bg-slate-900 text-slate-100 pb-20">
       <input type="file" ref={galleryInputRef} className="hidden" accept="image/*" onChange={handleGalleryUpload} />
       <input type="file" ref={thumbnailInputRef} className="hidden" accept="image/*" onChange={handleThumbnailUpload} />
+      <input type="file" ref={courseInputRef} className="hidden" accept="image/*" onChange={handleCourseImageUpload} />
 
       <div className="bg-slate-800 border-b border-slate-700 p-6 sticky top-16 z-40 shadow-2xl">
         <div className="container mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -260,7 +303,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
                     <label className="text-xs font-black text-slate-500 uppercase tracking-widest block mb-2">Form Header Title</label>
                     <input 
                       value={localContent.enrollmentForm.title} 
-                      onChange={e => updateNestedField('enrollmentForm', 'title', '', e.target.value)} 
+                      onChange={e => setLocalContent(prev => ({ ...prev, enrollmentForm: { ...prev.enrollmentForm, title: e.target.value } }))} 
                       className="w-full bg-slate-900 border border-slate-700 rounded-xl px-5 py-3 text-white font-bold"
                     />
                   </div>
@@ -268,7 +311,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
                     <label className="text-xs font-black text-slate-500 uppercase tracking-widest block mb-2">Form Description</label>
                     <input 
                       value={localContent.enrollmentForm.description} 
-                      onChange={e => updateNestedField('enrollmentForm', 'description', '', e.target.value)} 
+                      onChange={e => setLocalContent(prev => ({ ...prev, enrollmentForm: { ...prev.enrollmentForm, description: e.target.value } }))} 
                       className="w-full bg-slate-900 border border-slate-700 rounded-xl px-5 py-3 text-white font-bold"
                     />
                   </div>
@@ -277,61 +320,108 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
 
               <div className="space-y-6">
                 {localContent.enrollmentForm.fields.map((field, idx) => (
-                  <div key={field.id} className="bg-slate-900/50 p-6 rounded-[1.5rem] border border-slate-700 flex flex-col lg:flex-row gap-6 items-start lg:items-center group">
-                    <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 font-black shrink-0">
-                      {idx + 1}
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 flex-grow w-full">
-                      <div>
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Field Label</label>
-                        <input 
-                          value={field.label} 
-                          onChange={e => updateFormField(field.id, { label: e.target.value })}
-                          className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white"
-                        />
+                  <div key={field.id} className="bg-slate-900/50 p-6 rounded-[1.5rem] border border-slate-700 flex flex-col gap-6 group">
+                    <div className="flex flex-col lg:flex-row gap-6 items-start lg:items-center">
+                      <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 font-black shrink-0">
+                        {idx + 1}
                       </div>
-                      <div>
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Input Type</label>
-                        <select 
-                          value={field.type} 
-                          onChange={e => updateFormField(field.id, { type: e.target.value as any })}
-                          className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-300"
-                        >
-                          <option value="text">Short Text</option>
-                          <option value="email">Email Address</option>
-                          <option value="tel">Phone Number</option>
-                          <option value="course-select">Course Dropdown (Auto)</option>
-                          <option value="select">Custom Dropdown</option>
-                          <option value="textarea">Long Text/Message</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Placeholder</label>
-                        <input 
-                          value={field.placeholder} 
-                          onChange={e => updateFormField(field.id, { placeholder: e.target.value })}
-                          className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white"
-                        />
-                      </div>
-                      <div className="flex items-end gap-4">
-                        <div className="flex-grow flex items-center justify-center gap-2 bg-slate-800 p-2 rounded-lg border border-slate-700">
-                           <span className="text-[10px] font-black text-slate-500 uppercase">Required?</span>
-                           <button 
-                             onClick={() => updateFormField(field.id, { required: !field.required })}
-                             className={`w-10 h-5 rounded-full flex items-center px-1 transition-all ${field.required ? 'bg-emerald-600 justify-end' : 'bg-slate-700 justify-start'}`}
-                           >
-                             <div className="w-3 h-3 bg-white rounded-full"></div>
-                           </button>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 flex-grow w-full">
+                        <div>
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Field Label</label>
+                          <input 
+                            value={field.label} 
+                            onChange={e => updateFormField(field.id, { label: e.target.value })}
+                            className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white"
+                          />
                         </div>
-                        <button 
-                          onClick={() => deleteFormField(field.id)}
-                          className="w-10 h-10 bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white rounded-lg transition-all"
-                        >
-                          <i className="fa-solid fa-trash-can text-xs"></i>
-                        </button>
+                        <div>
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Input Type</label>
+                          <select 
+                            value={field.type} 
+                            onChange={e => updateFormField(field.id, { type: e.target.value as any, options: e.target.value === 'select' ? field.options || [] : field.options })}
+                            className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-300"
+                          >
+                            <option value="text">Short Text</option>
+                            <option value="email">Email Address</option>
+                            <option value="tel">Phone Number</option>
+                            <option value="course-select">Course Dropdown (Linked to Courses Tab)</option>
+                            <option value="select">Custom Dropdown (Manage Options Below)</option>
+                            <option value="textarea">Long Text/Message</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Placeholder</label>
+                          <input 
+                            value={field.placeholder} 
+                            onChange={e => updateFormField(field.id, { placeholder: e.target.value })}
+                            className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white"
+                          />
+                        </div>
+                        <div className="flex items-end gap-4">
+                          <div className="flex-grow flex items-center justify-center gap-2 bg-slate-800 p-2 rounded-lg border border-slate-700">
+                             <span className="text-[10px] font-black text-slate-500 uppercase">Required?</span>
+                             <button 
+                               onClick={() => updateFormField(field.id, { required: !field.required })}
+                               className={`w-10 h-5 rounded-full flex items-center px-1 transition-all ${field.required ? 'bg-emerald-600 justify-end' : 'bg-slate-700 justify-start'}`}
+                             >
+                               <div className="w-3 h-3 bg-white rounded-full"></div>
+                             </button>
+                          </div>
+                          <button 
+                            onClick={() => deleteFormField(field.id)}
+                            className="w-10 h-10 bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white rounded-lg transition-all"
+                          >
+                            <i className="fa-solid fa-trash-can text-xs"></i>
+                          </button>
+                        </div>
                       </div>
                     </div>
+
+                    {/* Manage Options for Custom Select */}
+                    {field.type === 'select' && (
+                      <div className="bg-slate-900 p-6 rounded-xl border border-slate-700 space-y-4">
+                        <div className="flex justify-between items-center">
+                          <h4 className="text-xs font-black text-emerald-500 uppercase tracking-widest">Dropdown Options</h4>
+                          <button 
+                            onClick={() => addSelectOption(field.id)}
+                            className="text-[10px] font-black text-emerald-500 hover:text-emerald-400 uppercase tracking-widest"
+                          >
+                            <i className="fa-solid fa-plus mr-1"></i> Add Option
+                          </button>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                          {field.options?.map((option, oIdx) => (
+                            <div key={oIdx} className="flex gap-2">
+                              <input 
+                                value={option}
+                                onChange={(e) => updateSelectOption(field.id, oIdx, e.target.value)}
+                                className="flex-grow bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"
+                                placeholder={`Option ${oIdx + 1}`}
+                              />
+                              <button 
+                                onClick={() => deleteSelectOption(field.id, oIdx)}
+                                className="text-slate-500 hover:text-red-500 px-2"
+                              >
+                                <i className="fa-solid fa-xmark"></i>
+                              </button>
+                            </div>
+                          ))}
+                          {(!field.options || field.options.length === 0) && (
+                            <p className="text-[10px] text-slate-600 italic">No options defined yet.</p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {field.type === 'course-select' && (
+                      <div className="bg-emerald-500/5 p-4 rounded-xl border border-emerald-500/20">
+                         <p className="text-[10px] font-bold text-emerald-500/70 italic flex items-center gap-2">
+                           <i className="fa-solid fa-circle-info"></i>
+                           This field will automatically pull all Active programs from the 'Courses' tab. Add or remove courses there to update this list.
+                         </p>
+                      </div>
+                    )}
                   </div>
                 ))}
                 
@@ -341,6 +431,108 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
                     <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">No fields added to your application form yet.</p>
                   </div>
                 )}
+              </div>
+            </div>
+          )}
+
+          {/* COURSES TAB */}
+          {activeTab === 'courses' && (
+            <div className="space-y-12 animate-fade-in">
+              <div className="flex justify-between items-center">
+                <SectionHeader title="Program Management" />
+                <button 
+                  onClick={() => addItem('courses', {
+                    name: 'New Program',
+                    duration: '0 Months',
+                    mode: 'Hybrid',
+                    description: 'Description here...',
+                    status: 'Active',
+                    image: 'https://picsum.photos/id/1/800/600',
+                    price: '$0'
+                  })}
+                  className="bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-3 rounded-full text-xs font-black shadow-xl transition-all flex items-center gap-2"
+                >
+                  <i className="fa-solid fa-plus"></i> ADD PROGRAM
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 gap-8">
+                {localContent.courses.map(course => (
+                  <div key={course.id} className="bg-slate-900/50 p-8 rounded-[2rem] border border-slate-700 group hover:border-emerald-500/30 transition-all">
+                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                      <div className="lg:col-span-1">
+                         <div className="relative aspect-video rounded-2xl overflow-hidden border border-slate-800 bg-slate-800 mb-4 group/img">
+                            <img src={course.image} className="w-full h-full object-cover" />
+                            <div 
+                              onClick={() => triggerCourseUpload(course.id)}
+                              className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 flex items-center justify-center cursor-pointer transition-opacity"
+                            >
+                               <i className="fa-solid fa-camera text-white text-2xl"></i>
+                            </div>
+                         </div>
+                         <div className="flex gap-2">
+                           <input 
+                             value={course.image}
+                             onChange={e => updateCourseItem(course.id, 'image', e.target.value)}
+                             className="flex-grow bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-[10px] text-slate-400"
+                             placeholder="Image URL"
+                           />
+                           <button 
+                             onClick={() => triggerCourseUpload(course.id)}
+                             className="px-3 bg-slate-700 hover:bg-slate-600 rounded-lg text-xs"
+                             title="Upload local file"
+                           >
+                             <i className="fa-solid fa-upload"></i>
+                           </button>
+                         </div>
+                      </div>
+                      <div className="lg:col-span-3 space-y-4">
+                        <div className="flex justify-between items-start">
+                          <input 
+                            value={course.name}
+                            onChange={e => updateCourseItem(course.id, 'name', e.target.value)}
+                            className="text-xl font-black bg-transparent border-b border-transparent hover:border-slate-700 focus:border-emerald-500 outline-none transition-all w-full mr-4"
+                          />
+                          <button 
+                            onClick={() => deleteItem('courses', course.id)}
+                            className="text-red-500 hover:text-red-400 p-2"
+                          >
+                            <i className="fa-solid fa-trash-can"></i>
+                          </button>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div>
+                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Duration</label>
+                            <input value={course.duration} onChange={e => updateCourseItem(course.id, 'duration', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white" />
+                          </div>
+                          <div>
+                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Price</label>
+                            <input value={course.price} onChange={e => updateCourseItem(course.id, 'price', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white" />
+                          </div>
+                          <div>
+                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Status</label>
+                            <select value={course.status} onChange={e => updateCourseItem(course.id, 'status', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
+                              <option value="Active">Active</option>
+                              <option value="Inactive">Inactive</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Mode</label>
+                          <select value={course.mode} onChange={e => updateCourseItem(course.id, 'mode', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
+                            <option value="Online">Online</option>
+                            <option value="Offline">Offline</option>
+                            <option value="Hybrid">Hybrid</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Program Description</label>
+                          <textarea rows={2} value={course.description} onChange={e => updateCourseItem(course.id, 'description', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white resize-none" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}
@@ -513,7 +705,50 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
             </div>
           )}
 
-          {/* Other Tabs omitted for brevity as they haven't changed */}
+          {/* NOTICES TAB */}
+          {activeTab === 'notices' && (
+            <div className="space-y-12 animate-fade-in">
+              <div className="flex justify-between items-center">
+                <SectionHeader title="Announcements & Notices" />
+                <button 
+                  onClick={() => addItem('notices', {
+                    date: new Date().toISOString().split('T')[0],
+                    title: 'New Announcement',
+                    description: 'Important details...',
+                    isImportant: false,
+                    category: 'General'
+                  })}
+                  className="bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-3 rounded-full text-xs font-black shadow-xl transition-all flex items-center gap-2"
+                >
+                  <i className="fa-solid fa-plus"></i> NEW NOTICE
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                {localContent.notices.map(notice => (
+                  <div key={notice.id} className="bg-slate-900/50 p-6 rounded-[1.5rem] border border-slate-700">
+                    <div className="flex justify-between items-start gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow">
+                        <input value={notice.title} onChange={e => updateNoticeItem(notice.id, 'title', e.target.value)} className="font-bold text-white bg-transparent border-b border-slate-700 outline-none w-full" />
+                        <div className="flex gap-2">
+                           <input type="date" value={notice.date} onChange={e => updateNoticeItem(notice.id, 'date', e.target.value)} className="bg-slate-800 rounded px-2 text-xs text-slate-400" />
+                           <select value={notice.category} onChange={e => updateNoticeItem(notice.id, 'category', e.target.value as any)} className="bg-slate-800 rounded px-2 text-xs text-slate-400">
+                             <option value="General">General</option>
+                             <option value="Urgent">Urgent</option>
+                             <option value="New">New</option>
+                             <option value="Holiday">Holiday</option>
+                             <option value="Event">Event</option>
+                           </select>
+                        </div>
+                        <textarea value={notice.description} onChange={e => updateNoticeItem(notice.id, 'description', e.target.value)} className="md:col-span-2 bg-slate-800 rounded-lg p-3 text-sm text-slate-300 w-full resize-none" rows={2} />
+                      </div>
+                      <button onClick={() => deleteItem('notices', notice.id)} className="text-red-500 hover:text-red-400"><i className="fa-solid fa-trash-can"></i></button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
         </div>
       </div>
