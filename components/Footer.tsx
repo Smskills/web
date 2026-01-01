@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { SiteConfig } from '../types';
@@ -7,12 +8,23 @@ interface FooterProps {
 }
 
 const Footer: React.FC<FooterProps> = ({ config }) => {
-  // Defensive fallbacks for data sanity
   const socialLinks = Array.isArray(config.social) ? config.social : [];
   const navigationLinks = Array.isArray(config.navigation) ? config.navigation : [];
   const supportLinks = Array.isArray(config.footer?.supportLinks) ? config.footer.supportLinks : [];
 
-  const isInternalLink = (path: string) => path.startsWith('#/');
+  const isInternalLink = (path: string) => {
+    if (!path) return false;
+    // Handle standard SPA paths (/about) and hash-style paths (#/about)
+    return path.startsWith('#/') || path.startsWith('/') || path.includes(window.location.origin);
+  };
+
+  const getCleanPath = (path: string) => {
+    if (!path) return '/';
+    // Remove the hash if it exists for Link component compatibility
+    if (path.startsWith('#/')) return path.substring(1);
+    if (path.startsWith('#')) return path.substring(1);
+    return path;
+  };
 
   return (
     <footer className="bg-slate-900 text-slate-300 pt-16 pb-8 border-t border-slate-800">
@@ -44,11 +56,18 @@ const Footer: React.FC<FooterProps> = ({ config }) => {
           <div>
             <h4 className="text-white font-semibold mb-6">{config.footer?.quickLinksLabel || 'Quick Links'}</h4>
             <ul className="space-y-4 text-sm">
-              {navigationLinks.map(nav => (
-                <li key={nav.label}>
-                  <a href={nav.path} className="hover:text-white transition-colors">{nav.label}</a>
-                </li>
-              ))}
+              {navigationLinks.map(nav => {
+                const isInternal = isInternalLink(nav.path);
+                return (
+                  <li key={nav.label}>
+                    {isInternal ? (
+                      <Link to={getCleanPath(nav.path)} className="hover:text-white transition-colors">{nav.label}</Link>
+                    ) : (
+                      <a href={nav.path} className="hover:text-white transition-colors">{nav.label}</a>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </div>
 
@@ -58,12 +77,12 @@ const Footer: React.FC<FooterProps> = ({ config }) => {
             <ul className="space-y-4 text-sm">
               {supportLinks.map((link, idx) => {
                 const isInternal = isInternalLink(link.path);
-                const path = isInternal ? link.path.replace('#', '') : link.path;
+                const cleanPath = getCleanPath(link.path);
                 
                 return (
                   <li key={idx}>
                     {isInternal ? (
-                      <Link to={path} className="hover:text-white transition-colors font-medium">{link.label}</Link>
+                      <Link to={cleanPath} className="hover:text-white transition-colors font-medium">{link.label}</Link>
                     ) : (
                       <a href={link.path} className="hover:text-white transition-colors">{link.label}</a>
                     )}

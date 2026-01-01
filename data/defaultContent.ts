@@ -18,12 +18,12 @@ export const INITIAL_CONTENT: AppState = {
       { id: 's3', platform: 'Instagram', url: 'https://instagram.com', icon: 'fa-instagram' }
     ],
     navigation: [
-      { label: "Home", path: "#/" },
-      { label: "About", path: "#/about" },
-      { label: "Courses", path: "#/courses" },
-      { label: "Notices", path: "#/notices" },
-      { label: "Gallery", path: "#/gallery" },
-      { label: "Contact", path: "#/contact" }
+      { label: "Home", path: "/" },
+      { label: "About", path: "/about" },
+      { label: "Courses", path: "/courses" },
+      { label: "Notices", path: "/notices" },
+      { label: "Gallery", path: "/gallery" },
+      { label: "Contact", path: "/contact" }
     ],
     footer: {
       brandDescription: "SM Skills Training Institute (SMS) is a premier center for technical education, providing industry-aligned training designed for immediate employability.",
@@ -32,10 +32,10 @@ export const INITIAL_CONTENT: AppState = {
       reachUsLabel: "Connect",
       bottomText: "SM Skills Training Institute • ESTD 2024",
       supportLinks: [
-        { label: "Privacy Policy", path: "#/privacy-policy" },
-        { label: "Terms of Service", path: "#/terms-of-service" },
-        { label: "Career Guidance", path: "#/career-guidance" },
-        { label: "Placement Wall", path: "#/placement-review" }
+        { label: "Privacy Policy", path: "/privacy-policy" },
+        { label: "Terms of Service", path: "/terms-of-service" },
+        { label: "Career Guidance", path: "/career-guidance" },
+        { label: "Placement Wall", path: "/placement-review" }
       ]
     }
   },
@@ -44,7 +44,7 @@ export const INITIAL_CONTENT: AppState = {
       title: "Master Skills for the Modern Industry",
       subtitle: "Join SM Skills for specialized training programs. Build your career with veterans.",
       ctaText: "Explore Courses",
-      ctaLink: "#/courses",
+      ctaLink: "/courses",
       bgImage: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=1600",
       visible: true
     },
@@ -80,7 +80,7 @@ export const INITIAL_CONTENT: AppState = {
       title: "Secure Your Future with SM Skills",
       subtitle: "Admissions for the 2024 academic cycle are now open. Consult with an advisor today.",
       buttonText: "Begin Application",
-      buttonLink: "#/enroll",
+      buttonLink: "/enroll",
       visible: true
     },
     bigShowcase: {
