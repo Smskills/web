@@ -36,7 +36,7 @@ const Header: React.FC<HeaderProps> = ({ config }) => {
             />
           </div>
           <div className="flex flex-col leading-tight -ml-2">
-            <span className="font-black text-2xl md:text-3xl text-slate-900 tracking-tighter uppercase whitespace-nowrap">
+            <span className="font-black text-2xl md:text-3xl text-emerald-600 tracking-tighter uppercase whitespace-nowrap">
               {config.name}
             </span>
             <span className="text-[10px] md:text-xs text-emerald-600 font-black uppercase tracking-[0.3em] mt-1">

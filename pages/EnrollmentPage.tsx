@@ -57,12 +57,12 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
           <p className="text-slate-500 mb-10 font-medium leading-relaxed">
             Thank you for your interest. Our admissions team will review your application and contact you within 48 hours.
           </p>
-          <a 
-            href="#/courses" 
+          <Link 
+            to="/courses" 
             className="inline-block px-10 py-4 bg-slate-900 text-white font-black rounded-2xl hover:bg-emerald-600 transition-all shadow-lg active:scale-95"
           >
             Explore More Courses
-          </a>
+          </Link>
         </div>
       </div>
     );

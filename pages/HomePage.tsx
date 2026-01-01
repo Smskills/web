@@ -24,10 +24,15 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
   const getCleanPath = (path: string) => {
     if (!path) return '/';
     // Remove both #/ and # prefixes for Link component
-    if (path.startsWith('#/')) return path.substring(1);
-    if (path.startsWith('#')) return path.substring(1);
-    // Ensure absolute path for router
-    return path.startsWith('/') ? path : `/${path}`;
+    let cleaned = path;
+    if (cleaned.startsWith('#/')) cleaned = cleaned.substring(1);
+    else if (cleaned.startsWith('#')) cleaned = cleaned.substring(1);
+    
+    // Ensure the path starts with / for React Router to treat it as absolute from root
+    if (!cleaned.startsWith('/')) {
+      cleaned = '/' + cleaned;
+    }
+    return cleaned;
   };
 
   const spotlightNotice = notices[0];
