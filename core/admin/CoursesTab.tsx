@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Course } from '../types.ts';
 
@@ -48,13 +47,30 @@ const CoursesTab: React.FC<CoursesTabProps> = ({
                   <input value={course.name} onChange={e => updateCourseItem(course.id, 'name', e.target.value)} className="text-xl font-black bg-transparent border-b border-slate-700 text-white w-full mr-4 outline-none focus:border-emerald-500 transition-colors" placeholder="Course Name" />
                   <button onClick={() => handleDelete(course.id, course.name)} className="text-red-500 hover:text-red-400 p-2"><i className="fa-solid fa-trash-can"></i></button>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <input value={course.duration} onChange={e => updateCourseItem(course.id, 'duration', e.target.value)} className="bg-slate-800 p-2 rounded text-sm text-white" placeholder="Duration" />
-                  <input value={course.price} onChange={e => updateCourseItem(course.id, 'price', e.target.value)} className="bg-slate-800 p-2 rounded text-sm text-white" placeholder="Price Tag (e.g. $2200)" />
-                  <select value={course.status} onChange={e => updateCourseItem(course.id, 'status', e.target.value)} className="bg-slate-800 p-2 rounded text-sm text-white outline-none focus:ring-1 focus:ring-emerald-500">
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                  </select>
+                <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Duration</label>
+                    <input value={course.duration} onChange={e => updateCourseItem(course.id, 'duration', e.target.value)} className="w-full bg-slate-800 p-2 rounded text-sm text-white" placeholder="e.g. 12 Months" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Price</label>
+                    <input value={course.price} onChange={e => updateCourseItem(course.id, 'price', e.target.value)} className="w-full bg-slate-800 p-2 rounded text-sm text-white" placeholder="e.g. $2200" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Delivery Mode</label>
+                    <select value={course.mode} onChange={e => updateCourseItem(course.id, 'mode', e.target.value)} className="w-full bg-slate-800 p-2 rounded text-sm text-white outline-none focus:ring-1 focus:ring-emerald-500">
+                      <option value="Online">Online</option>
+                      <option value="Offline">Offline</option>
+                      <option value="Hybrid">Hybrid</option>
+                    </select>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Status</label>
+                    <select value={course.status} onChange={e => updateCourseItem(course.id, 'status', e.target.value)} className="w-full bg-slate-800 p-2 rounded text-sm text-white outline-none focus:ring-1 focus:ring-emerald-500">
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                    </select>
+                  </div>
                 </div>
                 <div className="relative">
                   <textarea value={course.description} onChange={e => updateCourseItem(course.id, 'description', e.target.value)} className="w-full bg-slate-800 p-3 rounded text-sm text-slate-300 resize-none outline-none focus:ring-1 focus:ring-emerald-500" rows={3} placeholder="Course summary..." />
