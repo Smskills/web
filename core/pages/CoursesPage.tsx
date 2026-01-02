@@ -1,9 +1,9 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Course } from '../types';
 import FormattedText from '../components/FormattedText.tsx';
 import { CardSkeleton } from '../components/Skeleton.tsx';
+import PageStateGuard from '../components/PageStateGuard.tsx';
 
 interface CoursesPageProps {
   courses: Course[];
@@ -20,6 +20,23 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ courses, isLoading = false })
   const activeCourses = filteredCourses.filter(c => c.status === 'Active');
 
   const btnSecondary = "w-full py-5 bg-slate-900 text-white font-black rounded-2xl hover:bg-emerald-600 transition-all active:scale-95 text-center flex items-center justify-center gap-3 shadow-2xl text-[11px] uppercase tracking-widest";
+
+  const loadingFallback = (
+    <div className="container mx-auto px-4 py-24">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+        <CardSkeleton />
+        <CardSkeleton />
+        <CardSkeleton />
+      </div>
+    </div>
+  );
+
+  const emptyFallback = (
+    <div className="text-center py-32 bg-white rounded-[3rem] border-4 border-dashed border-slate-100 max-w-2xl mx-auto shadow-sm">
+       <i className="fa-solid fa-folder-open text-6xl text-slate-200 mb-8 block"></i>
+       <p className="text-slate-400 font-black uppercase tracking-widest">No active programs found in this category.</p>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -51,15 +68,14 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ courses, isLoading = false })
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-          {isLoading ? (
-            <>
-              <CardSkeleton />
-              <CardSkeleton />
-              <CardSkeleton />
-            </>
-          ) : (
-            activeCourses.map(course => (
+        <PageStateGuard 
+          isLoading={isLoading} 
+          isEmpty={activeCourses.length === 0} 
+          loadingFallback={loadingFallback}
+          emptyFallback={emptyFallback}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+            {activeCourses.map(course => (
               <div key={course.id} className="bg-white rounded-[2.5rem] border border-slate-100 overflow-hidden hover:shadow-3xl transition-all flex flex-col group">
                 <div className="h-64 relative overflow-hidden">
                   <img 
@@ -94,16 +110,9 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ courses, isLoading = false })
                   </Link>
                 </div>
               </div>
-            ))
-          )}
-        </div>
-        
-        {!isLoading && activeCourses.length === 0 && (
-          <div className="text-center py-32 bg-white rounded-[3rem] border-4 border-dashed border-slate-100 max-w-2xl mx-auto shadow-sm">
-             <i className="fa-solid fa-folder-open text-6xl text-slate-200 mb-8 block"></i>
-             <p className="text-slate-400 font-black uppercase tracking-widest">No active programs found in this category.</p>
+            ))}
           </div>
-        )}
+        </PageStateGuard>
       </div>
     </div>
   );

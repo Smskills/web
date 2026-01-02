@@ -1,4 +1,3 @@
-
 import { AppState } from '../types';
 
 export const INITIAL_CONTENT: AppState = {
@@ -105,6 +104,7 @@ export const INITIAL_CONTENT: AppState = {
     description: "Please complete the comprehensive academic application form below. Our registrar team evaluates each candidate for program alignment.",
     successTitle: "Application Received",
     successMessage: "Your registration is being processed. An institutional registrar will review your application and contact you within 48 business hours for the next steps.",
+    helpPhone: "+1 (555) 2024-SMS",
     roadmapTitle: "Enrollment Flow",
     roadmapSteps: [
       { id: "s1", title: "Identity Submission", description: "Provide verifiable academic and personal records for initial screening." },

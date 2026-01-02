@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { SiteConfig } from '../types';
@@ -36,12 +35,13 @@ const Header: React.FC<HeaderProps> = ({ config }) => {
   return (
     <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-b border-slate-200/50 z-[100] h-24 md:h-32 transition-all duration-300">
       <div className="container mx-auto px-4 h-full flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-3 md:gap-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-xl" aria-label="Institute Home">
+        <Link to="/" className="flex items-center gap-3 md:gap-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-xl" aria-label={`${config.name} - Institutional Home`}>
           <div className="w-16 h-16 md:w-40 md:h-28 flex items-center justify-center transition-all group-hover:scale-105">
             <img 
               src={logoUrl} 
-              alt={`${config.name} Logo`} 
+              alt="" 
               className="w-full h-full object-contain"
+              aria-hidden="true"
             />
           </div>
           <div className="flex flex-col leading-tight">
@@ -98,6 +98,7 @@ const Header: React.FC<HeaderProps> = ({ config }) => {
           className="lg:hidden w-12 h-12 flex flex-col items-center justify-center text-slate-900 bg-slate-50 border border-slate-200 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 focus-visible:ring-4 focus-visible:ring-emerald-500/30 transition-all group z-[110]"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           aria-expanded={isMenuOpen}
+          aria-controls="mobile-navigation"
           aria-label="Toggle Navigation Menu"
         >
           <div className="relative w-6 h-5">
@@ -110,7 +111,7 @@ const Header: React.FC<HeaderProps> = ({ config }) => {
 
       {/* Mobile Menu Dropdown */}
       {isMenuOpen && (
-        <div className="lg:hidden fixed inset-x-0 top-24 md:top-32 bg-white border-t border-slate-100 shadow-3xl animate-fade-in-down z-[90] overflow-y-auto max-h-[calc(100vh-8rem)]">
+        <div id="mobile-navigation" className="lg:hidden fixed inset-x-0 top-24 md:top-32 bg-white border-t border-slate-100 shadow-3xl animate-fade-in-down z-[90] overflow-y-auto max-h-[calc(100vh-8rem)]">
           <div className="flex flex-col p-8 space-y-4">
             {config.navigation.map((item) => {
               const isInternal = isInternalLink(item.path);

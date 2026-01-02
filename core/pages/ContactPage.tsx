@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { SiteConfig } from '../types';
+import { validateEmail, validateRequired } from '../utils/validation.ts';
 
 interface ContactPageProps {
   config: SiteConfig['contact'];
@@ -8,13 +9,46 @@ interface ContactPageProps {
 
 const ContactPage: React.FC<ContactPageProps> = ({ config, social = [] }) => {
   const [submitted, setSubmitted] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const validateForm = (formData: FormData): boolean => {
+    const newErrors: Record<string, string> = {};
+    const name = formData.get('name') as string;
+    const email = formData.get('email') as string;
+    const message = formData.get('message') as string;
+
+    const nameErr = validateRequired(name, 'Full Name');
+    if (nameErr) newErrors.name = nameErr;
+
+    const emailErr = validateEmail(email);
+    if (emailErr) newErrors.email = emailErr;
+
+    const msgErr = validateRequired(message, 'Message');
+    if (msgErr) newErrors.message = msgErr;
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmitted(true);
+    const formData = new FormData(e.currentTarget);
+    if (validateForm(formData)) {
+      setSubmitted(true);
+    } else {
+      // Mark all as touched to show errors
+      setTouched({ name: true, email: true, message: true });
+    }
+  };
+
+  const handleBlur = (field: string) => {
+    setTouched(prev => ({ ...prev, [field]: true }));
   };
 
   const btnPrimary = "w-full py-6 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-500/30 transition-all shadow-xl shadow-emerald-600/20 active:scale-[0.98] uppercase tracking-widest text-[11px]";
+  const labelText = "text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1 mb-2 block";
+  const errorText = "text-[10px] text-red-500 font-bold mt-1 ml-1";
 
   return (
     <div className="min-h-screen bg-slate-50 pb-24">
@@ -89,7 +123,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [] }) => {
 
           <div className="bg-white p-12 md:p-16 rounded-[3.5rem] shadow-3xl border border-slate-100 sticky top-24">
             {submitted ? (
-              <div className="text-center py-24" role="alert">
+              <div className="text-center py-24" role="alert" aria-live="polite">
                 <div className="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-[2rem] flex items-center justify-center text-4xl mx-auto mb-10 shadow-xl animate-bounce">
                   <i className="fa-solid fa-check" aria-hidden="true"></i>
                 </div>
@@ -103,16 +137,61 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [] }) => {
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-10">
+              <form onSubmit={handleSubmit} className="space-y-10" noValidate>
                 <div className="mb-10">
                   <h2 className="text-4xl font-black text-slate-900 tracking-tight leading-none mb-4">Send Enquiry</h2>
                   <div className="w-16 h-1.5 bg-emerald-500 rounded-full"></div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <input required type="text" className="w-full px-8 py-5 bg-slate-50 border border-slate-100 rounded-2xl focus:border-emerald-500 outline-none transition-all" placeholder="Full Name" />
-                  <input required type="email" className="w-full px-8 py-5 bg-slate-50 border border-slate-100 rounded-2xl focus:border-emerald-500 outline-none transition-all" placeholder="Email Address" />
+                  <div className="flex flex-col">
+                    <label htmlFor="form-name" className={labelText}>Full Name</label>
+                    <input 
+                      id="form-name"
+                      name="name"
+                      required 
+                      aria-required="true"
+                      aria-invalid={touched.name && !!errors.name}
+                      aria-describedby={touched.name && errors.name ? "error-name" : undefined}
+                      type="text" 
+                      className={`w-full px-8 py-5 bg-slate-50 border ${touched.name && errors.name ? 'border-red-500' : 'border-slate-100'} rounded-2xl focus:border-emerald-500 outline-none transition-all`} 
+                      placeholder="e.g. John Doe" 
+                      onBlur={() => handleBlur('name')}
+                    />
+                    {touched.name && errors.name && <span id="error-name" className={errorText}>{errors.name}</span>}
+                  </div>
+                  <div className="flex flex-col">
+                    <label htmlFor="form-email" className={labelText}>Email Address</label>
+                    <input 
+                      id="form-email"
+                      name="email"
+                      required 
+                      aria-required="true"
+                      aria-invalid={touched.email && !!errors.email}
+                      aria-describedby={touched.email && errors.email ? "error-email" : undefined}
+                      type="email" 
+                      className={`w-full px-8 py-5 bg-slate-50 border ${touched.email && errors.email ? 'border-red-500' : 'border-slate-100'} rounded-2xl focus:border-emerald-500 outline-none transition-all`} 
+                      placeholder="john@institute.edu" 
+                      onBlur={() => handleBlur('email')}
+                    />
+                    {touched.email && errors.email && <span id="error-email" className={errorText}>{errors.email}</span>}
+                  </div>
                 </div>
-                <textarea rows={6} className="w-full px-8 py-5 bg-slate-50 border border-slate-100 rounded-2xl focus:border-emerald-500 outline-none transition-all resize-none" placeholder="How can we help?" />
+                <div className="flex flex-col">
+                  <label htmlFor="form-message" className={labelText}>How can we help?</label>
+                  <textarea 
+                    id="form-message"
+                    name="message"
+                    required
+                    aria-required="true"
+                    aria-invalid={touched.message && !!errors.message}
+                    aria-describedby={touched.message && errors.message ? "error-message" : undefined}
+                    rows={6} 
+                    className={`w-full px-8 py-5 bg-slate-50 border ${touched.message && errors.message ? 'border-red-500' : 'border-slate-100'} rounded-2xl focus:border-emerald-500 outline-none transition-all resize-none`} 
+                    placeholder="Describe your inquiry..." 
+                    onBlur={() => handleBlur('message')}
+                  />
+                  {touched.message && errors.message && <span id="error-message" className={errorText}>{errors.message}</span>}
+                </div>
                 <button type="submit" className={btnPrimary}>Submit Official Inquiry</button>
               </form>
             )}

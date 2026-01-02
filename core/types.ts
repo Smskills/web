@@ -1,4 +1,3 @@
-
 export interface SocialLink {
   id: string;
   platform: string;
@@ -140,6 +139,7 @@ export interface AppState {
     description: string;
     successTitle: string;
     successMessage: string;
+    helpPhone?: string;
     roadmapTitle: string;
     roadmapSteps: RoadmapStep[];
     fields: FormField[];

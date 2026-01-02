@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { AppState } from '../types.ts';
 
@@ -35,10 +34,12 @@ const SiteTab: React.FC<SiteTabProps> = ({
       <div className="bg-slate-900/50 p-8 rounded-[2rem] border border-slate-700">
         <div className="flex flex-col md:flex-row gap-10 items-center md:items-start mb-10">
           <div className="space-y-4 text-center md:text-left">
-            <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] block ml-1">Institutional Logo</label>
-            <div 
+            <label id="logo-label" className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] block ml-1">Institutional Logo</label>
+            <button 
               onClick={onLogoUploadClick}
-              className="w-48 h-32 bg-white rounded-3xl border-2 border-slate-700 hover:border-emerald-500 transition-all cursor-pointer flex items-center justify-center p-4 overflow-hidden group relative"
+              type="button"
+              aria-labelledby="logo-label"
+              className="w-48 h-32 bg-white rounded-3xl border-2 border-slate-700 hover:border-emerald-500 transition-all cursor-pointer flex items-center justify-center p-4 overflow-hidden group relative focus:outline-none focus:ring-4 focus:ring-emerald-500/30"
             >
               <img 
                 src={data.logo || "https://lwfiles.mycourse.app/62a6cd5-public/6efdd5e.png"} 
@@ -50,31 +51,36 @@ const SiteTab: React.FC<SiteTabProps> = ({
                   Update PNG
                 </span>
               </div>
-            </div>
+            </button>
           </div>
 
           <div className="flex-grow space-y-8 w-full">
             <div className="space-y-3">
-              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Institute Name</label>
+              <label htmlFor="admin-site-name" className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Institute Name</label>
               <input 
+                id="admin-site-name"
                 value={data.name} 
                 onChange={e => updateField('name', e.target.value)} 
-                className="w-full bg-slate-900 border border-slate-700 rounded-2xl px-6 py-4 text-white font-black focus:border-emerald-500 outline-none transition-colors" 
+                className={`w-full bg-slate-900 border ${!data.name.trim() ? 'border-red-500' : 'border-slate-700'} rounded-2xl px-6 py-4 text-white font-black focus:border-emerald-500 outline-none transition-colors`} 
                 placeholder="e.g. SM Skills Training Institute"
               />
+              {!data.name.trim() && <p className="text-[9px] text-red-400 font-bold uppercase ml-1">Name is required</p>}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-3">
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Brand Tagline</label>
+                <label htmlFor="admin-site-tagline" className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Brand Tagline</label>
                 <input 
+                  id="admin-site-tagline"
                   value={data.tagline} 
                   onChange={e => updateField('tagline', e.target.value)} 
-                  className="w-full bg-slate-900 border border-slate-700 rounded-2xl px-6 py-4 text-white font-black focus:border-emerald-500 outline-none transition-colors" 
+                  className={`w-full bg-slate-900 border ${!data.tagline.trim() ? 'border-red-500' : 'border-slate-700'} rounded-2xl px-6 py-4 text-white font-black focus:border-emerald-500 outline-none transition-colors`} 
                 />
+                {!data.tagline.trim() && <p className="text-[9px] text-red-400 font-bold uppercase ml-1">Tagline is required</p>}
               </div>
               <div className="space-y-3">
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Header Login Button Text</label>
+                <label htmlFor="admin-login-label" className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Header Login Button Text</label>
                 <input 
+                  id="admin-login-label"
                   value={data.loginLabel || "Institutional Login"} 
                   onChange={e => updateField('loginLabel', e.target.value)} 
                   className="w-full bg-slate-900 border border-slate-700 rounded-2xl px-6 py-4 text-white font-black focus:border-emerald-500 outline-none transition-colors" 
@@ -89,7 +95,7 @@ const SiteTab: React.FC<SiteTabProps> = ({
       <div className="space-y-8 bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-700">
         <div className="flex justify-between items-center">
           <h3 className="text-emerald-500 font-black text-lg flex items-center gap-3">
-            <i className="fa-solid fa-compass"></i> HEADER NAVIGATION
+            <i className="fa-solid fa-compass" aria-hidden="true"></i> HEADER NAVIGATION
           </h3>
           <button onClick={addNavigation} className="bg-emerald-600 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 transition-all">ADD LINK</button>
         </div>
@@ -99,30 +105,45 @@ const SiteTab: React.FC<SiteTabProps> = ({
               <button 
                 onClick={() => handleRemoveNav(idx, nav.label)} 
                 className="absolute -top-2 -right-2 w-8 h-8 bg-red-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center shadow-xl hover:bg-red-500"
+                aria-label={`Remove navigation link ${nav.label}`}
               >
                 <i className="fa-solid fa-trash-can text-xs"></i>
               </button>
               <div className="grid grid-cols-1 gap-4">
                 <div className="space-y-1">
-                  <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Label</label>
+                  <label htmlFor={`nav-label-${idx}`} className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Label</label>
                   <input 
+                    id={`nav-label-${idx}`}
                     value={nav.label} 
                     onChange={e => updateNavigation(idx, 'label', e.target.value)} 
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" 
+                    className={`w-full bg-slate-900 border ${!nav.label.trim() ? 'border-red-500' : 'border-slate-700'} rounded-lg px-3 py-1.5 text-xs text-white`} 
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Path</label>
+                  <label htmlFor={`nav-path-${idx}`} className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Path</label>
                   <input 
+                    id={`nav-path-${idx}`}
                     value={nav.path} 
                     onChange={e => updateNavigation(idx, 'path', e.target.value)} 
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-emerald-500 font-mono" 
+                    className={`w-full bg-slate-900 border ${!nav.path.trim() ? 'border-red-500' : 'border-slate-700'} rounded-lg px-3 py-1.5 text-xs text-emerald-500 font-mono`} 
                     placeholder="/courses"
                   />
                 </div>
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      <div className="p-8 bg-emerald-500/10 border border-emerald-500/20 rounded-3xl flex items-center gap-6" role="note">
+        <div className="w-12 h-12 bg-emerald-500 text-white rounded-xl flex items-center justify-center text-xl shadow-lg shrink-0" aria-hidden="true">
+          <i className="fa-solid fa-wand-magic-sparkles"></i>
+        </div>
+        <div>
+          <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-1">Navigation Helper</p>
+          <p className="text-emerald-200/70 text-xs font-medium italic">
+            Internal paths should start with a slash (e.g. /courses). Using standard paths ensures consistent redirection across all local and remote environments.
+          </p>
         </div>
       </div>
     </div>
