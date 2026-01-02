@@ -157,81 +157,70 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
           <div className="flex-grow p-10 md:p-16 lg:p-20">
             <form onSubmit={handleSubmit} className="space-y-10" noValidate>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {enrollmentForm.fields.map(field => {
-                  const isWide = field.type === 'textarea' || (field.label && field.label.toLowerCase().includes('name'));
-
-                  return (
-                    <div key={field.id} className={`space-y-3 ${isWide ? 'md:col-span-2' : ''}`}>
-                      <label htmlFor={`enroll-${field.id}`} className="text-[11px] font-black text-slate-800 uppercase tracking-[0.2em] ml-1 block">
-                        {field.label} {field.required && <span className="text-emerald-600" aria-hidden="true">*</span>}
-                      </label>
-                      <div className="flex flex-col">
-                        {field.type === 'textarea' ? (
-                          <textarea 
-                            id={`enroll-${field.id}`}
-                            required={field.required} 
-                            aria-required={field.required}
-                            aria-invalid={touched[field.id] && !!errors[field.id]}
-                            aria-describedby={touched[field.id] && errors[field.id] ? `err-${field.id}` : undefined}
-                            className={`w-full px-6 py-4 bg-slate-50 border ${touched[field.id] && errors[field.id] ? 'border-red-500' : 'border-slate-200'} rounded-2xl focus:border-emerald-500 outline-none transition-all resize-none shadow-sm`} 
-                            placeholder={field.placeholder}
-                            value={formData[field.id] || ''}
-                            onChange={(e) => handleInputChange(field.id, e.target.value)}
-                            onBlur={() => handleBlur(field.id)}
-                          />
-                        ) : field.type === 'course-select' || field.type === 'select' ? (
-                          <div className="relative">
-                            <select 
-                              id={`enroll-${field.id}`}
-                              required={field.required} 
-                              aria-required={field.required}
-                              aria-invalid={touched[field.id] && !!errors[field.id]}
-                              aria-describedby={touched[field.id] && errors[field.id] ? `err-${field.id}` : undefined}
-                              className={`w-full px-6 py-4 bg-slate-50 border ${touched[field.id] && errors[field.id] ? 'border-red-500' : 'border-slate-200'} rounded-2xl focus:border-emerald-500 outline-none transition-all shadow-sm appearance-none cursor-pointer pr-12`}
-                              value={formData[field.id] || ''}
-                              onChange={(e) => handleInputChange(field.id, e.target.value)}
-                              onBlur={() => handleBlur(field.id)}
-                            >
-                              <option value="">{field.placeholder || 'Select Option'}</option>
-                              {field.type === 'course-select' ? (
-                                courses.filter(c => c.status === 'Active').map(c => (
-                                  <option key={c.id} value={c.name}>
-                                    {c.name} {c.price ? `— ${c.price}` : ''}
-                                  </option>
-                                ))
-                              ) : (
-                                field.options?.map(opt => (
-                                  <option key={opt} value={opt}>{opt}</option>
-                                ))
-                              )}
-                            </select>
-                            <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                              <i className="fa-solid fa-chevron-down text-xs"></i>
-                            </div>
-                          </div>
-                        ) : (
-                          <input 
-                            id={`enroll-${field.id}`}
-                            required={field.required} 
-                            aria-required={field.required}
-                            aria-invalid={touched[field.id] && !!errors[field.id]}
-                            aria-describedby={touched[field.id] && errors[field.id] ? `err-${field.id}` : undefined}
-                            type={field.type} 
-                            className={`w-full px-6 py-4 bg-slate-50 border ${touched[field.id] && errors[field.id] ? 'border-red-500' : 'border-slate-200'} rounded-2xl focus:border-emerald-500 outline-none transition-all shadow-sm`} 
-                            placeholder={field.placeholder}
-                            value={formData[field.id] || ''}
-                            onChange={(e) => handleInputChange(field.id, e.target.value)}
-                            onBlur={() => handleBlur(field.id)}
-                          />
-                        )}
-                        {touched[field.id] && errors[field.id] && <span id={`err-${field.id}`} className="text-[10px] text-red-500 font-bold mt-1 ml-1">{errors[field.id]}</span>}
-                      </div>
+                {enrollmentForm.fields.map(field => (
+                  <div key={field.id} className={`space-y-3 ${field.type === 'textarea' ? 'md:col-span-2' : ''}`}>
+                    <label htmlFor={`enroll-${field.id}`} className="text-[11px] font-black text-slate-800 uppercase tracking-[0.2em] ml-1 block">
+                      {field.label} {field.required && <span className="text-emerald-600" aria-hidden="true">*</span>}
+                    </label>
+                    <div className="flex flex-col">
+                      {field.type === 'textarea' ? (
+                        <textarea 
+                          id={`enroll-${field.id}`}
+                          required={field.required} 
+                          aria-required={field.required}
+                          aria-invalid={touched[field.id] && !!errors[field.id]}
+                          aria-describedby={touched[field.id] && errors[field.id] ? `err-${field.id}` : undefined}
+                          className={`w-full px-6 py-4 bg-slate-50 border ${touched[field.id] && errors[field.id] ? 'border-red-500' : 'border-slate-200'} rounded-2xl focus:border-emerald-500 outline-none transition-all resize-none`} 
+                          placeholder={field.placeholder}
+                          value={formData[field.id] || ''}
+                          onChange={(e) => handleInputChange(field.id, e.target.value)}
+                          onBlur={() => handleBlur(field.id)}
+                        />
+                      ) : field.type === 'course-select' || field.type === 'select' ? (
+                        <select 
+                          id={`enroll-${field.id}`}
+                          required={field.required} 
+                          aria-required={field.required}
+                          aria-invalid={touched[field.id] && !!errors[field.id]}
+                          aria-describedby={touched[field.id] && errors[field.id] ? `err-${field.id}` : undefined}
+                          className={`w-full px-6 py-4 bg-slate-50 border ${touched[field.id] && errors[field.id] ? 'border-red-500' : 'border-slate-200'} rounded-2xl focus:border-emerald-500 outline-none transition-all`}
+                          value={formData[field.id] || ''}
+                          onChange={(e) => handleInputChange(field.id, e.target.value)}
+                          onBlur={() => handleBlur(field.id)}
+                        >
+                          <option value="">{field.placeholder || 'Select Option'}</option>
+                          {field.type === 'course-select' ? (
+                            courses.filter(c => c.status === 'Active').map(c => (
+                              <option key={c.id} value={c.name}>{c.name}</option>
+                            ))
+                          ) : (
+                            field.options?.map(opt => (
+                              <option key={opt} value={opt}>{opt}</option>
+                            ))
+                          )}
+                        </select>
+                      ) : (
+                        <input 
+                          id={`enroll-${field.id}`}
+                          required={field.required} 
+                          aria-required={field.required}
+                          aria-invalid={touched[field.id] && !!errors[field.id]}
+                          aria-describedby={touched[field.id] && errors[field.id] ? `err-${field.id}` : undefined}
+                          type={field.type} 
+                          className={`w-full px-6 py-4 bg-slate-50 border ${touched[field.id] && errors[field.id] ? 'border-red-500' : 'border-slate-200'} rounded-2xl focus:border-emerald-500 outline-none transition-all`} 
+                          placeholder={field.placeholder}
+                          value={formData[field.id] || ''}
+                          onChange={(e) => handleInputChange(field.id, e.target.value)}
+                          onBlur={() => handleBlur(field.id)}
+                        />
+                      )}
+                      {touched[field.id] && errors[field.id] && <span id={`err-${field.id}`} className="text-[10px] text-red-500 font-bold mt-1 ml-1">{errors[field.id]}</span>}
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
-              <div className="space-y-6 pt-10">
-                <button type="submit" className="w-full py-6 bg-emerald-600 text-white font-black text-lg rounded-3xl hover:bg-emerald-700 transition-all shadow-2xl active:scale-[0.98] uppercase tracking-[0.2em] shadow-emerald-600/20">
+              <div className="space-y-6">
+                <button type="submit" className="w-full py-6 bg-emerald-600 text-white font-black text-lg rounded-3xl hover:bg-emerald-700 transition-all shadow-2xl active:scale-[0.98] uppercase tracking-[0.2em]">
                   Submit Application
                 </button>
                 <p className="text-[11px] text-slate-500 font-medium text-center leading-relaxed max-w-lg mx-auto">
