@@ -9,22 +9,7 @@ interface AboutPageProps {
 }
 
 const AboutPage: React.FC<AboutPageProps> = ({ content, siteName }) => {
-  // Defensive check to prevent crash if content is somehow null/undefined
-  if (!content) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <p className="text-slate-500 font-black uppercase tracking-widest">Loading Institutional Biography...</p>
-      </div>
-    );
-  }
-
-  // Use nullish coalescing to provide safe defaults for every section
-  const beginning = content.beginning || { label: '', title: '', story: '', image: '' };
-  const learning = content.learning || { label: '', title: '', description: '', image1: '', image2: '', caption1: '', caption2: '' };
-  const faculty = content.faculty || { label: '', title: '', description: '', members: [] };
-  const vision = content.vision || { label: '', title: '', content: '', values: [], image: '' };
-  const achievements = content.achievements || { label: '', title: '', image: '', stats: [], ctaLabel: 'Enroll Now' };
-  const extraChapters = content.extraChapters || [];
+  const { beginning, learning, faculty, vision, achievements, extraChapters } = content;
 
   return (
     <div className="bg-white overflow-hidden">
@@ -45,13 +30,11 @@ const AboutPage: React.FC<AboutPageProps> = ({ content, siteName }) => {
             <div className="lg:w-1/2 order-1 lg:order-2">
               <div className="relative">
                 <div className="absolute -inset-4 bg-emerald-50 rounded-[3rem] -z-10 transform rotate-2"></div>
-                {beginning.image && (
-                  <img 
-                    src={beginning.image} 
-                    alt="" 
-                    className="w-full h-[400px] md:h-[600px] object-cover rounded-[2.5rem] shadow-3xl"
-                  />
-                )}
+                <img 
+                  src={beginning.image} 
+                  alt="" 
+                  className="w-full h-[400px] md:h-[600px] object-cover rounded-[2.5rem] shadow-3xl"
+                />
               </div>
             </div>
           </div>
@@ -68,14 +51,14 @@ const AboutPage: React.FC<AboutPageProps> = ({ content, siteName }) => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div className="group relative">
-               {learning.image1 && <img src={learning.image1} className="w-full h-[400px] object-cover rounded-[2.5rem] shadow-xl group-hover:scale-[1.02] transition-transform duration-700" alt="" />}
+               <img src={learning.image1} className="w-full h-[400px] object-cover rounded-[2.5rem] shadow-xl group-hover:scale-[1.02] transition-transform duration-700" alt="" />
                <div className="absolute bottom-6 left-6 right-6 p-6 bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity">
                  <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Mastery Snapshot</p>
                  <p className="text-slate-900 font-bold">{learning.caption1}</p>
                </div>
             </div>
             <div className="group relative">
-               {learning.image2 && <img src={learning.image2} className="w-full h-[400px] object-cover rounded-[2.5rem] shadow-xl group-hover:scale-[1.02] transition-transform duration-700" alt="" />}
+               <img src={learning.image2} className="w-full h-[400px] object-cover rounded-[2.5rem] shadow-xl group-hover:scale-[1.02] transition-transform duration-700" alt="" />
                <div className="absolute bottom-6 left-6 right-6 p-6 bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity">
                  <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Mastery Lab</p>
                  <p className="text-slate-900 font-bold">{learning.caption2}</p>
@@ -96,7 +79,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ content, siteName }) => {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-            {(faculty.members || []).map(member => (
+            {faculty.members.map(member => (
               <div key={member.id} className="group">
                 <div className="mb-8 relative overflow-hidden rounded-[2.5rem] bg-slate-100 aspect-[4/5]">
                   <img src={member.image} alt={member.name} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
@@ -114,7 +97,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ content, siteName }) => {
       {/* Chapter 4: Vision & Values */}
       <section className="py-24 bg-slate-900 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-1/2 h-full opacity-20 pointer-events-none">
-          {vision.image && <img src={vision.image} className="w-full h-full object-cover" alt="" aria-hidden="true" />}
+          <img src={vision.image} className="w-full h-full object-cover" alt="" aria-hidden="true" />
           <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/40 to-transparent"></div>
         </div>
         <div className="container mx-auto px-4 relative z-10">
@@ -123,7 +106,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ content, siteName }) => {
             <h2 className="text-4xl md:text-6xl font-black mb-10 tracking-tighter leading-none">{vision.title}</h2>
             <p className="text-slate-300 text-xl font-medium leading-relaxed mb-12">{vision.content}</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {(vision.values || []).map((v, idx) => (
+              {vision.values.map((v, idx) => (
                 <div key={idx} className="flex items-center gap-4 p-6 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 group hover:border-emerald-500 transition-colors">
                   <div className="w-10 h-10 bg-emerald-500 text-white rounded-lg flex items-center justify-center shrink-0 shadow-lg">
                     <i className="fa-solid fa-check text-xs"></i>
@@ -143,7 +126,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ content, siteName }) => {
             <div className="lg:w-1/2">
               <div className="relative">
                  <div className="absolute -inset-10 bg-emerald-600/5 rounded-full blur-3xl"></div>
-                 {achievements.image && <img src={achievements.image} className="w-full h-[500px] object-cover rounded-[3rem] shadow-3xl relative z-10" alt="" />}
+                 <img src={achievements.image} className="w-full h-[500px] object-cover rounded-[3rem] shadow-3xl relative z-10" alt="" />
               </div>
             </div>
             <div className="lg:w-1/2">
@@ -171,7 +154,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ content, siteName }) => {
       </section>
 
       {/* Dynamic Extra Chapters */}
-      {extraChapters.map((ch, idx) => (
+      {(extraChapters || []).map((ch, idx) => (
         <section key={ch.id} className={`py-24 md:py-32 ${idx % 2 === 0 ? 'bg-slate-50' : 'bg-white'}`}>
           <div className="container mx-auto px-4">
             <div className={`flex flex-col items-center gap-16 ${idx % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'}`}>
@@ -184,7 +167,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ content, siteName }) => {
               <div className="lg:w-1/2">
                 <div className="relative group">
                   <div className="absolute -inset-4 bg-emerald-100/30 rounded-[3rem] -z-10 group-hover:rotate-0 transition-transform duration-700 rotate-2"></div>
-                  {ch.image && <img src={ch.image} className="w-full h-[400px] md:h-[500px] object-cover rounded-[2.5rem] shadow-2xl" alt="" />}
+                  <img src={ch.image} className="w-full h-[400px] md:h-[500px] object-cover rounded-[2.5rem] shadow-2xl" alt="" />
                 </div>
               </div>
             </div>

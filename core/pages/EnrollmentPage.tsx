@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { AppState } from '../types.ts';
@@ -59,13 +60,13 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
       <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-24">
         <div className="max-w-2xl w-full bg-white p-12 md:p-16 rounded-[3.5rem] shadow-3xl text-center border border-slate-100" role="alert">
           <div className="w-24 h-24 md:w-28 md:h-28 bg-emerald-100 text-emerald-600 rounded-[2.5rem] flex items-center justify-center text-4xl md:text-5xl mx-auto mb-10 shadow-2xl animate-bounce">
-            <i className="fa-solid fa-check" aria-hidden="true"></i>
+            <i className="fa-solid fa-check"></i>
           </div>
           <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tighter">{enrollmentForm.successTitle}</h2>
           <p className="text-slate-600 mb-12 text-lg md:text-xl font-medium leading-relaxed">
             {enrollmentForm.successMessage}
           </p>
-          <Link to="/courses" className="inline-block px-12 py-5 bg-slate-900 text-white font-black rounded-2xl hover:bg-emerald-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-900/20 transition-all shadow-3xl active:scale-95 uppercase tracking-widest text-[11px]">
+          <Link to="/courses" className="inline-block px-12 py-5 bg-slate-900 text-white font-black rounded-2xl hover:bg-emerald-600 transition-all shadow-3xl active:scale-95 uppercase tracking-widest text-[11px]">
             Return to Courses
           </Link>
         </div>
@@ -133,7 +134,7 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
                   return (
                     <div key={field.id} className={`space-y-3 ${isWide ? 'md:col-span-2' : 'md:col-span-1'}`}>
                       <label htmlFor={`field-${field.id}`} className="text-[11px] font-black text-slate-800 uppercase tracking-[0.2em] ml-1 block">
-                        {field.label} {field.required && <span className="text-red-600 font-black">*</span>}
+                        {field.label} {field.required && <span className="text-emerald-600 font-black">*</span>}
                       </label>
                       
                       {field.type === 'textarea' ? (

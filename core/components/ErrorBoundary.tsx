@@ -1,3 +1,4 @@
+
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 
 interface Props {
@@ -16,17 +17,7 @@ interface State {
  * total crashes during runtime rendering exceptions.
  */
 export default class ErrorBoundary extends Component<Props, State> {
-  // Fix: Explicitly declare state and props as class members to resolve TypeScript errors where 'this.state' and 'this.props' were not found on the instance
-  public props: Props;
-  public state: State = {
-    hasError: false
-  };
-
-  // Fix: Adding constructor to ensure props are correctly initialized and recognized by TypeScript on the instance
-  constructor(props: Props) {
-    super(props);
-    this.props = props;
-  }
+  public state: State = { hasError: false };
 
   public static getDerivedStateFromError(_: Error): State {
     // Update state so the next render will show the fallback UI.
@@ -63,7 +54,6 @@ export default class ErrorBoundary extends Component<Props, State> {
       );
     }
 
-    // Fix: Accessing children from the correctly typed and initialized this.props
     return this.props.children;
   }
 }

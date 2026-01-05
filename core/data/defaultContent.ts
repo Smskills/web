@@ -185,13 +185,11 @@ export const INITIAL_CONTENT: AppState = {
       ctaLabel: "Join the Next Batch",
       image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1200",
       stats: [
-        /* Added missing id properties to AchievementStat objects */
-        { id: "stat-1", label: "Years of Heritage", value: "ESTD 2024" },
-        { id: "stat-2", label: "Success Rate", value: "94%" },
-        { id: "stat-3", label: "Global Partners", value: "200+" }
+        { label: "Years of Heritage", value: "ESTD 2024" },
+        { label: "Success Rate", value: "94%" },
+        { label: "Global Partners", value: "200+" }
       ]
-    },
-    extraChapters: []
+    }
   },
   courses: {
     list: [

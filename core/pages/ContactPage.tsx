@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { SiteConfig, AppState } from '../types';
 
@@ -127,7 +128,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
                     return (
                       <div key={field.id} className={`space-y-3 ${isWide ? 'md:col-span-2' : 'md:col-span-1'}`}>
                         <label htmlFor={`field-${field.id}`} className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1 block">
-                          {field.label} {field.required && <span className="text-red-600">*</span>}
+                          {field.label} {field.required && <span className="text-emerald-600">*</span>}
                         </label>
                         
                         {field.type === 'textarea' ? (
