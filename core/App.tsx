@@ -33,12 +33,11 @@ const App: React.FC = () => {
     try {
       const parsed = JSON.parse(saved);
       
-      // Helper for robust merging of objects
       const deepMerge = (target: any, source: any) => {
-        if (!source) return target;
+        if (!source || typeof source !== 'object') return target;
         const result = { ...target };
         for (const key in source) {
-          if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+          if (source[key] !== null && typeof source[key] === 'object' && !Array.isArray(source[key])) {
              result[key] = deepMerge(target[key] || {}, source[key]);
           } else {
              result[key] = source[key];
@@ -47,6 +46,7 @@ const App: React.FC = () => {
         return result;
       };
 
+      // Force structure for list-based sections to prevent legacy data crashes
       const mergedState: AppState = {
         ...INITIAL_CONTENT,
         site: deepMerge(INITIAL_CONTENT.site, parsed.site),
@@ -58,7 +58,6 @@ const App: React.FC = () => {
         placements: deepMerge(INITIAL_CONTENT.placements, parsed.placements),
         legal: deepMerge(INITIAL_CONTENT.legal, parsed.legal),
         career: deepMerge(INITIAL_CONTENT.career, parsed.career),
-        // Handle list-based objects carefully
         courses: {
           list: parsed.courses?.list || (Array.isArray(parsed.courses) ? parsed.courses : INITIAL_CONTENT.courses.list),
           pageMeta: deepMerge(INITIAL_CONTENT.courses.pageMeta, parsed.courses?.pageMeta)
@@ -72,8 +71,8 @@ const App: React.FC = () => {
           pageMeta: deepMerge(INITIAL_CONTENT.gallery.pageMeta, parsed.gallery?.pageMeta)
         },
         faqs: {
-          // Fixed: Changed parsed.notices to parsed.faqs for correct data recovery
-          list: parsed.faqs?.list || (Array.isArray(parsed.faqs) ? parsed.faqs : INITIAL_CONTENT.faqs.list),
+          // Hardened merge: ensure we always have an object with a list array
+          list: (parsed.faqs?.list || (Array.isArray(parsed.faqs) ? parsed.faqs : null)) || INITIAL_CONTENT.faqs.list,
           pageMeta: deepMerge(INITIAL_CONTENT.faqs.pageMeta, parsed.faqs?.pageMeta)
         },
         customPages: parsed.customPages || INITIAL_CONTENT.customPages,
@@ -82,7 +81,7 @@ const App: React.FC = () => {
 
       return mergedState;
     } catch (e) {
-      console.error("Educational CMS: Error restoring state.", e);
+      console.error("Educational CMS: System restoration failed.", e);
       return INITIAL_CONTENT;
     }
   });
@@ -120,7 +119,7 @@ const App: React.FC = () => {
     try {
       localStorage.setItem('edu_insta_content', JSON.stringify(newContent));
     } catch (err) {
-      console.error("Educational CMS: Failed to save", err);
+      console.error("Educational CMS: Persistence failed", err);
     }
   };
 
