@@ -15,7 +15,7 @@ interface State {
  * Global Error Boundary component to protect the application from 
  * total crashes during runtime rendering exceptions.
  */
-// Fix: Extend React.Component explicitly to ensure correct property inheritance for this.props and this.state
+// Use explicit React.Component inheritance with generic Props and State to ensure this.props and this.state are correctly typed
 export default class ErrorBoundary extends React.Component<Props, State> {
   /**
    * Initialize error tracking state.
@@ -65,7 +65,7 @@ export default class ErrorBoundary extends React.Component<Props, State> {
       );
     }
 
-    // Fix: Access children from this.props which is now correctly recognized via explicit inheritance from React.Component
+    // Access inherited children prop from React.Component context
     return this.props.children || null;
   }
 }

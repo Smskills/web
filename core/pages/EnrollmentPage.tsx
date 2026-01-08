@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { AppState } from '../types.ts';
@@ -22,7 +21,6 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
       successTitle: 'Thank You', 
       successMessage: 'We received your application.' 
     }, 
-    // Fix: courses is an object containing a list, not an array. Removed default array value.
     courses, 
     site = { contact: { phone: 'N/A', email: '', address: '' } } 
   } = content || {};
@@ -66,7 +64,7 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
           <p className="text-slate-600 mb-12 text-lg md:text-xl font-medium leading-relaxed">
             {enrollmentForm.successMessage}
           </p>
-          <Link to="/courses" className="inline-block px-12 py-5 bg-slate-900 text-white font-black rounded-2xl hover:bg-emerald-600 transition-all shadow-3xl active:scale-95 uppercase tracking-widest text-[11px]">
+          <Link to="/courses" className="inline-block px-12 py-5 bg-slate-900 text-white font-black rounded-2xl hover:bg-emerald-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-900/20 transition-all shadow-3xl active:scale-95 uppercase tracking-widest text-[11px]">
             Return to Courses
           </Link>
         </div>
@@ -125,10 +123,9 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
           </div>
 
           <div className="flex-grow p-10 md:p-16 lg:p-20">
-            <form onSubmit={handleSubmit} className="space-y-8 md:space-y-10">
+            <form onSubmit={handleSubmit} className="space-y-8 md:space-y-10" autoComplete="off">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8 md:gap-y-10">
                 {(enrollmentForm.fields || []).map(field => {
-                  // Aesthetically: Names and Textareas should be wide.
                   const isWide = field.type === 'textarea' || (field.label && field.label.toLowerCase().includes('name')) || (field.label && field.label.toLowerCase().includes('address'));
                   
                   return (
@@ -140,6 +137,7 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
                       {field.type === 'textarea' ? (
                         <textarea 
                           id={`field-${field.id}`}
+                          autoComplete="off"
                           required={field.required}
                           value={formData[field.id] || ''}
                           onChange={(e) => handleChange(field.id, e.target.value)}
@@ -157,7 +155,6 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
                             className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-black text-[11px] text-slate-900 uppercase tracking-widest appearance-none pr-12 shadow-sm cursor-pointer"
                           >
                             <option value="">{field.placeholder || 'Select Track'}</option>
-                            {/* Fix: Access the list property from the courses object instead of assuming it is an array */}
                             {(courses?.list || []).filter(c => c?.status === 'Active').map(course => (
                               <option key={course.id} value={course.name}>
                                 {course.name}
@@ -190,6 +187,7 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
                         <input 
                           id={`field-${field.id}`}
                           required={field.required}
+                          autoComplete="off"
                           type={field.type}
                           value={formData[field.id] || ''}
                           onChange={(e) => handleChange(field.id, e.target.value)}
@@ -206,9 +204,14 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
                 <button type="submit" className="w-full py-6 md:py-8 bg-emerald-600 text-white font-black text-base md:text-lg rounded-3xl hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-500/30 transition-all shadow-2xl shadow-emerald-600/20 active:scale-[0.98] uppercase tracking-[0.2em] mt-8">
                   Submit Admission Request <i className="fa-solid fa-paper-plane ml-3 text-sm"></i>
                 </button>
-                <p className="text-[11px] text-slate-500 font-medium text-center leading-relaxed max-w-lg mx-auto">
-                  By submitting this application, you acknowledge that you have read and agree to our <Link to="/privacy-policy" className="text-emerald-600 font-black hover:underline">Privacy Policy</Link> and <Link to="/terms-of-service" className="text-emerald-600 font-black hover:underline">Terms of Service</Link>.
-                </p>
+                <div className="text-[11px] text-slate-500 font-medium text-center leading-relaxed max-w-lg mx-auto space-y-2">
+                  <p>
+                    By submitting this application, you acknowledge that you have read and agree to our <Link to="/privacy-policy" className="text-emerald-600 font-black hover:underline">Privacy Policy</Link> and <Link to="/terms-of-service" className="text-emerald-600 font-black hover:underline">Terms of Service</Link>.
+                  </p>
+                  <p className="opacity-60 italic">
+                    Your data is handled securely via encrypted institutional protocols and is never shared with third-party advertising networks.
+                  </p>
+                </div>
               </div>
             </form>
           </div>

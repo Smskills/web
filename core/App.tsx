@@ -33,6 +33,11 @@ const App: React.FC = () => {
     try {
       const parsed = JSON.parse(saved);
       
+      // Basic Structural Validation to prevent "Cannot read property of undefined" crashes
+      if (!parsed || typeof parsed !== 'object' || !parsed.site || !parsed.home) {
+        throw new Error("Invalid state structure detected.");
+      }
+
       const deepMerge = (target: any, source: any) => {
         if (!source || typeof source !== 'object') return target;
         const result = { ...target };
@@ -60,7 +65,6 @@ const App: React.FC = () => {
         return (INITIAL_CONTENT as any)[key] || { list: [], pageMeta: defaultMeta };
       };
 
-      // NAVIGATION RECONCILIATION: Ensure FAQ link exists in the navigation array
       const baseSite = deepMerge(INITIAL_CONTENT.site, parsed.site);
       const hasFaq = baseSite.navigation.some((n: any) => n.path === '/faq');
       if (!hasFaq) {
@@ -88,7 +92,9 @@ const App: React.FC = () => {
 
       return mergedState;
     } catch (e) {
-      console.error("Educational CMS: Error restoring state.", e);
+      console.error("Educational CMS: Error restoring state. Reverting to defaults.", e);
+      // If corruption is deep, clear corrupted storage to allow recovery
+      localStorage.removeItem('edu_insta_content');
       return INITIAL_CONTENT;
     }
   });

@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { AppState, Course, Notice, FAQItem, FormField, PlacementStat, StudentReview, IndustryPartner, LegalSection, CareerService, CustomPage, TeamMember, PageMeta, SocialLink, AchievementStat, ExtraChapter } from '../types.ts';
 import { INITIAL_CONTENT } from '../data/defaultContent.ts';
@@ -65,6 +64,32 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
   };
 
   const trackChange = () => setHasUnsavedChanges(true);
+
+  // Data Portability Logic
+  const handleExport = () => {
+    const dataStr = JSON.stringify(localContent, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    const exportFileDefaultName = `sm-skills-backup-${new Date().toISOString().split('T')[0]}.json`;
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+    setStatusMsg('Backup exported successfully.');
+  };
+
+  const handleImport = (jsonString: string) => {
+    try {
+      const parsed = JSON.parse(jsonString);
+      if (parsed && parsed.site && parsed.home) {
+        onUpdate(parsed);
+        setStatusMsg('Database restored from backup.');
+      } else {
+        alert("Import failed: JSON file does not appear to be a valid SMS database.");
+      }
+    } catch (e) {
+      alert("Import failed: Invalid JSON file.");
+    }
+  };
 
   const updateField = (section: keyof AppState, field: string, value: any) => {
     setLocalContent(prev => ({ ...prev, [section]: { ...(prev[section] as any), [field]: value } }));
@@ -181,7 +206,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
           {activeTab === 'site' && <SiteTab 
             data={localContent.site} theme={localContent.theme} 
             updateTheme={(f, v) => updateField('theme', f, v)} updateField={(f, v) => updateField('site', f, v)} 
-            onLogoUploadClick={() => { activeUploadPath.current = 'site.logo'; genericUploadRef.current?.click(); }} onExport={() => {}} onImport={() => {}}
+            onLogoUploadClick={() => { activeUploadPath.current = 'site.logo'; genericUploadRef.current?.click(); }} onExport={handleExport} onImport={handleImport}
             updateNavigation={(idx, f, v) => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, navigation: prev.site.navigation.map((n, i) => i === idx ? { ...n, [f]: v } : n) } })); trackChange(); }} 
             addNavigation={() => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, navigation: [...prev.site.navigation, { label: 'New Link', path: '/' }] } })); trackChange(); }} 
             removeNavigation={(idx) => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, navigation: prev.site.navigation.filter((_, i) => i !== idx) } })); trackChange(); }} 
