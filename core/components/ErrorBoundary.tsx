@@ -1,4 +1,4 @@
-import React, { ErrorInfo, ReactNode } from 'react';
+import React, { Component, ErrorInfo, ReactNode } from 'react';
 
 interface Props {
   /**
@@ -15,8 +15,8 @@ interface State {
  * Global Error Boundary component to protect the application from 
  * total crashes during runtime rendering exceptions.
  */
-// Use explicit React.Component inheritance with generic Props and State to ensure this.props and this.state are correctly typed
-export default class ErrorBoundary extends React.Component<Props, State> {
+// Fix: Explicitly extend Component from react to resolve inherited property types like 'props' correctly
+export default class ErrorBoundary extends Component<Props, State> {
   /**
    * Initialize error tracking state.
    */
@@ -65,7 +65,7 @@ export default class ErrorBoundary extends React.Component<Props, State> {
       );
     }
 
-    // Access inherited children prop from React.Component context
+    // Fix: Component inheritance now allows correct access to 'props.children'
     return this.props.children || null;
   }
 }
