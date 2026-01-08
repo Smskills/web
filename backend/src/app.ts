@@ -2,10 +2,10 @@ import express, { Application } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import apiRoutes from './routes/index.ts';
-import { errorHandler } from './middleware/error.middleware.ts';
-import { ENV } from './config/env.ts';
-import { CONSTANTS } from './config/constants.ts';
+import apiRoutes from './routes/index';
+import { errorHandler } from './middleware/error.middleware';
+import { ENV } from './config/env';
+import { CONSTANTS } from './config/constants';
 
 const app: Application = express();
 

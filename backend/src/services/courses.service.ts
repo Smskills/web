@@ -1,5 +1,4 @@
-
-import { CoursesRepository } from '../repositories/courses.repo.ts';
+import { CoursesRepository } from '../repositories/courses.repo';
 
 export class CoursesService {
   static async fetchActivePrograms() {

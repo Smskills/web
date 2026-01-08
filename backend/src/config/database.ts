@@ -1,5 +1,5 @@
 import mysql from 'mysql2/promise';
-import { ENV } from './env.ts';
+import { ENV } from './env';
 
 /**
  * MASTER DATABASE CONNECTION POOL

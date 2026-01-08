@@ -1,7 +1,6 @@
-
 import { Request, Response, NextFunction } from 'express';
-import { ENV } from '../config/env.ts';
-import { sendResponse } from '../utils/response.ts';
+import { ENV } from '../config/env';
+import { sendResponse } from '../utils/response';
 
 export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
   const statusCode = err.statusCode || 500;

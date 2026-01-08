@@ -1,8 +1,8 @@
 // Fix: Use node:process to ensure the compiler correctly identifies Node.js runtime methods
 import process from 'node:process';
-import app from './app.ts';
-import pool from './config/database.ts';
-import { ENV } from './config/env.ts';
+import app from './app';
+import pool from './config/database';
+import { ENV } from './config/env';
 
 /**
  * BOOTSTRAP SEQUENCE
