@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import React, { ErrorInfo, ReactNode } from 'react';
 
 interface Props {
   /**
@@ -15,30 +15,41 @@ interface State {
  * Global Error Boundary component to protect the application from 
  * total crashes during runtime rendering exceptions.
  */
-// Use the directly imported Component class to ensure proper TypeScript generic inheritance and access to this.props
-export default class ErrorBoundary extends Component<Props, State> {
+// Explicitly use React.Component to ensure correct generic typing and property inheritance for this.props and this.state
+export default class ErrorBoundary extends React.Component<Props, State> {
+  /**
+   * Initialize error tracking state.
+   */
   public state: State = { hasError: false };
 
   /**
-   * Fixed: Added explicit constructor and super(props) call to ensure 
-   * internal 'props' property is correctly initialized and typed.
+   * Standard React class constructor.
+   * Fixed: Using super(props) to ensure the base Component class correctly initializes internal props.
    */
   constructor(props: Props) {
     super(props);
   }
 
+  /**
+   * Update state so the next render will show the fallback UI.
+   */
   public static getDerivedStateFromError(_: Error): State {
-    // Update state so the next render will show the fallback UI.
     return { hasError: true };
   }
 
+  /**
+   * Catch and log errors for debugging and monitoring.
+   */
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log the error to console for diagnostic purposes
     console.error("Critical rendering exception caught by boundary:", error, errorInfo);
   }
 
+  /**
+   * Renders the children or an error fallback UI.
+   */
   public render(): ReactNode {
-    // Standard access to state and props in React class components
+    // Access state to check for rendering errors
     if (this.state.hasError) {
       // Minimal, neutral fallback UI using existing global Tailwind and FontAwesome
       return (
@@ -63,7 +74,8 @@ export default class ErrorBoundary extends Component<Props, State> {
     }
 
     /**
-     * Fixed: Successfully inheriting from Component allows standard access to this.props.
+     * Fixed: Returning children from this.props which is now correctly recognized by the TypeScript compiler
+     * through explicit React.Component inheritance.
      */
     return this.props.children || null;
   }

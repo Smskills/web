@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { AppState } from '../types.ts';
 import FormattedText from '../components/FormattedText.tsx';
@@ -15,8 +14,8 @@ const NoticesPage: React.FC<NoticesPageProps> = ({ noticesState }) => {
 
   const getNoticeTheme = (category?: string) => {
     switch(category) {
-      case 'Urgent': return { bg: 'bg-red-600', text: 'text-white', lightBg: 'bg-red-50', lightText: 'text-red-600', border: 'border-red-100', icon: 'fa-fire-flame-curved' };
-      case 'New': return { bg: 'bg-green-500', text: 'text-white', lightBg: 'bg-green-50', lightText: 'text-green-600', border: 'border-green-100', icon: 'fa-sparkles' };
+      case 'Urgent': return { bg: 'bg-red-600', text: 'text-white', lightBg: 'bg-red-50', lightText: 'text-red-600', border: 'border-red-100', icon: 'fa-circle-exclamation' };
+      case 'New': return { bg: 'bg-green-500', text: 'text-white', lightBg: 'bg-green-50', lightText: 'text-green-600', border: 'border-green-100', icon: 'fa-wand-magic-sparkles' };
       case 'Event': return { bg: 'bg-blue-600', text: 'text-white', lightBg: 'bg-blue-50', lightText: 'text-blue-600', border: 'border-blue-100', icon: 'fa-calendar-star' };
       case 'Holiday': return { bg: 'bg-amber-500', text: 'text-white', lightBg: 'bg-amber-50', lightText: 'text-amber-600', border: 'border-amber-100', icon: 'fa-umbrella-beach' };
       default: return { bg: 'bg-slate-600', text: 'text-white', lightBg: 'bg-slate-50', lightText: 'text-slate-600', border: 'border-slate-200', icon: 'fa-bullhorn' };
@@ -26,8 +25,8 @@ const NoticesPage: React.FC<NoticesPageProps> = ({ noticesState }) => {
   const filtered = list
     .filter(n => activeFilter === 'All' || n.category === activeFilter)
     .filter(n => 
-      n.title.toLowerCase().includes(search.toLowerCase()) || 
-      n.description.toLowerCase().includes(search.toLowerCase())
+      (n.title || '').toLowerCase().includes(search.toLowerCase()) || 
+      (n.description || '').toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
