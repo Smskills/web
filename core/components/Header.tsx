@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { SiteConfig } from '../types';
 
 interface HeaderProps {
@@ -9,8 +9,27 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ config }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const logoUrl = config.logo || "https://lwfiles.mycourse.app/62a6cd5-public/6efdd5e.png";
+
+  useEffect(() => {
+    const checkAuth = () => {
+      setIsLoggedIn(!!localStorage.getItem('sms_auth_token'));
+    };
+
+    checkAuth();
+    window.addEventListener('authChange', checkAuth);
+    return () => window.removeEventListener('authChange', checkAuth);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('sms_auth_token');
+    localStorage.removeItem('sms_auth_user');
+    setIsLoggedIn(false);
+    navigate('/');
+  };
 
   const isInternalLink = (path: string) => {
     if (!path) return false;
@@ -81,17 +100,41 @@ const Header: React.FC<HeaderProps> = ({ config }) => {
               </a>
             );
           })}
-          <Link
-            to="/login"
-            className={`${btnNavAction} ${
-              location.pathname === '/login' 
-                ? 'bg-emerald-600 text-white shadow-emerald-600/20' 
-                : 'bg-slate-900 text-white hover:bg-emerald-600 shadow-slate-900/10'
-            }`}
-          >
-            <i className="fa-solid fa-user-gear mr-2" aria-hidden="true"></i>
-            {config.loginLabel || "Login"}
-          </Link>
+          
+          {isLoggedIn ? (
+            <div className="flex items-center gap-4">
+              <Link
+                to="/admin"
+                className={`${btnNavAction} ${
+                  location.pathname === '/admin' 
+                    ? 'bg-emerald-600 text-white shadow-emerald-600/20' 
+                    : 'bg-slate-900 text-white hover:bg-emerald-600 shadow-slate-900/10'
+                }`}
+              >
+                <i className="fa-solid fa-gauge-high mr-2"></i>
+                Dashboard
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 hover:bg-red-50 hover:text-red-500 transition-all active:scale-90"
+                title="Logout Session"
+              >
+                <i className="fa-solid fa-power-off"></i>
+              </button>
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              className={`${btnNavAction} ${
+                location.pathname === '/login' 
+                  ? 'bg-emerald-600 text-white shadow-emerald-600/20' 
+                  : 'bg-slate-900 text-white hover:bg-emerald-600 shadow-slate-900/10'
+              }`}
+            >
+              <i className="fa-solid fa-lock mr-2"></i>
+              {config.loginLabel || "Login"}
+            </Link>
+          )}
         </nav>
 
         {/* Mobile Menu Toggle */}
@@ -143,13 +186,32 @@ const Header: React.FC<HeaderProps> = ({ config }) => {
                 </a>
               );
             })}
-            <Link
-              to="/login"
-              className="bg-slate-900 text-white font-black py-6 rounded-3xl text-center shadow-2xl mt-4 uppercase tracking-[0.3em] text-[11px] active:scale-95 transition-all"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <i className="fa-solid fa-lock mr-2" aria-hidden="true"></i> Institutional Login
-            </Link>
+            
+            {isLoggedIn ? (
+              <>
+                <Link
+                  to="/admin"
+                  className="bg-emerald-600 text-white font-black py-6 rounded-3xl text-center shadow-2xl mt-4 uppercase tracking-[0.3em] text-[11px] active:scale-95 transition-all"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <i className="fa-solid fa-gauge-high mr-2"></i> Dashboard
+                </Link>
+                <button
+                  onClick={() => { handleLogout(); setIsMenuOpen(false); }}
+                  className="bg-red-50 text-red-600 font-black py-6 rounded-3xl text-center mt-2 uppercase tracking-[0.3em] text-[11px] active:scale-95 transition-all"
+                >
+                  <i className="fa-solid fa-power-off mr-2"></i> Logout
+                </button>
+              </>
+            ) : (
+              <Link
+                to="/login"
+                className="bg-slate-900 text-white font-black py-6 rounded-3xl text-center shadow-2xl mt-4 uppercase tracking-[0.3em] text-[11px] active:scale-95 transition-all"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <i className="fa-solid fa-lock mr-2" aria-hidden="true"></i> Institutional Login
+              </Link>
+            )}
           </div>
         </div>
       )}

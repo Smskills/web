@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, Suspense, useMemo } from 'react';
-import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { HashRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { INITIAL_CONTENT } from './data/defaultContent.ts';
 import { AppState } from './types.ts';
 
@@ -136,6 +136,10 @@ const App: React.FC = () => {
     }
   };
 
+  const isAuthenticated = () => {
+    return !!localStorage.getItem('sms_auth_token');
+  };
+
   return (
     <HashRouter>
       <style>{brandingStyles}</style>
@@ -152,7 +156,13 @@ const App: React.FC = () => {
               <Route path="/gallery" element={<GalleryPage content={content} />} />
               <Route path="/faq" element={<FAQPage faqsState={content.faqs} contact={content.site.contact} />} />
               <Route path="/contact" element={<ContactPage config={content.site.contact} social={content.site.social} content={content} />} />
-              <Route path="/admin" element={<AdminDashboard content={content} onUpdate={updateContent} />} />
+              
+              {/* Protected Admin Route */}
+              <Route 
+                path="/admin" 
+                element={isAuthenticated() ? <AdminDashboard content={content} onUpdate={updateContent} /> : <Navigate to="/login" />} 
+              />
+              
               <Route path="/enroll" element={<EnrollmentPage content={content} />} />
               <Route path="/privacy-policy" element={<PrivacyPolicyPage siteName={content.site.name} data={content.legal.privacy} />} />
               <Route path="/terms-of-service" element={<TermsOfServicePage data={content.legal.terms} />} />
