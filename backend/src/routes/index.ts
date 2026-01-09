@@ -16,7 +16,7 @@ router.get('/health', (req, res) => {
 });
 
 /**
- * Feature Module Registration
+ * Core Institutional Modules
  */
 router.use('/auth', authRoutes);
 router.use('/courses', courseRoutes);

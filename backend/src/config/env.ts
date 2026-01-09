@@ -1,6 +1,5 @@
-
 import dotenv from 'dotenv';
-import process from 'process';
+import process from 'node:process';
 
 dotenv.config();
 
@@ -14,5 +13,6 @@ export const ENV = {
     NAME: process.env.DB_NAME || 'sms_skills_db',
     PORT: parseInt(process.env.DB_PORT || '3306'),
   },
+  JWT_SECRET: process.env.JWT_SECRET || 'institutional_default_secret_key_2024',
   UPLOAD_LIMIT: process.env.UPLOAD_LIMIT || '10mb'
 };

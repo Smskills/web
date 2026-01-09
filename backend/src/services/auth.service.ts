@@ -1,43 +1,51 @@
-import bcrypt from 'bcryptjs';
+// @ts-ignore
+import bcrypt from 'bcrypt';
+// @ts-ignore
 import jwt from 'jsonwebtoken';
-import { AdminRepository } from '../repositories/admin.repository';
+import { UsersRepository } from '../repositories/users.repo';
+import { ENV } from '../config/env';
 
 export class AuthService {
-  /**
-   * Authenticate admin credentials and generate a secure session token.
-   */
-  static async login(email: string, pass: string) {
-    const admin = await AdminRepository.findByEmail(email);
-
-    // 1. Check existence and status
-    if (!admin || admin.status !== 'Active') {
-      const error: any = new Error('Authentication failed: Invalid credentials or inactive account.');
-      error.statusCode = 401;
-      throw error;
+  static async login(identifier: string, plainPassword: string) {
+    // 1. Locate user record
+    const user = await UsersRepository.findByIdentifier(identifier);
+    if (!user) {
+      const err: any = new Error('Invalid credentials');
+      err.statusCode = 401;
+      throw err;
     }
 
-    // 2. Verify password hash
-    const isMatch = await bcrypt.compare(pass, admin.password);
+    // 2. Security Check: Status must be 'active'
+    if (user.status !== 'active') {
+      const err: any = new Error('Account is inactive. Contact Administrator.');
+      err.statusCode = 403;
+      throw err;
+    }
+
+    // 3. Cryptographic Verification
+    const isMatch = await bcrypt.compare(plainPassword, user.password);
     if (!isMatch) {
-      const error: any = new Error('Authentication failed: Invalid credentials.');
-      error.statusCode = 401;
-      throw error;
+      const err: any = new Error('Invalid credentials');
+      err.statusCode = 401;
+      throw err;
     }
 
-    // 3. Generate JWT
-    const secret = process.env.JWT_SECRET || 'sms_default_secret_key_2024';
+    // 4. Identity Token Generation
     const token = jwt.sign(
-      { id: admin.id, email: admin.email, role: 'admin' },
-      secret,
+      { id: user.id, username: user.username, role: user.role },
+      ENV.JWT_SECRET,
       { expiresIn: '8h' }
     );
 
-    // 4. Sanitize sensitive data before returning
-    const { password, ...adminData } = admin;
-    
+    // 5. Data Sanitization
     return {
       token,
-      admin: adminData
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role
+      }
     };
   }
 }
