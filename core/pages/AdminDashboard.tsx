@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AppState, Course, Notice, FAQItem, FormField, PlacementStat, StudentReview, IndustryPartner, LegalSection, CareerService, CustomPage, TeamMember, PageMeta, SocialLink, AchievementStat, ExtraChapter } from '../types.ts';
 import { INITIAL_CONTENT } from '../data/defaultContent.ts';
 import { optimizeImage } from '../utils/imageOptimizer.ts';
@@ -25,6 +26,7 @@ interface AdminDashboardProps {
 }
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'site' | 'home' | 'pages' | 'about' | 'courses' | 'notices' | 'gallery' | 'faq' | 'form' | 'contact' | 'footer' | 'placements' | 'legal' | 'career'>('site');
   const [localContent, setLocalContent] = useState(content);
   const [statusMsg, setStatusMsg] = useState('');
@@ -60,6 +62,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
     if (window.confirm("Discard all unsaved changes?")) {
       setLocalContent(content);
       setHasUnsavedChanges(false);
+    }
+  };
+
+  const handleLogout = () => {
+    if (window.confirm("End administrator session? Any unsaved changes will be lost.")) {
+      localStorage.removeItem('sms_auth_token');
+      localStorage.removeItem('sms_auth_user');
+      window.dispatchEvent(new Event('authChange'));
+      navigate('/login');
     }
   };
 
@@ -184,6 +195,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
           <div className="flex items-center gap-2">
               <button onClick={handleDiscard} className="px-5 py-2 text-slate-400 hover:text-white text-xs font-black transition-all border border-slate-700 rounded-lg">DISCARD</button>
               <button onClick={handleSave} className={`px-8 py-2 rounded-lg text-xs font-black transition-all active:scale-95 shadow-lg ${hasUnsavedChanges ? 'bg-emerald-600 hover:bg-emerald-500 text-white animate-pulse shadow-emerald-500/20' : 'bg-slate-700 text-slate-300 cursor-default'}`}>SAVE DATABASE</button>
+              <div className="w-px h-8 bg-slate-700 mx-2"></div>
+              <button onClick={handleLogout} className="px-4 py-2 text-slate-400 hover:text-red-500 text-xs font-black transition-all flex items-center gap-2 group" title="Logout Session">
+                <i className="fa-solid fa-power-off group-hover:scale-110 transition-transform"></i> LOGOUT
+              </button>
           </div>
         </div>
       </div>
