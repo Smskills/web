@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, Suspense, useMemo } from 'react';
 import { HashRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { INITIAL_CONTENT } from './data/defaultContent.ts';
@@ -25,6 +24,15 @@ import FAQPage from './pages/FAQPage.tsx';
 import NotFoundPage from './pages/NotFoundPage.tsx';
 import CustomPageView from './pages/CustomPageView.tsx';
 import LoginPage from './pages/LoginPage.tsx';
+
+// --- Fix: Moving ProtectedRoute outside of the App component to resolve TypeScript children inference issues
+// and following best practices for React component definitions.
+const ProtectedRoute: React.FC<{ isAuthenticated: boolean; children: React.ReactNode }> = ({ isAuthenticated, children }) => {
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  return <>{children}</>;
+};
 
 const App: React.FC = () => {
   const [isInitializing, setIsInitializing] = useState(true);
@@ -149,14 +157,6 @@ const App: React.FC = () => {
     }
   };
 
-  // Protected Route Component
-  const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-    if (!isAuthenticated) {
-      return <Navigate to="/login" replace />;
-    }
-    return <>{children}</>;
-  };
-
   return (
     <HashRouter>
       <style>{brandingStyles}</style>
@@ -175,7 +175,7 @@ const App: React.FC = () => {
               <Route path="/contact" element={<ContactPage config={content.site.contact} social={content.site.social} content={content} />} />
               
               <Route path="/admin" element={
-                <ProtectedRoute>
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
                   <AdminDashboard content={content} onUpdate={updateContent} />
                 </ProtectedRoute>
               } />

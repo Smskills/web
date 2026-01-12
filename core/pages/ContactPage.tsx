@@ -22,30 +22,47 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
     setIsSubmitting(true);
     setErrorMessage('');
 
+    // Dynamic extraction: Find the best field for each DB column
+    const findValueByKeyword = (keywords: string[]) => {
+      const field = contactForm.fields.find(f => 
+        keywords.some(k => f.label.toLowerCase().includes(k))
+      );
+      return field ? formData[field.id] : null;
+    };
+
+    const findValueByType = (type: string) => {
+      const field = contactForm.fields.find(f => f.type === type);
+      return field ? formData[field.id] : null;
+    };
+
+    const fullName = findValueByKeyword(['name', 'full name']) || 'Anonymous';
+    const email = findValueByType('email') || findValueByKeyword(['email']) || '';
+    const phone = findValueByType('tel') || findValueByKeyword(['phone', 'contact', 'mobile']) || '000-000-0000';
+    const course = findValueByType('course-select') || findValueByKeyword(['course', 'track']) || 'General Inquiry';
+    const message = findValueByType('textarea') || findValueByKeyword(['message', 'query', 'detail']) || '';
+
     try {
       const response = await fetch('http://localhost:5000/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          fullName: formData['c1'] || 'Anonymous',
-          email: formData['c2'] || '',
-          phone: '000-000-0000', // Default if field missing
-          course: formData['c3'] || 'General Inquiry',
-          message: formData['c4'] || '',
+          fullName,
+          email,
+          phone,
+          course,
+          message,
           source: 'contact',
-          details: { ...formData }
+          details: { ...formData } // All fields stored here for reference
         })
       });
 
       const result = await response.json();
-
       if (result.success) {
         setSubmitted(true);
       } else {
         setErrorMessage(result.message || 'Server rejected the application.');
       }
     } catch (err) {
-      console.error("Submission error:", err);
       setErrorMessage('Could not connect to the server. Please check if the backend is running.');
     } finally {
       setIsSubmitting(false);
@@ -71,7 +88,6 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
 
       <div className="container mx-auto px-4 -mt-10 relative z-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-          
           <div className="space-y-12">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="p-10 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm flex flex-col gap-6 group hover:border-emerald-500 transition-all">
@@ -83,7 +99,6 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
                   <p className="text-slate-500 font-medium leading-relaxed">{config.address}</p>
                 </div>
               </div>
-
               <div className="p-10 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm flex flex-col gap-6 group hover:border-emerald-500 transition-all">
                 <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
                   <i className="fa-solid fa-phone"></i>
@@ -105,12 +120,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
                 </div>
                 <h2 className="text-4xl font-black text-slate-900 mb-6 tracking-tight">Message Received</h2>
                 <p className="text-slate-500 mb-12 text-lg font-medium">Thank you for reaching out. An institutional advisor will contact you within 24 hours.</p>
-                <button 
-                  onClick={() => setSubmitted(false)}
-                  className="px-12 py-5 bg-slate-900 text-white font-black rounded-2xl uppercase text-[11px] tracking-widest hover:bg-emerald-600 focus-visible:ring-4 focus-visible:ring-slate-900/20 transition-all shadow-2xl active:scale-95"
-                >
-                  Send New Inquiry
-                </button>
+                <button onClick={() => setSubmitted(false)} className="px-12 py-5 bg-slate-900 text-white font-black rounded-2xl uppercase text-[11px] tracking-widest hover:bg-emerald-600 transition-all active:scale-95">Send New Inquiry</button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-10">
@@ -118,13 +128,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
                   <h2 className="text-4xl font-black text-slate-900 tracking-tight leading-none mb-4">{contactForm.title}</h2>
                   <div className="w-16 h-1.5 bg-emerald-500 rounded-full"></div>
                 </div>
-
-                {errorMessage && (
-                  <div className="p-4 bg-red-50 text-red-600 text-xs font-bold rounded-xl border border-red-100">
-                    {errorMessage}
-                  </div>
-                )}
-                
+                {errorMessage && <div className="p-4 bg-red-50 text-red-600 text-xs font-bold rounded-xl border border-red-100">{errorMessage}</div>}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
                   {contactForm.fields.map(field => {
                     const isWide = field.type === 'textarea' || (field.label && field.label.toLowerCase().includes('name'));
@@ -134,59 +138,36 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
                           {field.label} {field.required && <span className="text-emerald-600">*</span>}
                         </label>
                         {field.type === 'textarea' ? (
-                          <textarea 
-                            id={`field-${field.id}`}
-                            required={field.required}
-                            value={formData[field.id] || ''}
-                            onChange={(e) => handleChange(field.id, e.target.value)}
-                            rows={5}
-                            className="w-full px-8 py-5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-medium text-slate-900 resize-none placeholder-slate-300 shadow-sm"
-                            placeholder={field.placeholder}
-                          />
+                          <textarea id={`field-${field.id}`} required={field.required} value={formData[field.id] || ''} onChange={(e) => handleChange(field.id, e.target.value)} rows={5} className="w-full px-8 py-5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-medium text-slate-900 resize-none placeholder-slate-300" placeholder={field.placeholder} />
                         ) : field.type === 'course-select' ? (
                           <div className="relative">
-                            <select 
-                              id={`field-${field.id}`}
-                              required={field.required}
-                              value={formData[field.id] || ''}
-                              onChange={(e) => handleChange(field.id, e.target.value)}
-                              className="w-full px-8 py-5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-black text-[11px] text-slate-900 uppercase tracking-widest appearance-none pr-12 shadow-sm cursor-pointer"
-                            >
+                            <select id={`field-${field.id}`} required={field.required} value={formData[field.id] || ''} onChange={(e) => handleChange(field.id, e.target.value)} className="w-full px-8 py-5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-black text-[11px] text-slate-900 uppercase tracking-widest appearance-none pr-12 shadow-sm cursor-pointer">
                               <option value="">{field.placeholder || 'Select Track'}</option>
                               {coursesList.filter(c => c.status === 'Active').map(course => (
                                 <option key={course.id} value={course.name}>{course.name}</option>
                               ))}
                             </select>
-                            <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                              <i className="fa-solid fa-chevron-down text-xs"></i>
-                            </div>
+                            <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400"><i className="fa-solid fa-chevron-down text-xs"></i></div>
+                          </div>
+                        ) : field.type === 'select' ? (
+                          <div className="relative">
+                            <select id={`field-${field.id}`} required={field.required} value={formData[field.id] || ''} onChange={(e) => handleChange(field.id, e.target.value)} className="w-full px-8 py-5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-black text-[11px] text-slate-900 uppercase tracking-widest appearance-none pr-12 shadow-sm cursor-pointer">
+                              <option value="">{field.placeholder || 'Choose Option'}</option>
+                              {field.options?.map(opt => (
+                                <option key={opt} value={opt}>{opt}</option>
+                              ))}
+                            </select>
+                            <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400"><i className="fa-solid fa-chevron-down text-xs"></i></div>
                           </div>
                         ) : (
-                          <input 
-                            id={`field-${field.id}`}
-                            required={field.required}
-                            type={field.type}
-                            value={formData[field.id] || ''}
-                            onChange={(e) => handleChange(field.id, e.target.value)}
-                            className="w-full px-8 py-5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-medium text-slate-900 placeholder-slate-300 shadow-sm"
-                            placeholder={field.placeholder}
-                          />
+                          <input id={`field-${field.id}`} required={field.required} type={field.type} value={formData[field.id] || ''} onChange={(e) => handleChange(field.id, e.target.value)} className="w-full px-8 py-5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-medium text-slate-900 placeholder-slate-300 shadow-sm" placeholder={field.placeholder} />
                         )}
                       </div>
                     );
                   })}
                 </div>
-
-                <button 
-                  disabled={isSubmitting}
-                  type="submit" 
-                  className={`${btnPrimary} flex items-center justify-center gap-4`}
-                >
-                  {isSubmitting ? (
-                    <><i className="fa-solid fa-circle-notch fa-spin"></i> Processing...</>
-                  ) : (
-                    <>Submit Official Inquiry <i className="fa-solid fa-paper-plane text-sm"></i></>
-                  )}
+                <button disabled={isSubmitting} type="submit" className={`${btnPrimary} flex items-center justify-center gap-4`}>
+                  {isSubmitting ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Processing...</> : <>Submit Official Inquiry <i className="fa-solid fa-paper-plane text-sm"></i></>}
                 </button>
               </form>
             )}

@@ -36,17 +36,36 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
     e.preventDefault();
     setIsSubmitting(true);
     setErrorMessage('');
+
+    // Intelligent Extraction: Find the best matching field for DB columns
+    const findValueByKeywords = (keywords: string[]) => {
+      const field = enrollmentForm.fields.find(f => 
+        keywords.some(k => (f.label || '').toLowerCase().includes(k))
+      );
+      return field ? formData[field.id] : null;
+    };
+
+    const findValueByType = (type: string) => {
+      const field = enrollmentForm.fields.find(f => f.type === type);
+      return field ? formData[field.id] : null;
+    };
+
+    const fullName = findValueByKeywords(['student full name', 'full name', 'student name']) || findValueByKeywords(['name']) || 'Anonymous';
+    const email = findValueByType('email') || findValueByKeywords(['email']) || '';
+    const phone = findValueByType('tel') || findValueByKeywords(['phone', 'contact', 'mobile']) || '000-000-0000';
+    const course = findValueByType('course-select') || findValueByKeywords(['course', 'program', 'track']) || 'N/A';
+    const message = findValueByKeywords(['remarks', 'questions', 'message']) || findValueByType('textarea') || 'New Enrollment Application';
     
     try {
       const response = await fetch('http://localhost:5000/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          fullName: formData['f1'] || 'Anonymous',
-          email: formData['f2'] || '',
-          phone: formData['f5'] || '000-000-0000',
-          course: formData['f9'] || 'N/A',
-          message: formData['f12'] || 'New Enrollment Application',
+          fullName,
+          email,
+          phone,
+          course,
+          message,
           source: 'enrollment',
           details: { ...formData }
         })
@@ -89,29 +108,75 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
     <div className="min-h-screen bg-slate-50">
       <section className="bg-slate-900 pt-32 pb-24 text-white text-center">
         <div className="container mx-auto px-4 max-w-4xl">
-          <h1 className="text-4xl md:text-7xl font-black mb-8">{enrollmentForm.title}</h1>
+          <h1 className="text-4xl md:text-7xl font-black mb-8 tracking-tighter leading-none">{enrollmentForm.title}</h1>
+          <p className="text-slate-400 text-lg font-medium">{enrollmentForm.description}</p>
         </div>
       </section>
 
       <div className="container mx-auto px-4 -mt-10 pb-32">
         <div className="max-w-6xl mx-auto bg-white rounded-[3rem] shadow-3xl border border-slate-100 overflow-hidden flex flex-col lg:flex-row">
-          <div className="flex-grow p-10 md:p-16 lg:p-20">
-            {errorMessage && <div className="mb-6 p-4 bg-red-50 text-red-600 font-bold rounded-xl border border-red-100">{errorMessage}</div>}
-            <form onSubmit={handleSubmit} className="space-y-8 md:space-y-10">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                {(enrollmentForm.fields || []).map(field => (
-                  <div key={field.id} className={field.type === 'textarea' ? 'md:col-span-2' : ''}>
-                    <label className="text-[11px] font-black text-slate-800 uppercase tracking-[0.2em] ml-1 block">{field.label}</label>
-                    {field.type === 'textarea' ? (
-                      <textarea required={field.required} value={formData[field.id] || ''} onChange={(e) => handleChange(field.id, e.target.value)} rows={4} className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:border-emerald-500 outline-none" />
-                    ) : (
-                      <input required={field.required} type={field.type} value={formData[field.id] || ''} onChange={(e) => handleChange(field.id, e.target.value)} className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:border-emerald-500 outline-none" />
-                    )}
+          
+          <div className="bg-slate-900 lg:w-96 p-10 md:p-14 text-white shrink-0">
+             <h3 className="text-xl md:text-2xl font-black mb-12 text-white uppercase tracking-tighter border-b border-white/5 pb-6">
+                {enrollmentForm.roadmapTitle || 'Process'}
+              </h3>
+              <div className="space-y-12">
+                {(enrollmentForm.roadmapSteps || []).map((step, idx) => (
+                  <div key={step.id} className="relative flex gap-8 group">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-black text-lg shrink-0 shadow-xl relative z-20 border border-emerald-400/30">
+                      {idx + 1}
+                    </div>
+                    <div className="flex-grow pt-1">
+                      <h4 className="font-black text-lg uppercase tracking-tight text-white group-hover:text-emerald-400 transition-colors">{step.title}</h4>
+                      <p className="text-sm text-slate-400 mt-2 font-medium leading-relaxed">{step.description}</p>
+                    </div>
                   </div>
                 ))}
               </div>
-              <button disabled={isSubmitting} type="submit" className="w-full py-6 md:py-8 bg-emerald-600 text-white font-black rounded-3xl hover:bg-emerald-700 transition-all uppercase tracking-[0.2em] shadow-2xl">
-                {isSubmitting ? 'Processing...' : 'Submit Admission Request'}
+          </div>
+
+          <div className="flex-grow p-10 md:p-16 lg:p-20">
+            {errorMessage && <div className="mb-6 p-4 bg-red-50 text-red-600 font-bold rounded-xl border border-red-100">{errorMessage}</div>}
+            <form onSubmit={handleSubmit} className="space-y-8 md:space-y-10">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8 md:gap-y-10">
+                {(enrollmentForm.fields || []).map(field => {
+                   const isWide = field.type === 'textarea' || (field.label && (field.label.toLowerCase().includes('name') || field.label.toLowerCase().includes('address')));
+                   return (
+                    <div key={field.id} className={`space-y-2 ${isWide ? 'md:col-span-2' : ''}`}>
+                      <label className="text-[11px] font-black text-slate-800 uppercase tracking-[0.2em] ml-1 block">
+                        {field.label} {field.required && <span className="text-emerald-600">*</span>}
+                      </label>
+                      {field.type === 'textarea' ? (
+                        <textarea required={field.required} value={formData[field.id] || ''} onChange={(e) => handleChange(field.id, e.target.value)} rows={4} className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-medium text-slate-900 resize-none placeholder-slate-400 shadow-sm" placeholder={field.placeholder} />
+                      ) : field.type === 'course-select' ? (
+                        <div className="relative">
+                          <select required={field.required} value={formData[field.id] || ''} onChange={(e) => handleChange(field.id, e.target.value)} className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-black text-[11px] text-slate-900 uppercase tracking-widest appearance-none pr-12 shadow-sm cursor-pointer">
+                            <option value="">{field.placeholder || 'Select Track'}</option>
+                            {(courses?.list || []).filter(c => c.status === 'Active').map(course => (
+                              <option key={course.id} value={course.name}>{course.name}</option>
+                            ))}
+                          </select>
+                          <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400"><i className="fa-solid fa-chevron-down text-xs"></i></div>
+                        </div>
+                      ) : field.type === 'select' ? (
+                        <div className="relative">
+                          <select required={field.required} value={formData[field.id] || ''} onChange={(e) => handleChange(field.id, e.target.value)} className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-black text-[11px] text-slate-900 uppercase tracking-widest appearance-none pr-12 shadow-sm cursor-pointer">
+                            <option value="">{field.placeholder || 'Choose Option'}</option>
+                            {field.options?.map(opt => (
+                              <option key={opt} value={opt}>{opt}</option>
+                            ))}
+                          </select>
+                          <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400"><i className="fa-solid fa-chevron-down text-xs"></i></div>
+                        </div>
+                      ) : (
+                        <input required={field.required} type={field.type} value={formData[field.id] || ''} onChange={(e) => handleChange(field.id, e.target.value)} className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-medium text-slate-900 placeholder-slate-400 shadow-sm" placeholder={field.placeholder} />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              <button disabled={isSubmitting} type="submit" className="w-full py-6 md:py-8 bg-emerald-600 text-white font-black rounded-3xl hover:bg-emerald-700 transition-all uppercase tracking-[0.2em] shadow-2xl flex items-center justify-center gap-4 active:scale-[0.98]">
+                {isSubmitting ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Processing Application</> : <>Submit Admission Request <i className="fa-solid fa-paper-plane text-sm"></i></>}
               </button>
             </form>
           </div>
