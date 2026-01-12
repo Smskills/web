@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { SiteConfig, AppState, FormField } from '../types';
 
@@ -23,16 +22,33 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
     setErrorMessage('');
 
     // --- ROBUST FIELD EXTRACTION ---
-    const getVal = (predicate: (f: FormField) => boolean) => {
+    const getValByLogic = (predicate: (f: FormField) => boolean) => {
       const field = contactForm.fields.find(predicate);
-      return field ? formData[field.id] : null;
+      return field ? (formData[field.id] || '').trim() : null;
     };
 
-    const email = getVal(f => f.type === 'email') || getVal(f => (f.label || '').toLowerCase().includes('email'));
-    const phone = getVal(f => f.type === 'tel') || getVal(f => (f.label || '').toLowerCase().includes('phone') || (f.label || '').toLowerCase().includes('contact'));
-    const fullName = getVal(f => (f.label || '').toLowerCase().includes('name')) || 'Anonymous Inquirer';
-    const course = getVal(f => f.type === 'course-select') || 'General Support';
-    const message = getVal(f => f.type === 'textarea') || 'No details provided.';
+    const email = getValByLogic(f => f.type === 'email') || 
+                  getValByLogic(f => (f.label || '').toLowerCase().includes('email')) || '';
+    
+    const phone = getValByLogic(f => f.type === 'tel') || 
+                  getValByLogic(f => {
+                    const l = (f.label || '').toLowerCase();
+                    return l.includes('phone') || l.includes('contact') || l.includes('mobile') || l.includes('number');
+                  }) || '';
+
+    const fullName = getValByLogic(f => {
+                       const l = (f.label || '').toLowerCase();
+                       return l.includes('name') || l.includes('student');
+                     }) || 'Inquirer';
+
+    const course = getValByLogic(f => f.type === 'course-select') || 'General Support';
+    const message = getValByLogic(f => f.type === 'textarea') || 'No details provided.';
+
+    if (!fullName || !email) {
+      setErrorMessage("Required fields (Name or Email) were not detected correctly.");
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
       const response = await fetch('http://localhost:5000/api/leads', {
@@ -40,8 +56,8 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           fullName,
-          email: email || '',
-          phone: phone || '',
+          email,
+          phone,
           course,
           message,
           source: 'contact',
@@ -53,10 +69,10 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
       if (result.success) {
         setSubmitted(true);
       } else {
-        setErrorMessage(result.message || 'The server rejected your inquiry. Please try again.');
+        setErrorMessage(result.message || 'The server rejected your inquiry.');
       }
     } catch (err) {
-      setErrorMessage('Communication Error: Could not reach the institute database. Is the backend server running?');
+      setErrorMessage('Communication Error: Backend server is unreachable.');
     } finally {
       setIsSubmitting(false);
     }
@@ -129,7 +145,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
                 {errorMessage && <div className="p-4 bg-red-50 text-red-600 text-xs font-bold rounded-xl border border-red-100 animate-shake">{errorMessage}</div>}
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
-                  {contactForm.fields.map(field => {
+                  {(contactForm.fields || []).map(field => {
                     const isWide = field.type === 'textarea' || (field.label && field.label.toLowerCase().includes('name'));
                     return (
                       <div key={field.id} className={`space-y-3 ${isWide ? 'md:col-span-2' : 'md:col-span-1'}`}>

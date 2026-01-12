@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { AppState, FormField } from '../types.ts';
@@ -23,7 +22,6 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
   useEffect(() => {
     if (!enrollmentForm?.fields) return;
     
-    // Maintain existing values if fields update, but initialize new ones
     setFormData(prev => {
       const nextData = { ...prev };
       enrollmentForm.fields.forEach(field => {
@@ -34,7 +32,6 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
       return nextData;
     });
     
-    // Auto-fill course from URL if available
     const courseFromUrl = searchParams.get('course');
     if (courseFromUrl) {
       const courseField = enrollmentForm.fields.find(f => f.type === 'course-select');
@@ -49,36 +46,42 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
     setIsSubmitting(true);
     setErrorMessage('');
 
-    // --- ROBUST FIELD MAPPING (Fix for "Required fields missing") ---
-    // This logic finds the correct box even if you move them or change labels.
-    const getVal = (predicate: (f: FormField) => boolean) => {
+    // --- ENHANCED ROBUST FIELD MAPPING ---
+    // We look for Name, Email, and Phone using multiple strategies to ensure they aren't missed
+    const getValByLogic = (predicate: (f: FormField) => boolean) => {
       const field = enrollmentForm.fields.find(predicate);
-      return field ? formData[field.id] : null;
+      return field ? (formData[field.id] || '').trim() : null;
     };
 
-    // 1. Identification for Email (Try Type, then Keyword)
-    const email = getVal(f => f.type === 'email') || 
-                  getVal(f => (f.label || '').toLowerCase().includes('email')) || '';
+    // 1. Find Email: Priority to type='email', then label containing 'email'
+    const email = getValByLogic(f => f.type === 'email') || 
+                  getValByLogic(f => (f.label || '').toLowerCase().includes('email')) || '';
 
-    // 2. Identification for Phone (Try Type, then Keywords)
-    const phone = getVal(f => f.type === 'tel') || 
-                  getVal(f => {
+    // 2. Find Phone: Priority to type='tel', then labels containing phone/mobile/contact/number
+    const phone = getValByLogic(f => f.type === 'tel') || 
+                  getValByLogic(f => {
                     const l = (f.label || '').toLowerCase();
-                    return l.includes('phone') || l.includes('contact') || l.includes('mobile') || l.includes('number');
+                    return l.includes('phone') || l.includes('mobile') || l.includes('contact') || l.includes('number');
                   }) || '';
 
-    // 3. Identification for Full Name (Try keywords)
-    const fullName = getVal(f => {
+    // 3. Find Full Name: Priority to labels containing name/student/applicant
+    const fullName = getValByLogic(f => {
                        const l = (f.label || '').toLowerCase();
-                       return (l.includes('student') && l.includes('name')) || l === 'name' || l === 'full name' || l.includes('applicant');
+                       return l.includes('name') || l.includes('student') || l.includes('applicant');
                      }) || 'Applicant';
 
-    // 4. Identification for Course
-    const course = getVal(f => f.type === 'course-select') || 
-                   getVal(f => (f.label || '').toLowerCase().includes('course')) || 'N/A';
+    // 4. Find Course and Message
+    const course = getValByLogic(f => f.type === 'course-select') || 
+                   getValByLogic(f => (f.label || '').toLowerCase().includes('course')) || 'N/A';
 
-    // 5. Identification for Message
-    const message = getVal(f => f.type === 'textarea') || 'Enrollment Submission';
+    const message = getValByLogic(f => f.type === 'textarea') || 'Enrollment Submission';
+
+    // FINAL CHECK: Ensure values actually exist before sending to backend
+    if (!fullName || !email || !phone) {
+      setErrorMessage("System Error: Could not identify Name, Email, or Phone boxes. Please check field labels in Admin Panel.");
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
       const response = await fetch('http://localhost:5000/api/leads', {
@@ -91,7 +94,7 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
           course,
           message,
           source: 'enrollment',
-          details: { ...formData } // All other custom fields go here
+          details: { ...formData }
         })
       });
 
@@ -100,7 +103,7 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
         setSubmitted(true);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
-        setErrorMessage(result.message || 'The server rejected the application. Please ensure Name, Email, and Phone are filled.');
+        setErrorMessage(result.message || 'The server rejected the application.');
       }
     } catch (err) {
       setErrorMessage('Network Error: Could not reach the server. Is the backend running?');
