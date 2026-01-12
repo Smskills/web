@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { AppState } from '../types.ts';
+import { AppState, FormField } from '../types.ts';
 
 interface EnrollmentPageProps {
   content: AppState;
@@ -24,50 +24,56 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
     if (!enrollmentForm?.fields) return;
     const initialData: Record<string, string> = {};
     enrollmentForm.fields.forEach(field => { if (field?.id) initialData[field.id] = ''; });
+    
+    // Auto-fill course from URL if available
     const courseFromUrl = searchParams.get('course');
     if (courseFromUrl) {
       const courseField = enrollmentForm.fields.find(f => f.type === 'course-select');
       if (courseField?.id) initialData[courseField.id] = decodeURIComponent(courseFromUrl);
     }
     setFormData(initialData);
-  }, [enrollmentForm, searchParams]);
+  }, [enrollmentForm.fields, searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setErrorMessage('');
 
-    // Intelligent Extraction: Find the best matching field for DB columns
-    const findValueByKeywords = (keywords: string[]) => {
-      const field = enrollmentForm.fields.find(f => 
-        keywords.some(k => (f.label || '').toLowerCase().includes(k))
-      );
+    // --- INTELLIGENT FIELD MAPPING ---
+    // This logic prevents data mismatches by prioritizing Type over simple Label keywords.
+    const getVal = (predicate: (f: FormField) => boolean) => {
+      const field = enrollmentForm.fields.find(predicate);
       return field ? formData[field.id] : null;
     };
 
-    const findValueByType = (type: string) => {
-      const field = enrollmentForm.fields.find(f => f.type === type);
-      return field ? formData[field.id] : null;
-    };
+    // 1. Identify specific columns by unique types first
+    const email = getVal(f => f.type === 'email');
+    const phone = getVal(f => f.type === 'tel');
+    const course = getVal(f => f.type === 'course-select');
 
-    const fullName = findValueByKeywords(['student full name', 'full name', 'student name']) || findValueByKeywords(['name']) || 'Anonymous';
-    const email = findValueByType('email') || findValueByKeywords(['email']) || '';
-    const phone = findValueByType('tel') || findValueByKeywords(['phone', 'contact', 'mobile']) || '000-000-0000';
-    const course = findValueByType('course-select') || findValueByKeywords(['course', 'program', 'track']) || 'N/A';
-    const message = findValueByKeywords(['remarks', 'questions', 'message']) || findValueByType('textarea') || 'New Enrollment Application';
-    
+    // 2. Identify Name and Message by strict keyword matching
+    const fullName = getVal(f => {
+      const lbl = (f.label || '').toLowerCase();
+      return (lbl.includes('student') && lbl.includes('name')) || lbl === 'full name' || lbl === 'name';
+    }) || 'Anonymous Student';
+
+    const message = getVal(f => {
+      const lbl = (f.label || '').toLowerCase();
+      return lbl.includes('remarks') || lbl.includes('message') || lbl.includes('comments') || f.type === 'textarea';
+    }) || 'New Enrollment Submission';
+
     try {
       const response = await fetch('http://localhost:5000/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           fullName,
-          email,
-          phone,
-          course,
+          email: email || '',
+          phone: phone || '',
+          course: course || 'N/A',
           message,
           source: 'enrollment',
-          details: { ...formData }
+          details: { ...formData } // Store EVERYTHING here to ensure no data is lost
         })
       });
 
@@ -76,10 +82,10 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
         setSubmitted(true);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
-        setErrorMessage(result.message || 'Application rejected by server.');
+        setErrorMessage(result.message || 'Server rejected the application.');
       }
     } catch (err) {
-      setErrorMessage('Network error: Is the backend server running?');
+      setErrorMessage('Network Error: Could not reach the server. Please ensure the backend is running at http://localhost:5000.');
     } finally {
       setIsSubmitting(false);
     }
@@ -97,7 +103,7 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
             <i className="fa-solid fa-check"></i>
           </div>
           <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tighter">Application Received</h2>
-          <p className="text-slate-600 mb-12 text-lg md:text-xl font-medium leading-relaxed">We will contact you within 48 hours.</p>
+          <p className="text-slate-600 mb-12 text-lg md:text-xl font-medium leading-relaxed">Thank you. An admissions advisor will contact you within 48 business hours.</p>
           <Link to="/courses" className="inline-block px-12 py-5 bg-slate-900 text-white font-black rounded-2xl hover:bg-emerald-600 transition-all shadow-3xl active:scale-95 uppercase tracking-widest text-[11px]">Return to Courses</Link>
         </div>
       </div>
@@ -105,11 +111,13 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <section className="bg-slate-900 pt-32 pb-24 text-white text-center">
-        <div className="container mx-auto px-4 max-w-4xl">
+    <div className="min-h-screen bg-slate-50 font-sans">
+      <section className="bg-slate-900 pt-32 pb-24 text-white text-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-emerald-500/5 blur-[100px] opacity-30"></div>
+        <div className="container mx-auto px-4 max-w-4xl relative z-10">
+          <span className="text-emerald-500 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">Official Intake 2024</span>
           <h1 className="text-4xl md:text-7xl font-black mb-8 tracking-tighter leading-none">{enrollmentForm.title}</h1>
-          <p className="text-slate-400 text-lg font-medium">{enrollmentForm.description}</p>
+          <p className="text-slate-400 text-lg md:text-xl font-medium max-w-2xl mx-auto">{enrollmentForm.description}</p>
         </div>
       </section>
 
@@ -118,7 +126,7 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
           
           <div className="bg-slate-900 lg:w-96 p-10 md:p-14 text-white shrink-0">
              <h3 className="text-xl md:text-2xl font-black mb-12 text-white uppercase tracking-tighter border-b border-white/5 pb-6">
-                {enrollmentForm.roadmapTitle || 'Process'}
+                Admission Flow
               </h3>
               <div className="space-y-12">
                 {(enrollmentForm.roadmapSteps || []).map((step, idx) => (
@@ -136,13 +144,17 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
           </div>
 
           <div className="flex-grow p-10 md:p-16 lg:p-20">
-            {errorMessage && <div className="mb-6 p-4 bg-red-50 text-red-600 font-bold rounded-xl border border-red-100">{errorMessage}</div>}
-            <form onSubmit={handleSubmit} className="space-y-8 md:space-y-10">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8 md:gap-y-10">
+            {errorMessage && <div className="mb-8 p-6 bg-red-50 text-red-600 font-bold rounded-2xl border border-red-100 flex items-center gap-4">
+              <i className="fa-solid fa-circle-exclamation text-xl"></i>
+              <p className="text-sm">{errorMessage}</p>
+            </div>}
+            
+            <form onSubmit={handleSubmit} className="space-y-10">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
                 {(enrollmentForm.fields || []).map(field => {
                    const isWide = field.type === 'textarea' || (field.label && (field.label.toLowerCase().includes('name') || field.label.toLowerCase().includes('address')));
                    return (
-                    <div key={field.id} className={`space-y-2 ${isWide ? 'md:col-span-2' : ''}`}>
+                    <div key={field.id} className={`space-y-3 ${isWide ? 'md:col-span-2' : ''}`}>
                       <label className="text-[11px] font-black text-slate-800 uppercase tracking-[0.2em] ml-1 block">
                         {field.label} {field.required && <span className="text-emerald-600">*</span>}
                       </label>
@@ -175,8 +187,8 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
                   );
                 })}
               </div>
-              <button disabled={isSubmitting} type="submit" className="w-full py-6 md:py-8 bg-emerald-600 text-white font-black rounded-3xl hover:bg-emerald-700 transition-all uppercase tracking-[0.2em] shadow-2xl flex items-center justify-center gap-4 active:scale-[0.98]">
-                {isSubmitting ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Processing Application</> : <>Submit Admission Request <i className="fa-solid fa-paper-plane text-sm"></i></>}
+              <button disabled={isSubmitting} type="submit" className="w-full py-7 bg-emerald-600 text-white font-black rounded-3xl hover:bg-emerald-700 transition-all uppercase tracking-[0.2em] shadow-2xl flex items-center justify-center gap-4 active:scale-[0.98] focus:ring-4 focus:ring-emerald-500/30">
+                {isSubmitting ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Processing Application...</> : <>Submit Official Request <i className="fa-solid fa-paper-plane text-sm"></i></>}
               </button>
             </form>
           </div>
