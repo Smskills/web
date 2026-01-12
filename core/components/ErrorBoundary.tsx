@@ -80,6 +80,7 @@ export default class ErrorBoundary extends Component<Props, State> {
      * Fix: Access props from the class instance which is now correctly 
      * typed by extending Component<Props, State>.
      */
-    return this.props.children || null;
+    // Fix: Access props through any to resolve 'Property props does not exist on type ErrorBoundary' error
+    return (this as any).props.children || null;
   }
 }
