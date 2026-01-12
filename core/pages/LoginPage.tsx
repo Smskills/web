@@ -13,15 +13,41 @@ const LoginPage: React.FC<LoginPageProps> = ({ siteConfig }) => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Institutional Auth Simulation
-    setTimeout(() => {
+    setError('');
+    
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier, password }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Save auth data to localStorage for persistence
+        localStorage.setItem('sms_auth_token', result.data.token);
+        localStorage.setItem('sms_is_auth', 'true');
+        localStorage.setItem('sms_auth_user', JSON.stringify(result.data.user));
+        
+        // Notify other components (Header, App) that auth state changed
+        window.dispatchEvent(new Event('authChange'));
+        
+        navigate('/admin');
+      } else {
+        // Show specific error from backend or generic failure message
+        setError(result.message || 'Invalid credentials. Access Denied.');
+      }
+    } catch (err) {
+      setError('Institutional security gateway is offline. Please try again later.');
+    } finally {
       setIsLoading(false);
-      navigate('/admin');
-    }, 1200);
+    }
   };
 
   return (
@@ -33,7 +59,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ siteConfig }) => {
       </div>
 
       <div className="max-w-md w-full relative z-10">
-        {/* Branding Area - Logo Removed as per request */}
+        {/* Branding Area */}
         <div className="text-center mb-10">
           <h1 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">Institutional Access</h1>
           <p className="text-slate-500 text-sm font-medium mt-2">Secure gateway for {siteConfig.name} administrators.</p>
@@ -43,6 +69,14 @@ const LoginPage: React.FC<LoginPageProps> = ({ siteConfig }) => {
         <div className="bg-white rounded-[2.5rem] shadow-3xl border border-slate-100 overflow-hidden">
           <div className="p-10 md:p-12">
             <form onSubmit={handleLogin} className="space-y-6">
+              {/* Error Alert */}
+              {error && (
+                <div className="bg-red-50 border border-red-100 p-4 rounded-xl text-red-600 text-[10px] font-black uppercase tracking-widest flex items-center gap-3">
+                  <i className="fa-solid fa-triangle-exclamation"></i>
+                  {error}
+                </div>
+              )}
+
               {/* Identifier Input */}
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 block">Email or Username</label>
