@@ -11,6 +11,7 @@ interface ContactPageProps {
 const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [formData, setFormData] = useState<Record<string, string>>({});
 
   const contactForm = content?.contactForm || { title: "Send Enquiry", fields: [] };
@@ -19,34 +20,36 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulate API Call delay for processing and email notification
-    await new Promise(r => setTimeout(r, 1500));
+    setErrorMessage('');
 
-    // Capture Lead Logic (In production, this is a POST to /api/leads)
-    const newLead = {
-        id: 'L-' + Date.now(),
-        fullName: formData['c1'] || '',
-        email: formData['c2'] || '',
-        phone: 'Not provided', // Contact form usually needs a phone field, adding simulated data
-        course: formData['c3'] || 'General Inquiry',
-        message: formData['c4'] || '',
-        source: 'contact',
-        status: 'New',
-        createdAt: new Date().toISOString(),
-        details: { ...formData }
-    };
+    try {
+      const response = await fetch('http://localhost:5000/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName: formData['c1'] || 'Anonymous',
+          email: formData['c2'] || '',
+          phone: '000-000-0000', // Default if field missing
+          course: formData['c3'] || 'General Inquiry',
+          message: formData['c4'] || '',
+          source: 'contact',
+          details: { ...formData }
+        })
+      });
 
-    // Locally store for dashboard simulation (Persistence via LocalStorage merging in App.tsx)
-    const saved = localStorage.getItem('edu_insta_content');
-    if (saved) {
-        const state = JSON.parse(saved);
-        state.leads = [newLead, ...(state.leads || [])];
-        localStorage.setItem('edu_insta_content', JSON.stringify(state));
+      const result = await response.json();
+
+      if (result.success) {
+        setSubmitted(true);
+      } else {
+        setErrorMessage(result.message || 'Server rejected the application.');
+      }
+    } catch (err) {
+      console.error("Submission error:", err);
+      setErrorMessage('Could not connect to the server. Please check if the backend is running.');
+    } finally {
+      setIsSubmitting(false);
     }
-
-    setIsSubmitting(false);
-    setSubmitted(true);
   };
 
   const handleChange = (id: string, value: string) => {
@@ -92,26 +95,6 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
                 </div>
               </div>
             </div>
-
-            {social && social.length > 0 && (
-              <div className="p-10 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm">
-                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mb-10 text-center">Digital Footprint</h4>
-                <div className="flex flex-wrap gap-4 justify-center">
-                  {social.map(item => (
-                    <a 
-                      key={item.id}
-                      href={item.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-4 px-8 py-4 bg-slate-50 border border-slate-100 rounded-2xl hover:border-emerald-500 hover:text-emerald-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 transition-all group"
-                    >
-                      <i className={`fa-brands ${item.icon} text-xl group-hover:scale-110 transition-transform`}></i>
-                      <span className="font-black text-xs uppercase tracking-widest">{item.platform}</span>
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
 
           <div className="bg-white p-12 md:p-16 rounded-[3.5rem] shadow-3xl border border-slate-100 sticky top-24">
@@ -135,17 +118,21 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
                   <h2 className="text-4xl font-black text-slate-900 tracking-tight leading-none mb-4">{contactForm.title}</h2>
                   <div className="w-16 h-1.5 bg-emerald-500 rounded-full"></div>
                 </div>
+
+                {errorMessage && (
+                  <div className="p-4 bg-red-50 text-red-600 text-xs font-bold rounded-xl border border-red-100">
+                    {errorMessage}
+                  </div>
+                )}
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
                   {contactForm.fields.map(field => {
                     const isWide = field.type === 'textarea' || (field.label && field.label.toLowerCase().includes('name'));
-                    
                     return (
                       <div key={field.id} className={`space-y-3 ${isWide ? 'md:col-span-2' : 'md:col-span-1'}`}>
                         <label htmlFor={`field-${field.id}`} className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1 block">
                           {field.label} {field.required && <span className="text-emerald-600">*</span>}
                         </label>
-                        
                         {field.type === 'textarea' ? (
                           <textarea 
                             id={`field-${field.id}`}
@@ -174,24 +161,6 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
                               <i className="fa-solid fa-chevron-down text-xs"></i>
                             </div>
                           </div>
-                        ) : field.type === 'select' ? (
-                          <div className="relative">
-                            <select 
-                              id={`field-${field.id}`}
-                              required={field.required}
-                              value={formData[field.id] || ''}
-                              onChange={(e) => handleChange(field.id, e.target.value)}
-                              className="w-full px-8 py-5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-black text-[11px] text-slate-900 uppercase tracking-widest appearance-none pr-12 shadow-sm cursor-pointer"
-                            >
-                              <option value="">{field.placeholder || 'Choose Option'}</option>
-                              {field.options?.map(opt => (
-                                <option key={opt} value={opt}>{opt}</option>
-                              ))}
-                            </select>
-                            <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                              <i className="fa-solid fa-chevron-down text-xs"></i>
-                            </div>
-                          </div>
                         ) : (
                           <input 
                             id={`field-${field.id}`}
@@ -214,7 +183,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
                   className={`${btnPrimary} flex items-center justify-center gap-4`}
                 >
                   {isSubmitting ? (
-                    <><i className="fa-solid fa-circle-notch fa-spin"></i> Processing Inquiry...</>
+                    <><i className="fa-solid fa-circle-notch fa-spin"></i> Processing...</>
                   ) : (
                     <>Submit Official Inquiry <i className="fa-solid fa-paper-plane text-sm"></i></>
                   )}
