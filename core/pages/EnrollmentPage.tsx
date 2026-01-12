@@ -22,16 +22,26 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
 
   useEffect(() => {
     if (!enrollmentForm?.fields) return;
-    const initialData: Record<string, string> = {};
-    enrollmentForm.fields.forEach(field => { if (field?.id) initialData[field.id] = ''; });
+    
+    // Maintain existing values if fields update, but initialize new ones
+    setFormData(prev => {
+      const nextData = { ...prev };
+      enrollmentForm.fields.forEach(field => {
+        if (field?.id && nextData[field.id] === undefined) {
+          nextData[field.id] = '';
+        }
+      });
+      return nextData;
+    });
     
     // Auto-fill course from URL if available
     const courseFromUrl = searchParams.get('course');
     if (courseFromUrl) {
       const courseField = enrollmentForm.fields.find(f => f.type === 'course-select');
-      if (courseField?.id) initialData[courseField.id] = decodeURIComponent(courseFromUrl);
+      if (courseField?.id) {
+        setFormData(prev => ({ ...prev, [courseField.id]: decodeURIComponent(courseFromUrl) }));
+      }
     }
-    setFormData(initialData);
   }, [enrollmentForm.fields, searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -39,28 +49,36 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
     setIsSubmitting(true);
     setErrorMessage('');
 
-    // --- INTELLIGENT FIELD MAPPING ---
-    // This logic prevents data mismatches by prioritizing Type over simple Label keywords.
+    // --- ROBUST FIELD MAPPING (Fix for "Required fields missing") ---
+    // This logic finds the correct box even if you move them or change labels.
     const getVal = (predicate: (f: FormField) => boolean) => {
       const field = enrollmentForm.fields.find(predicate);
       return field ? formData[field.id] : null;
     };
 
-    // 1. Identify specific columns by unique types first
-    const email = getVal(f => f.type === 'email');
-    const phone = getVal(f => f.type === 'tel');
-    const course = getVal(f => f.type === 'course-select');
+    // 1. Identification for Email (Try Type, then Keyword)
+    const email = getVal(f => f.type === 'email') || 
+                  getVal(f => (f.label || '').toLowerCase().includes('email')) || '';
 
-    // 2. Identify Name and Message by strict keyword matching
+    // 2. Identification for Phone (Try Type, then Keywords)
+    const phone = getVal(f => f.type === 'tel') || 
+                  getVal(f => {
+                    const l = (f.label || '').toLowerCase();
+                    return l.includes('phone') || l.includes('contact') || l.includes('mobile') || l.includes('number');
+                  }) || '';
+
+    // 3. Identification for Full Name (Try keywords)
     const fullName = getVal(f => {
-      const lbl = (f.label || '').toLowerCase();
-      return (lbl.includes('student') && lbl.includes('name')) || lbl === 'full name' || lbl === 'name';
-    }) || 'Anonymous Student';
+                       const l = (f.label || '').toLowerCase();
+                       return (l.includes('student') && l.includes('name')) || l === 'name' || l === 'full name' || l.includes('applicant');
+                     }) || 'Applicant';
 
-    const message = getVal(f => {
-      const lbl = (f.label || '').toLowerCase();
-      return lbl.includes('remarks') || lbl.includes('message') || lbl.includes('comments') || f.type === 'textarea';
-    }) || 'New Enrollment Submission';
+    // 4. Identification for Course
+    const course = getVal(f => f.type === 'course-select') || 
+                   getVal(f => (f.label || '').toLowerCase().includes('course')) || 'N/A';
+
+    // 5. Identification for Message
+    const message = getVal(f => f.type === 'textarea') || 'Enrollment Submission';
 
     try {
       const response = await fetch('http://localhost:5000/api/leads', {
@@ -68,12 +86,12 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           fullName,
-          email: email || '',
-          phone: phone || '',
-          course: course || 'N/A',
+          email,
+          phone,
+          course,
           message,
           source: 'enrollment',
-          details: { ...formData } // Store EVERYTHING here to ensure no data is lost
+          details: { ...formData } // All other custom fields go here
         })
       });
 
@@ -82,10 +100,10 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
         setSubmitted(true);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
-        setErrorMessage(result.message || 'Server rejected the application.');
+        setErrorMessage(result.message || 'The server rejected the application. Please ensure Name, Email, and Phone are filled.');
       }
     } catch (err) {
-      setErrorMessage('Network Error: Could not reach the server. Please ensure the backend is running at http://localhost:5000.');
+      setErrorMessage('Network Error: Could not reach the server. Is the backend running?');
     } finally {
       setIsSubmitting(false);
     }
@@ -144,10 +162,12 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
           </div>
 
           <div className="flex-grow p-10 md:p-16 lg:p-20">
-            {errorMessage && <div className="mb-8 p-6 bg-red-50 text-red-600 font-bold rounded-2xl border border-red-100 flex items-center gap-4">
-              <i className="fa-solid fa-circle-exclamation text-xl"></i>
-              <p className="text-sm">{errorMessage}</p>
-            </div>}
+            {errorMessage && (
+              <div className="mb-8 p-6 bg-red-50 text-red-600 font-bold rounded-2xl border border-red-100 flex items-center gap-4 animate-shake">
+                <i className="fa-solid fa-circle-exclamation text-xl"></i>
+                <p className="text-sm">{errorMessage}</p>
+              </div>
+            )}
             
             <form onSubmit={handleSubmit} className="space-y-10">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
