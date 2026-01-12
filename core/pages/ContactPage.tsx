@@ -9,15 +9,43 @@ interface ContactPageProps {
 }
 
 const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState<Record<string, string>>({});
 
   const contactForm = content?.contactForm || { title: "Send Enquiry", fields: [] };
-  // Fix: Access the list property from the courses object instead of using it as an array
   const coursesList = content?.courses?.list || [];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    
+    // Simulate API Call delay for processing and email notification
+    await new Promise(r => setTimeout(r, 1500));
+
+    // Capture Lead Logic (In production, this is a POST to /api/leads)
+    const newLead = {
+        id: 'L-' + Date.now(),
+        fullName: formData['c1'] || '',
+        email: formData['c2'] || '',
+        phone: 'Not provided', // Contact form usually needs a phone field, adding simulated data
+        course: formData['c3'] || 'General Inquiry',
+        message: formData['c4'] || '',
+        source: 'contact',
+        status: 'New',
+        createdAt: new Date().toISOString(),
+        details: { ...formData }
+    };
+
+    // Locally store for dashboard simulation (Persistence via LocalStorage merging in App.tsx)
+    const saved = localStorage.getItem('edu_insta_content');
+    if (saved) {
+        const state = JSON.parse(saved);
+        state.leads = [newLead, ...(state.leads || [])];
+        localStorage.setItem('edu_insta_content', JSON.stringify(state));
+    }
+
+    setIsSubmitting(false);
     setSubmitted(true);
   };
 
@@ -84,24 +112,11 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
                 </div>
               </div>
             )}
-
-            <div className="rounded-[3rem] overflow-hidden shadow-3xl h-96 border-8 border-white group">
-              <iframe 
-                src={config.mapUrl} 
-                width="100%" 
-                height="100%" 
-                style={{ border: 0 }} 
-                allowFullScreen={true} 
-                loading="lazy"
-                title="Institute Campus Location Map"
-                className="grayscale group-hover:grayscale-0 transition-all duration-700"
-              ></iframe>
-            </div>
           </div>
 
           <div className="bg-white p-12 md:p-16 rounded-[3.5rem] shadow-3xl border border-slate-100 sticky top-24">
             {submitted ? (
-              <div className="text-center py-24" role="alert" aria-live="polite">
+              <div className="text-center py-24" role="alert">
                 <div className="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-[2rem] flex items-center justify-center text-4xl mx-auto mb-10 shadow-xl animate-bounce">
                   <i className="fa-solid fa-check"></i>
                 </div>
@@ -109,13 +124,13 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
                 <p className="text-slate-500 mb-12 text-lg font-medium">Thank you for reaching out. An institutional advisor will contact you within 24 hours.</p>
                 <button 
                   onClick={() => setSubmitted(false)}
-                  className="px-12 py-5 bg-slate-900 text-white font-black rounded-2xl uppercase text-[11px] tracking-widest hover:bg-emerald-600 transition-all shadow-2xl active:scale-95"
+                  className="px-12 py-5 bg-slate-900 text-white font-black rounded-2xl uppercase text-[11px] tracking-widest hover:bg-emerald-600 focus-visible:ring-4 focus-visible:ring-slate-900/20 transition-all shadow-2xl active:scale-95"
                 >
                   Send New Inquiry
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-10" noValidate>
+              <form onSubmit={handleSubmit} className="space-y-10">
                 <div className="mb-10">
                   <h2 className="text-4xl font-black text-slate-900 tracking-tight leading-none mb-4">{contactForm.title}</h2>
                   <div className="w-16 h-1.5 bg-emerald-500 rounded-full"></div>
@@ -151,7 +166,6 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
                               className="w-full px-8 py-5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-black text-[11px] text-slate-900 uppercase tracking-widest appearance-none pr-12 shadow-sm cursor-pointer"
                             >
                               <option value="">{field.placeholder || 'Select Track'}</option>
-                              {/* Fix: Access the list property from the courses object instead of using it as an array */}
                               {coursesList.filter(c => c.status === 'Active').map(course => (
                                 <option key={course.id} value={course.name}>{course.name}</option>
                               ))}
@@ -194,8 +208,16 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
                   })}
                 </div>
 
-                <button type="submit" className={btnPrimary}>
-                  Submit Official Inquiry <i className="fa-solid fa-paper-plane ml-3 text-sm"></i>
+                <button 
+                  disabled={isSubmitting}
+                  type="submit" 
+                  className={`${btnPrimary} flex items-center justify-center gap-4`}
+                >
+                  {isSubmitting ? (
+                    <><i className="fa-solid fa-circle-notch fa-spin"></i> Processing Inquiry...</>
+                  ) : (
+                    <>Submit Official Inquiry <i className="fa-solid fa-paper-plane text-sm"></i></>
+                  )}
                 </button>
               </form>
             )}

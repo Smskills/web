@@ -1,6 +1,8 @@
+
 import { Router } from 'express';
 import courseRoutes from './courses.routes';
 import authRoutes from './auth.routes';
+import leadsRoutes from './leads.routes';
 
 const router = Router();
 
@@ -11,7 +13,7 @@ router.get('/health', (req, res) => {
   res.status(200).json({ 
     status: 'online', 
     timestamp: new Date().toISOString(),
-    version: '1.0.0'
+    version: '1.1.0'
   });
 });
 
@@ -20,5 +22,6 @@ router.get('/health', (req, res) => {
  */
 router.use('/auth', authRoutes);
 router.use('/courses', courseRoutes);
+router.use('/leads', leadsRoutes);
 
 export default router;

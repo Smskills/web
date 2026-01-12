@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { AppState } from '../types.ts';
@@ -8,6 +9,7 @@ interface EnrollmentPageProps {
 
 const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
   const [searchParams] = useSearchParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState<Record<string, string>>({});
 
@@ -43,8 +45,36 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
     setFormData(initialData);
   }, [enrollmentForm, searchParams]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    
+    // Process Application
+    await new Promise(r => setTimeout(r, 2000));
+
+    // Create detailed lead object
+    const lead = {
+        id: 'APP-' + Date.now(),
+        fullName: formData['f1'] || 'Anonymous',
+        email: formData['f2'] || '',
+        phone: formData['f5'] || '',
+        course: formData['f9'] || 'N/A',
+        message: formData['f12'] || 'Application for Enrollment',
+        source: 'enrollment',
+        status: 'New',
+        createdAt: new Date().toISOString(),
+        details: { ...formData }
+    };
+
+    // Local storage push
+    const saved = localStorage.getItem('edu_insta_content');
+    if (saved) {
+        const state = JSON.parse(saved);
+        state.leads = [lead, ...(state.leads || [])];
+        localStorage.setItem('edu_insta_content', JSON.stringify(state));
+    }
+
+    setIsSubmitting(false);
     setSubmitted(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -123,7 +153,7 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
           </div>
 
           <div className="flex-grow p-10 md:p-16 lg:p-20">
-            <form onSubmit={handleSubmit} className="space-y-8 md:space-y-10" autoComplete="off">
+            <form onSubmit={handleSubmit} className="space-y-8 md:space-y-10">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8 md:gap-y-10">
                 {(enrollmentForm.fields || []).map(field => {
                   const isWide = field.type === 'textarea' || (field.label && field.label.toLowerCase().includes('name')) || (field.label && field.label.toLowerCase().includes('address'));
@@ -137,7 +167,6 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
                       {field.type === 'textarea' ? (
                         <textarea 
                           id={`field-${field.id}`}
-                          autoComplete="off"
                           required={field.required}
                           value={formData[field.id] || ''}
                           onChange={(e) => handleChange(field.id, e.target.value)}
@@ -187,7 +216,6 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
                         <input 
                           id={`field-${field.id}`}
                           required={field.required}
-                          autoComplete="off"
                           type={field.type}
                           value={formData[field.id] || ''}
                           onChange={(e) => handleChange(field.id, e.target.value)}
@@ -201,15 +229,20 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
               </div>
 
               <div className="space-y-6">
-                <button type="submit" className="w-full py-6 md:py-8 bg-emerald-600 text-white font-black text-base md:text-lg rounded-3xl hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-500/30 transition-all shadow-2xl shadow-emerald-600/20 active:scale-[0.98] uppercase tracking-[0.2em] mt-8">
-                  Submit Admission Request <i className="fa-solid fa-paper-plane ml-3 text-sm"></i>
+                <button 
+                  disabled={isSubmitting}
+                  type="submit" 
+                  className="w-full py-6 md:py-8 bg-emerald-600 text-white font-black text-base md:text-lg rounded-3xl hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-500/30 transition-all shadow-2xl shadow-emerald-600/20 active:scale-[0.98] uppercase tracking-[0.2em] mt-8 flex items-center justify-center gap-4"
+                >
+                  {isSubmitting ? (
+                    <><i className="fa-solid fa-circle-notch fa-spin"></i> Processing Application...</>
+                  ) : (
+                    <>Submit Admission Request <i className="fa-solid fa-paper-plane ml-3 text-sm"></i></>
+                  )}
                 </button>
                 <div className="text-[11px] text-slate-500 font-medium text-center leading-relaxed max-w-lg mx-auto space-y-2">
                   <p>
                     By submitting this application, you acknowledge that you have read and agree to our <Link to="/privacy-policy" className="text-emerald-600 font-black hover:underline">Privacy Policy</Link> and <Link to="/terms-of-service" className="text-emerald-600 font-black hover:underline">Terms of Service</Link>.
-                  </p>
-                  <p className="opacity-60 italic">
-                    Your data is handled securely via encrypted institutional protocols and is never shared with third-party advertising networks.
                   </p>
                 </div>
               </div>
