@@ -36,6 +36,7 @@ const ProtectedRoute: React.FC<{ isAuthenticated: boolean; children: React.React
 const App: React.FC = () => {
   const [isInitializing, setIsInitializing] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    // Correct check for Point 2: Hardened JWT Security
     return localStorage.getItem('sms_is_auth') === 'true' && !!localStorage.getItem('sms_auth_token');
   });
 
@@ -44,12 +45,11 @@ const App: React.FC = () => {
   useEffect(() => {
     const bootstrapConfig = async () => {
       try {
-        // 1. Attempt to fetch master config from Backend MySQL
+        // 1. Attempt to fetch master configuration from the real backend
         const response = await fetch('http://localhost:5000/api/config');
         const result = await response.json();
         
         if (result.success && result.data) {
-          // Merge remote data with initial structure to handle any new core fields added in code
           setContent(prev => ({
             ...INITIAL_CONTENT,
             ...result.data,
@@ -58,12 +58,12 @@ const App: React.FC = () => {
             theme: { ...INITIAL_CONTENT.theme, ...result.data.theme }
           }));
         } else {
-          // 2. Fallback to localStorage if database is empty or not configured
+          // 2. Fallback to local storage if DB is empty
           const saved = localStorage.getItem('edu_insta_content');
           if (saved) setContent(JSON.parse(saved));
         }
       } catch (err) {
-        console.warn("Educational CMS: Central DB unreachable. Using local cache.");
+        console.warn("Bootstrap: Backend DB unreachable. Using local cache.");
         const saved = localStorage.getItem('edu_insta_content');
         if (saved) setContent(JSON.parse(saved));
       } finally {
@@ -74,6 +74,7 @@ const App: React.FC = () => {
     bootstrapConfig();
 
     const handleAuthChange = () => {
+      // Re-verify the session storage when the login status changes
       setIsAuthenticated(localStorage.getItem('sms_is_auth') === 'true' && !!localStorage.getItem('sms_auth_token'));
     };
 
@@ -105,11 +106,10 @@ const App: React.FC = () => {
   }, [content.theme]);
 
   const updateContent = async (newContent: AppState) => {
-    // Local Update
     setContent(newContent);
     localStorage.setItem('edu_insta_content', JSON.stringify(newContent));
     
-    // Remote Sync (if authenticated)
+    // Sync back to central database if admin is authenticated
     if (isAuthenticated) {
       try {
         const token = localStorage.getItem('sms_auth_token');
@@ -122,7 +122,7 @@ const App: React.FC = () => {
           body: JSON.stringify(newContent)
         });
       } catch (e) {
-        console.error("Educational CMS: Central sync failed. Changes restricted to this device.");
+        console.error("Central Sync Error: Backend unreachable.");
       }
     }
   };

@@ -19,7 +19,13 @@ const LeadsTab: React.FC<LeadsTabProps> = ({ onUpdateLeads }) => {
     setIsLoading(true);
     setFetchError(null);
     try {
-      const response = await fetch('http://localhost:5000/api/leads');
+      const token = localStorage.getItem('sms_auth_token');
+      // Fetching from the hardened production backend
+      const response = await fetch('http://localhost:5000/api/leads', {
+        headers: {
+          'Authorization': `Bearer ${token}` // Mandatory JWT token from Point 2 fix
+        }
+      });
       const data = await response.json();
       if (data.success) {
         const mapped = data.data.map((l: any) => ({
@@ -36,10 +42,10 @@ const LeadsTab: React.FC<LeadsTabProps> = ({ onUpdateLeads }) => {
         }));
         setDbLeads(mapped);
       } else {
-        setFetchError(data.message || 'Institutional database returned an error.');
+        setFetchError(data.message || 'Authentication session has expired. Please log in again.');
       }
     } catch (e) {
-      setFetchError('Connection Failed: Ensure the backend is running at http://localhost:5000 and MySQL is active.');
+      setFetchError('Institutional server offline. Ensure Node.js is running.');
     } finally {
       setIsLoading(false);
     }
@@ -51,21 +57,31 @@ const LeadsTab: React.FC<LeadsTabProps> = ({ onUpdateLeads }) => {
 
   const updateStatus = async (id: string, status: Lead['status']) => {
     try {
+      const token = localStorage.getItem('sms_auth_token');
       const res = await fetch(`http://localhost:5000/api/leads/${id}/status`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ status })
       });
       if (res.ok) fetchLeads();
-    } catch (e) { alert("Status update failed"); }
+    } catch (e) { alert("Action failed: Insufficient permissions."); }
   };
 
   const deleteLead = async (id: string) => {
-    if (!window.confirm("Permanently delete this lead?")) return;
+    if (!window.confirm("Permanently delete this student lead?")) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/leads/${id}`, { method: 'DELETE' });
+      const token = localStorage.getItem('sms_auth_token');
+      const res = await fetch(`http://localhost:5000/api/leads/${id}`, { 
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       if (res.ok) fetchLeads();
-    } catch (e) { alert("Delete failed"); }
+    } catch (e) { alert("Delete failed."); }
   };
 
   const filtered = dbLeads
@@ -87,7 +103,7 @@ const LeadsTab: React.FC<LeadsTabProps> = ({ onUpdateLeads }) => {
         <div>
           <h2 className="text-2xl font-black text-white uppercase tracking-tight">Lead Pipeline</h2>
           <button onClick={fetchLeads} className="text-emerald-500 text-[10px] font-black uppercase tracking-widest mt-2 hover:underline flex items-center gap-2">
-            <i className="fa-solid fa-rotate"></i> Synchronize Data
+            <i className="fa-solid fa-rotate"></i> Synchronize with MySQL
           </button>
         </div>
         <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
@@ -103,11 +119,11 @@ const LeadsTab: React.FC<LeadsTabProps> = ({ onUpdateLeads }) => {
       {fetchError && (
         <div className="p-8 bg-red-500/10 border-2 border-red-500/20 rounded-3xl text-center space-y-4">
            <i className="fa-solid fa-triangle-exclamation text-4xl text-red-500"></i>
-           <h3 className="text-white font-black uppercase tracking-tight">Fetch leads failed</h3>
+           <h3 className="text-white font-black uppercase tracking-tight">Secure Fetch Error</h3>
            <p className="text-red-400 text-sm font-medium max-w-md mx-auto leading-relaxed">{fetchError}</p>
            <div className="pt-4 flex justify-center gap-4">
-              <button onClick={fetchLeads} className="px-6 py-2 bg-red-600 text-white text-[10px] font-black uppercase rounded-lg">Retry Now</button>
-              <a href="https://github.com" target="_blank" className="px-6 py-2 bg-slate-700 text-white text-[10px] font-black uppercase rounded-lg">Check Port 5000</a>
+              <button onClick={fetchLeads} className="px-6 py-2 bg-red-600 text-white text-[10px] font-black uppercase rounded-lg">Retry Sync</button>
+              <button onClick={() => window.location.href = '#/login'} className="px-6 py-2 bg-slate-700 text-white text-[10px] font-black uppercase rounded-lg">Refresh Token</button>
            </div>
         </div>
       )}
@@ -141,7 +157,7 @@ const LeadsTab: React.FC<LeadsTabProps> = ({ onUpdateLeads }) => {
           ))}
 
           {filtered.length === 0 && (
-             <div className="text-center py-20 text-slate-700 font-black uppercase tracking-widest border-2 border-dashed border-slate-800 rounded-[3rem]">No entries found in this view</div>
+             <div className="text-center py-20 text-slate-700 font-black uppercase tracking-widest border-2 border-dashed border-slate-800 rounded-[3rem]">No student records found</div>
           )}
         </div>
       )}
@@ -151,7 +167,7 @@ const LeadsTab: React.FC<LeadsTabProps> = ({ onUpdateLeads }) => {
             <div className="bg-slate-800 w-full max-w-3xl rounded-[3rem] border border-slate-700 overflow-hidden animate-fade-in shadow-4xl max-h-[90vh] flex flex-col">
                 <div className="p-8 border-b border-slate-700 flex justify-between items-center bg-slate-900/50 shrink-0">
                     <div>
-                      <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-1 block">Lead Details</span>
+                      <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-1 block">Student Lead Profile</span>
                       <h2 className="text-2xl md:text-3xl font-black text-white leading-none">{selectedLead.fullName}</h2>
                     </div>
                     <button onClick={() => setSelectedLead(null)} className="w-12 h-12 rounded-full bg-slate-700 hover:bg-red-500 text-white transition-all active:scale-90"><i className="fa-solid fa-xmark text-lg"></i></button>
@@ -167,32 +183,31 @@ const LeadsTab: React.FC<LeadsTabProps> = ({ onUpdateLeads }) => {
                         <p className="text-white font-bold select-all">{selectedLead.phone}</p>
                       </div>
                       <div className="space-y-1">
-                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Primary Interest</label>
+                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Selected Course</label>
                         <p className="text-emerald-400 font-black uppercase tracking-tight">{selectedLead.course}</p>
                       </div>
                       <div className="space-y-1">
-                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Registration Date</label>
+                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Submitted On</label>
                         <p className="text-slate-300 font-medium">{new Date(selectedLead.createdAt).toLocaleString()}</p>
                       </div>
                     </div>
 
                     <div className="space-y-4">
-                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Main Message / Remarks</label>
+                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Message / Remarks</label>
                         <div className="p-6 bg-slate-900/50 rounded-2xl border border-slate-700 italic text-slate-300 text-sm leading-relaxed whitespace-pre-wrap">
-                          {selectedLead.message || "No specific message provided."}
+                          {selectedLead.message || "No additional comments provided."}
                         </div>
                     </div>
 
-                    {/* EXTENDED DETAILS VIEWER (Fix for reordering/mismatch) */}
                     <div className="space-y-4">
                         <div className="flex items-center gap-4">
-                          <label className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Extended Form Data</label>
+                          <label className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Dynamic Form Data</label>
                           <div className="flex-grow h-px bg-slate-700"></div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {Object.entries(selectedLead.details || {}).map(([key, val]) => (
                             <div key={key} className="p-4 bg-slate-800 border border-slate-700 rounded-xl group/item">
-                               <p className="text-[8px] font-black text-slate-500 uppercase tracking-tighter mb-1 group-hover/item:text-emerald-500 transition-colors">Field Key: {key}</p>
+                               <p className="text-[8px] font-black text-slate-500 uppercase tracking-tighter mb-1 group-hover/item:text-emerald-500 transition-colors">{key.replace(/_/g, ' ')}</p>
                                <p className="text-xs text-white font-medium">{val?.toString() || '—'}</p>
                             </div>
                           ))}
@@ -203,7 +218,7 @@ const LeadsTab: React.FC<LeadsTabProps> = ({ onUpdateLeads }) => {
                         <button onClick={() => updateStatus(selectedLead.id, 'Contacted')} className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Mark Contacted</button>
                         <button onClick={() => updateStatus(selectedLead.id, 'Enrolled')} className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Mark Enrolled</button>
                         <div className="flex-grow"></div>
-                        <button onClick={() => deleteLead(selectedLead.id)} className="px-6 py-3 bg-red-600/10 hover:bg-red-600 text-red-600 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Delete Record</button>
+                        <button onClick={() => deleteLead(selectedLead.id)} className="px-6 py-3 bg-red-600/10 hover:bg-red-600 text-red-600 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Delete Entry</button>
                     </div>
                 </div>
             </div>
