@@ -14,15 +14,37 @@ const LoginPage: React.FC<LoginPageProps> = ({ siteConfig }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    // Institutional Auth Simulation
-    setTimeout(() => {
-      setIsLoading(false);
-      navigate('/admin');
-    }, 1200);
-  };
+const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setIsLoading(true);
+
+  try {
+    const res = await fetch("http://localhost:5000/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        identifier,
+        password,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+      throw new Error("Invalid credentials");
+    }
+
+    // TEMP: token handling later (problem 2)
+    localStorage.setItem("token", data.token);
+
+    navigate("/admin");
+  } catch (err) {
+    alert("Login failed. Invalid email/username or password.");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 md:p-8">

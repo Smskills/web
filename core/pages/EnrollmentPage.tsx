@@ -131,7 +131,7 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
                   return (
                     <div key={field.id} className={`space-y-3 ${isWide ? 'md:col-span-2' : 'md:col-span-1'}`}>
                       <label htmlFor={`field-${field.id}`} className="text-[11px] font-black text-slate-800 uppercase tracking-[0.2em] ml-1 block">
-                        {field.label} {field.required && <span className="text-emerald-600 font-black">*</span>}
+                        {field.label} {field.required && <span className="text-red-600 font-black">*</span>}
                       </label>
                       
                       {field.type === 'textarea' ? (
