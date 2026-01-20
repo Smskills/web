@@ -54,12 +54,12 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false }) => {
         </div>
       )}
 
-      {/* Main Header Row - Height and Logo Increased */}
-      <div className="bg-white/90 backdrop-blur-xl border-b border-slate-200/50 h-32 md:h-44 flex items-center">
-        <div className="container mx-auto px-4 h-full flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-4 md:gap-8 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-xl" aria-label={`${config.name} - Institutional Home`}>
-            {/* Logo Container size significantly increased */}
-            <div className="w-24 h-24 md:w-60 md:h-36 flex items-center justify-center transition-all group-hover:scale-105">
+      {/* Main Header Row - Adjusted padding to move elements to edges */}
+      <div className="bg-white/90 backdrop-blur-xl border-b border-slate-200/50 h-28 md:h-36 flex items-center">
+        <div className="container mx-auto pl-2 pr-2 md:pl-4 md:pr-4 h-full flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-3 md:gap-5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-xl" aria-label={`${config.name} - Institutional Home`}>
+            {/* Logo size reduced slightly and shifted left via container padding */}
+            <div className="w-20 h-20 md:w-48 md:h-28 flex items-center justify-center transition-all group-hover:scale-105">
               <img 
                 src={logoUrl} 
                 alt={`${config.name} Logo`} 
@@ -67,17 +67,17 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false }) => {
               />
             </div>
             <div className="flex flex-col leading-none">
-              <span className="font-black text-2xl md:text-5xl text-emerald-600 tracking-tighter uppercase whitespace-nowrap">
+              <span className="font-black text-xl md:text-4xl text-emerald-600 tracking-tighter uppercase whitespace-nowrap">
                 {config.name}
               </span>
-              <span className="text-[10px] md:text-sm text-emerald-600 font-bold uppercase tracking-[0.3em] md:tracking-[0.4em] mt-2 opacity-90">
+              <span className="text-[9px] md:text-xs text-emerald-600 font-bold uppercase tracking-[0.3em] md:tracking-[0.4em] mt-1.5 opacity-90">
                 {config.tagline}
               </span>
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-10" aria-label="Main Navigation">
+          {/* Desktop Navigation - Shifted right via container padding */}
+          <nav className="hidden lg:flex items-center space-x-8" aria-label="Main Navigation">
             {config.navigation.map((item) => {
               const isInternal = isInternalLink(item.path);
               const cleanPath = getCleanPath(item.path);
