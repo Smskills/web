@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, Suspense, useMemo } from 'react';
 import { HashRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { INITIAL_CONTENT } from './data/defaultContent.ts';
@@ -134,7 +133,8 @@ const App: React.FC = () => {
       <ScrollToTop />
       <div className="flex flex-col min-h-screen overflow-x-hidden">
         <Header config={content.site} isAuthenticated={isAuthenticated} />
-        <main id="main-content" className="flex-grow pt-32 focus:outline-none" tabIndex={-1}>
+        {/* pt-36 md:pt-[11.5rem] precisely matches the sum of alert (h-8/10) + header (h-28/36) */}
+        <main id="main-content" className="flex-grow pt-36 md:pt-[11.5rem] focus:outline-none" tabIndex={-1}>
           <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><i className="fa-solid fa-spinner fa-spin text-4xl text-emerald-600"></i></div>}>
             <Routes>
               <Route path="/" element={<HomePage content={content} />} />
