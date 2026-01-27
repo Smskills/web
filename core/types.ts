@@ -189,6 +189,9 @@ export interface Course {
   status: 'Active' | 'Inactive';
   image: string;
   price?: string;
+  certification?: string;
+  eligibility?: string;
+  benefits?: string;
 }
 
 export interface Notice {

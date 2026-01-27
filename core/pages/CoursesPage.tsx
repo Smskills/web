@@ -137,9 +137,34 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                 <div className="md:w-2/3">
                    <span className="inline-block px-4 py-1.5 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-black uppercase tracking-widest mb-6">{selectedCourse.mode} Track</span>
                    <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-8 tracking-tighter leading-tight">{selectedCourse.name}</h2>
+                   
                    <div className="prose prose-slate max-w-none mb-12">
                      <FormattedText text={selectedCourse.description} className="text-slate-600 text-lg leading-relaxed font-medium" />
                    </div>
+
+                   {/* New: Eligibility and Benefits Display */}
+                   <div className="grid grid-cols-1 gap-10 mb-12">
+                     {selectedCourse.eligibility && (
+                       <div className="p-8 bg-slate-50 rounded-3xl border border-slate-100 relative group">
+                         <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center absolute -top-5 left-8 shadow-lg">
+                           <i className="fa-solid fa-user-check"></i>
+                         </div>
+                         <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Candidate Eligibility</h4>
+                         <FormattedText text={selectedCourse.eligibility} className="text-slate-700 font-medium leading-relaxed" />
+                       </div>
+                     )}
+
+                     {selectedCourse.benefits && (
+                       <div className="p-8 bg-emerald-600 text-white rounded-3xl relative group shadow-xl">
+                         <div className="w-10 h-10 bg-white text-emerald-600 rounded-xl flex items-center justify-center absolute -top-5 left-8 shadow-lg">
+                           <i className="fa-solid fa-gift"></i>
+                         </div>
+                         <h4 className="text-[11px] font-black text-emerald-100 uppercase tracking-[0.2em] mb-4">Program Benefits</h4>
+                         <FormattedText text={selectedCourse.benefits} className="text-white font-medium leading-relaxed" />
+                       </div>
+                     )}
+                   </div>
+
                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400"><i className="fa-regular fa-clock"></i></div>

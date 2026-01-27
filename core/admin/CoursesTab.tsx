@@ -65,11 +65,12 @@ const CoursesTab: React.FC<CoursesTabProps> = ({
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition-opacity"><i className="fa-solid fa-upload text-white text-2xl"></i></div>
                 </div>
               </div>
-              <div className="lg:col-span-3 space-y-4">
+              <div className="lg:col-span-3 space-y-6">
                 <div className="flex justify-between items-center">
                   <input value={course.name} onChange={e => updateCourseItem(course.id, 'name', e.target.value)} className="text-xl font-black bg-transparent border-b border-slate-700 text-white w-full mr-4 outline-none focus:border-emerald-500 transition-colors" placeholder="Course Name" />
                   <button onClick={() => handleDelete(course.id, course.name)} className="text-red-500 hover:text-red-400 p-2"><i className="fa-solid fa-trash-can"></i></button>
                 </div>
+                
                 <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
                   <div className="space-y-1">
                     <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Duration</label>
@@ -77,7 +78,7 @@ const CoursesTab: React.FC<CoursesTabProps> = ({
                   </div>
                   <div className="space-y-1">
                     <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Price</label>
-                    <input value={course.price} onChange={e => updateCourseItem(course.id, 'price', e.target.value)} className="w-full bg-slate-800 p-2 rounded text-sm text-white" placeholder="e.g. $2200" />
+                    <input value={course.price} onChange={e => updateCourseItem(course.id, 'price', e.target.value)} className="w-full bg-slate-800 p-2 rounded text-sm text-white" placeholder="e.g. Rs. 50,000" />
                   </div>
                   <div className="space-y-1">
                     <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Delivery Mode</label>
@@ -95,9 +96,22 @@ const CoursesTab: React.FC<CoursesTabProps> = ({
                     </select>
                   </div>
                 </div>
-                <div className="relative">
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[9px] font-black text-emerald-500 uppercase tracking-widest ml-1">Course Eligibility</label>
+                    <textarea value={course.eligibility || ''} onChange={e => updateCourseItem(course.id, 'eligibility', e.target.value)} className="w-full bg-slate-800 p-3 rounded text-sm text-slate-300 resize-none outline-none focus:ring-1 focus:ring-emerald-500" rows={2} placeholder="Requirements to join..." />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[9px] font-black text-emerald-500 uppercase tracking-widest ml-1">Program Benefits</label>
+                    <textarea value={course.benefits || ''} onChange={e => updateCourseItem(course.id, 'benefits', e.target.value)} className="w-full bg-slate-800 p-3 rounded text-sm text-slate-300 resize-none outline-none focus:ring-1 focus:ring-emerald-500" rows={2} placeholder="Key outcomes or perks..." />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Main Description</label>
                   <textarea value={course.description} onChange={e => updateCourseItem(course.id, 'description', e.target.value)} className="w-full bg-slate-800 p-3 rounded text-sm text-slate-300 resize-none outline-none focus:ring-1 focus:ring-emerald-500" rows={3} placeholder="Course summary..." />
-                  <p className="text-[9px] text-emerald-500/70 font-bold uppercase mt-1 tracking-widest italic">Supports basic HTML tags: &lt;b&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;a&gt;</p>
+                  <p className="text-[9px] text-emerald-500/70 font-bold uppercase mt-1 tracking-widest italic">Supports &lt;b&gt;, &lt;br/&gt;, &lt;ul&gt;, &lt;li&gt;</p>
                 </div>
               </div>
             </div>

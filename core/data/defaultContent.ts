@@ -1,3 +1,4 @@
+
 import { AppState } from '../types';
 
 export const INITIAL_CONTENT: AppState = {
@@ -208,7 +209,10 @@ export const INITIAL_CONTENT: AppState = {
         description: "Comprehensive training on distributed systems and cloud-native engineering.",
         status: "Active",
         image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=800",
-        price: "$2,200"
+        price: "Rs. 75,000",
+        certification: "SMS Technical Diploma",
+        eligibility: "<b>Educational Requirement:</b> Minimum 12th Grade or Equivalent.<br/><b>Prerequisites:</b> Basic understanding of computer systems.",
+        benefits: "• 100% Placement Support<br/>• Real-world Project Mentorship<br/>• Global Certification recognized by 200+ partners"
       }
     ],
     pageMeta: { title: "Technical Programs", subtitle: "Browse through our industry-verified technical tracks optimized for global employability.", tagline: "Professional Curricula" }

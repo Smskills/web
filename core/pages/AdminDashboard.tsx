@@ -92,15 +92,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
     const file = e.target.files?.[0];
     if (!file || !activeUploadPath.current || isProcessing) return;
     
-    // Clear input value immediately to allow re-uploading the same file if needed 
-    // and prevent browser-level duplicate change triggers
     const inputElement = e.target;
     
     setIsProcessing(true);
     optimizeImage(file).then(url => {
       setLocalContent(prev => {
-        // CRITICAL FIX: Ensure we clone nested objects to avoid direct state mutation.
-        // Direct mutation causes bugs in React 18 Strict Mode where updaters run twice.
         const next = { ...prev };
         const pathParts = activeUploadPath.current!.split('.');
         
@@ -116,7 +112,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
            if (pathParts[1] === 'thumbnails') {
               next.galleryMetadata = { ...(next.galleryMetadata || {}), [activeThumbnailCategory.current!]: url };
            } else {
-              // Properly clone gallery and list to prevent double-add in StrictMode
               next.gallery = {
                 ...next.gallery,
                 list: [{ id: `img_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`, url, category: activeUploadCategory.current, title: '' }, ...next.gallery.list]
@@ -143,7 +138,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
           return next;
         }
 
-        // Generic deep-ish fallback update
         let current: any = next;
         for (let i = 0; i < pathParts.length - 1; i++) {
           const key = pathParts[i];
@@ -152,7 +146,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
              current.members = current.members.map((m: any) => m.id === memberId ? { ...m, image: url } : m);
              return next;
           }
-          // Clone the intermediate object
           current[key] = Array.isArray(current[key]) ? [...current[key]] : { ...current[key] };
           current = current[key];
         }
@@ -161,7 +154,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
       });
       setHasUnsavedChanges(true);
       setIsProcessing(false);
-      inputElement.value = ''; // Reset file input
+      inputElement.value = '';
     }).catch(err => {
       console.error("Upload failed:", err);
       setIsProcessing(false);
@@ -178,7 +171,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
     <div className="min-h-screen bg-slate-900 text-slate-100 pb-20 font-sans">
       <input type="file" ref={genericUploadRef} className="hidden" accept="image/*" onChange={handleGenericUpload} />
 
-      {/* Admin Action Bar - Sticky below the full header */}
       <div className="bg-slate-800 border-b border-slate-700 p-6 sticky top-36 md:top-[11.5rem] z-[80] shadow-2xl">
         <div className="container mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
@@ -270,7 +262,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
             updateCourseItem={(id, f, v) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: prev.courses.list.map(c => c.id === id ? { ...c, [f]: v } : c) } })); trackChange(); }}
             updatePageMeta={(f, v) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, pageMeta: { ...prev.courses.pageMeta, [f]: v } } })); trackChange(); }}
             onCourseImageClick={(id) => { activeCourseId.current = id; triggerGenericUpload('courses.list'); }}
-            addItem={() => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: [{ id: Date.now().toString(), name: 'New Program', duration: '6 Months', mode: 'Offline', description: '', status: 'Active', image: 'https://picsum.photos/800/600' }, ...prev.courses.list] } })); trackChange(); }}
+            addItem={() => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: [{ id: Date.now().toString(), name: 'New Program', duration: '6 Months', mode: 'Offline', description: '', status: 'Active', image: 'https://picsum.photos/800/600', price: 'Rs. 0', certification: 'SMS Technical Diploma' }, ...prev.courses.list] } })); trackChange(); }}
             deleteItem={(id) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: prev.courses.list.filter(c => c.id !== id) } })); trackChange(); }}
           />}
 
