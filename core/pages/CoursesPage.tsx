@@ -17,7 +17,6 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
   const [filter, setFilter] = useState<'All' | 'Online' | 'Offline' | 'Hybrid'>('All');
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   
-  // Use defensive defaults to prevent crashes if data is missing
   const { list = [], pageMeta = { title: 'Technical Programs', subtitle: '', tagline: 'Professional Curricula' } } = coursesState || {};
   
   const filteredCourses = filter === 'All' 
@@ -88,7 +87,6 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                          <i className="fa-solid fa-wifi"></i> {course.mode}
                        </span>
                     </div>
-                    {/* Price Badge - Positioned below image as requested */}
                     <div className="bg-emerald-50 text-emerald-600 font-black px-4 py-1.5 rounded-lg text-[9px] shadow-sm tracking-widest uppercase border border-emerald-100">
                       {course.price || 'Scholarship'}
                     </div>
@@ -118,80 +116,86 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
         )}
       </div>
 
-      {/* Course Detail Modal */}
+      {/* Optimized Course Detail Modal - Reduced Whitespace & Compact Design */}
       {selectedCourse && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/90 backdrop-blur-sm" onClick={() => setSelectedCourse(null)}></div>
-          <div className="bg-white w-full max-w-4xl max-h-[90vh] rounded-[3rem] shadow-3xl relative z-10 overflow-y-auto custom-scrollbar animate-fade-in">
-            <button onClick={() => setSelectedCourse(null)} className="absolute top-8 right-8 w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center hover:bg-red-50 transition-colors text-slate-400 hover:text-red-500">
-               <i className="fa-solid fa-xmark text-xl"></i>
+          <div className="bg-white w-full max-w-5xl rounded-[2rem] shadow-4xl relative z-10 overflow-y-auto max-h-[90vh] custom-scrollbar animate-fade-in">
+            <button onClick={() => setSelectedCourse(null)} className="absolute top-6 right-6 w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center hover:bg-red-50 transition-colors text-slate-400 hover:text-red-500 z-20">
+               <i className="fa-solid fa-xmark text-lg"></i>
             </button>
             
-            <div className="p-10 md:p-16">
-              <div className="flex flex-col md:flex-row gap-12">
-                <div className="md:w-1/3">
-                  <img src={selectedCourse.image} className="w-full aspect-[4/5] object-cover rounded-[2rem] shadow-2xl" alt={selectedCourse.name} />
-                  <div className="mt-8 space-y-4">
-                    <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100">
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Program Value</p>
-                      <p className="text-2xl font-black text-emerald-600">{selectedCourse.price || 'Rs. 0'}</p>
-                    </div>
+            <div className="p-6 md:p-10">
+              <div className="flex flex-col md:flex-row gap-10">
+                {/* Left Side: Image and Value */}
+                <div className="md:w-5/12 flex flex-col">
+                  <img src={selectedCourse.image} className="w-full aspect-[4/5] object-cover rounded-[1.5rem] shadow-xl" alt={selectedCourse.name} />
+                  <div className="mt-6 p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Program Value</p>
+                    <p className="text-2xl font-black text-emerald-600 leading-none">{selectedCourse.price || 'Rs. 0'}</p>
                   </div>
                 </div>
-                <div className="md:w-2/3">
-                   <span className="inline-block px-4 py-1.5 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-black uppercase tracking-widest mb-6">{selectedCourse.mode} Track</span>
-                   <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-8 tracking-tighter leading-tight">{selectedCourse.name}</h2>
-                   
-                   <div className="prose prose-slate max-w-none mb-12">
-                     <FormattedText text={selectedCourse.description} className="text-slate-600 text-lg leading-relaxed font-medium" />
-                   </div>
 
-                   {/* Eligibility Display */}
-                   {selectedCourse.eligibility && (
-                     <div className="mb-10 p-8 bg-slate-50 rounded-3xl border border-slate-100 relative group">
-                        <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center absolute -top-5 left-8 shadow-lg">
-                          <i className="fa-solid fa-user-check"></i>
-                        </div>
-                        <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Candidate Eligibility</h4>
-                        <FormattedText text={selectedCourse.eligibility} className="text-slate-700 font-medium leading-relaxed" />
-                     </div>
-                   )}
-
-                   {/* Program Benefits */}
-                   {selectedCourse.benefits && (
-                     <div className="mb-12 p-8 bg-[#059669] text-white rounded-3xl relative group shadow-xl">
-                       <h4 className="text-[10px] font-black text-emerald-100/80 uppercase tracking-[0.2em] mb-4">Program Benefits</h4>
-                       <FormattedText text={selectedCourse.benefits} className="text-lg font-medium leading-relaxed" />
-                     </div>
-                   )}
-
-                   {/* Duration and Certification Icons */}
-                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 mb-12 items-center">
-                      <div className="flex items-center gap-6">
-                        <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 border border-slate-100">
-                          <i className="fa-regular fa-clock text-xl"></i>
-                        </div>
-                        <div>
-                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Duration</p>
-                          <p className="text-xl font-black text-slate-900">{selectedCourse.duration}</p>
-                        </div>
+                {/* Right Side: Information Content */}
+                <div className="md:w-7/12 flex flex-col justify-between">
+                   <div className="space-y-6">
+                      <div>
+                        <span className="inline-block px-3 py-1 bg-emerald-100 text-emerald-700 rounded-md text-[9px] font-black uppercase tracking-widest mb-3">{selectedCourse.mode} Track</span>
+                        <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight">{selectedCourse.name}</h2>
                       </div>
-                      <div className="flex items-center gap-6">
-                        <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 border border-slate-100">
-                          <i className="fa-solid fa-award text-xl"></i>
+                      
+                      {/* Eligibility Section */}
+                      {selectedCourse.eligibility && (
+                        <div className="flex gap-4 items-start">
+                          <div className="w-8 h-8 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center shrink-0">
+                            <i className="fa-solid fa-user-check text-xs"></i>
+                          </div>
+                          <div>
+                            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Candidate Eligibility</h4>
+                            <FormattedText text={selectedCourse.eligibility} className="text-sm text-slate-700 font-bold" />
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Certification</p>
-                          <p className="text-xl font-black text-slate-900 leading-tight">
-                            {selectedCourse.certification || 'SMS Technical Diploma'}
-                          </p>
+                      )}
+
+                      {/* Benefits Section - Compact Green Box */}
+                      {selectedCourse.benefits && (
+                        <div className="p-6 bg-[#059669] text-white rounded-2xl shadow-lg">
+                          <h4 className="text-[9px] font-black text-emerald-100 uppercase tracking-widest mb-3">Program Benefits</h4>
+                          <FormattedText text={selectedCourse.benefits} className="text-sm md:text-base font-semibold leading-relaxed" />
                         </div>
+                      )}
+                      
+                      {/* Shortened description or specific details if needed */}
+                      <div className="prose prose-slate max-w-none">
+                         <FormattedText text={selectedCourse.description} className="text-slate-600 text-sm leading-relaxed font-medium line-clamp-3" />
                       </div>
                    </div>
 
-                   <Link to={`/enroll?course=${encodeURIComponent(selectedCourse.name)}`} className="w-full py-6 bg-slate-900 text-white font-black rounded-full hover:bg-emerald-600 transition-all active:scale-95 text-center flex items-center justify-center gap-4 shadow-3xl text-[12px] uppercase tracking-[0.3em]">
-                     Apply for this program <i className="fa-solid fa-arrow-right"></i>
-                   </Link>
+                   {/* Bottom Row: Icons & Button */}
+                   <div className="mt-8 pt-6 border-t border-slate-100 space-y-6">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-300 border border-slate-100"><i className="fa-regular fa-clock"></i></div>
+                          <div>
+                            <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Duration</p>
+                            <p className="text-sm font-black text-slate-900">{selectedCourse.duration}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-300 border border-slate-100"><i className="fa-solid fa-award"></i></div>
+                          <div>
+                            <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Certification</p>
+                            <p className="text-sm font-black text-slate-900 leading-tight truncate max-w-[120px] md:max-w-full">
+                              {selectedCourse.certification || 'SMS Certificate'}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <Link to={`/enroll?course=${encodeURIComponent(selectedCourse.name)}`} className="w-full py-4 bg-[#0f172a] text-white font-black rounded-full hover:bg-emerald-600 transition-all active:scale-95 text-center flex items-center justify-center gap-3 shadow-xl text-[11px] uppercase tracking-[0.2em]">
+                        Apply for this program <i className="fa-solid fa-arrow-right text-xs"></i>
+                      </Link>
+                   </div>
                 </div>
               </div>
             </div>
