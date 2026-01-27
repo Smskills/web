@@ -1,27 +1,22 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Course, PageMeta } from '../../types.ts';
-import FormattedText from '../FormattedText.tsx';
-import { CardSkeleton } from '../Skeleton.tsx';
+import { Course } from '../types';
+import FormattedText from '../components/FormattedText.tsx';
+import { CardSkeleton } from '../components/Skeleton.tsx';
 
 interface CoursesPageProps {
-  coursesState: {
-    list: Course[];
-    pageMeta: PageMeta;
-  };
+  courses: Course[];
   isLoading?: boolean;
 }
 
-const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = false }) => {
+const CoursesPage: React.FC<CoursesPageProps> = ({ courses, isLoading = false }) => {
   const [filter, setFilter] = useState<'All' | 'Online' | 'Offline' | 'Hybrid'>('All');
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   
-  const { list, pageMeta } = coursesState;
-  
   const filteredCourses = filter === 'All' 
-    ? list 
-    : list.filter(c => c.mode === filter);
+    ? courses 
+    : courses.filter(c => c.mode === filter);
 
   const activeCourses = filteredCourses.filter(c => c.status === 'Active');
 
@@ -34,8 +29,8 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
         <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl opacity-30"></div>
         <div className="container mx-auto px-4 relative z-10 max-w-4xl">
           <span className="text-emerald-500 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">Professional Curricula</span>
-          <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tighter leading-none">{pageMeta.title}</h1>
-          <p className="text-slate-400 text-xl font-medium max-w-2xl mx-auto">{pageMeta.subtitle}</p>
+          <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tighter leading-none">Technical Programs</h1>
+          <p className="text-slate-400 text-xl font-medium max-w-2xl mx-auto">Browse through our industry-verified technical tracks optimized for global employability.</p>
         </div>
       </section>
 
@@ -75,19 +70,22 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                     alt={course.name} 
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1.5s]"
                   />
-                  <div className="absolute top-6 right-6 bg-white/95 backdrop-blur-md text-emerald-600 font-black px-6 py-2 rounded-full text-[10px] shadow-2xl tracking-[0.2em] uppercase">
-                    {course.price || 'Scholarship'}
-                  </div>
                 </div>
-                <div className="p-12 flex flex-col flex-grow">
-                  <div className="flex items-center gap-6 mb-6">
-                     <span className="flex items-center gap-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                       <i className="fa-regular fa-clock text-emerald-500"></i> {course.duration}
-                     </span>
-                     <span className="w-1.5 h-1.5 bg-slate-200 rounded-full"></span>
-                     <span className="flex items-center gap-3 text-[10px] font-black text-emerald-600 uppercase tracking-widest">
-                       <i className="fa-solid fa-wifi"></i> {course.mode}
-                     </span>
+                <div className="p-10 flex flex-col flex-grow">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-4">
+                       <span className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                         <i className="fa-regular fa-clock text-emerald-500"></i> {course.duration}
+                       </span>
+                       <span className="w-1.5 h-1.5 bg-slate-200 rounded-full"></span>
+                       <span className="flex items-center gap-2 text-[10px] font-black text-emerald-600 uppercase tracking-widest">
+                         <i className="fa-solid fa-wifi"></i> {course.mode}
+                       </span>
+                    </div>
+                    {/* Price Moved Down Here */}
+                    <div className="bg-emerald-50 text-emerald-600 font-black px-4 py-1.5 rounded-lg text-[9px] shadow-sm tracking-widest uppercase border border-emerald-100">
+                      {course.price || 'Scholarship'}
+                    </div>
                   </div>
                   <h3 className="text-3xl font-black text-slate-900 mb-6 group-hover:text-emerald-600 transition-colors tracking-tight leading-tight cursor-pointer" onClick={() => setSelectedCourse(course)}>{course.name}</h3>
                   <FormattedText 
@@ -153,7 +151,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                      </div>
                    )}
 
-                   {/* Program Benefits Styled like the Reference Image */}
+                   {/* Program Benefits */}
                    {selectedCourse.benefits && (
                      <div className="mb-12 p-8 bg-[#059669] text-white rounded-3xl relative group shadow-xl">
                        <h4 className="text-[10px] font-black text-emerald-100/80 uppercase tracking-[0.2em] mb-4">Program Benefits</h4>
@@ -161,7 +159,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                      </div>
                    )}
 
-                   {/* Duration and Certification Icons like the Reference Image */}
+                   {/* Duration and Certification Icons */}
                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 mb-12 items-center">
                       <div className="flex items-center gap-6">
                         <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 border border-slate-100">

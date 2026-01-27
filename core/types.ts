@@ -22,34 +22,18 @@ export interface CustomPage {
   showHeader: boolean;
 }
 
-export interface Lead {
-  id: string;
-  fullName: string;
-  email: string;
-  phone: string;
-  course: string;
-  message?: string;
-  source: 'contact' | 'enrollment';
-  status: 'New' | 'Contacted' | 'Enrolled' | 'Closed';
-  createdAt: string;
-  details?: Record<string, any>; // For extra form fields
-}
-
-export interface AdmissionAlert {
-  enabled: boolean;
-  text: string;
-  subtext: string;
-  linkText: string;
-  linkPath: string;
-}
-
 export interface SiteConfig {
   name: string;
   tagline: string;
   logo: string;
   loginLabel?: string;
-  notificationEmails?: string[];
-  admissionAlert?: AdmissionAlert;
+  admissionAlert?: {
+    enabled: boolean;
+    text: string;
+    subtext: string;
+    linkText: string;
+    linkPath: string;
+  };
   contact: {
     email: string;
     phone: string;
@@ -184,12 +168,12 @@ export interface Course {
   id: string;
   name: string;
   duration: string;
+  certification?: string;
   mode: 'Online' | 'Offline' | 'Hybrid';
   description: string;
   status: 'Active' | 'Inactive';
   image: string;
   price?: string;
-  certification?: string;
   eligibility?: string;
   benefits?: string;
 }
@@ -237,6 +221,19 @@ export interface PageMeta {
   title: string;
   subtitle: string;
   tagline?: string;
+}
+
+export interface Lead {
+  id: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  course: string;
+  message?: string;
+  source: 'contact' | 'enrollment';
+  status: 'New' | 'Contacted' | 'Enrolled' | 'Closed';
+  createdAt: string;
+  details?: Record<string, any>;
 }
 
 export interface AppState {
