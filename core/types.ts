@@ -36,7 +36,7 @@ export interface SiteConfig {
   };
   contact: {
     email: string;
-    phone: string;
+    phone: string; // Reverted to single string
     address: string;
     mapUrl: string;
   };

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { AppState, FormField } from '../types.ts';
@@ -13,7 +14,6 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [formData, setFormData] = useState<Record<string, string>>({});
 
-  // Fix: Provide a complete default object for enrollmentForm to satisfy TypeScript property access for description and others
   const { 
     enrollmentForm = { 
       title: 'Enrollment Form', 
@@ -57,7 +57,7 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
 
     const fields = enrollmentForm.fields || [];
 
-    // --- HEURISTIC FIELD DISCOVERY (Kept from previous fix) ---
+    // --- HEURISTIC FIELD DISCOVERY ---
     let emailField = fields.find(f => f.type === 'email') || 
                      fields.find(f => (f.label || '').toLowerCase().includes('email')) ||
                      fields.find(f => (formData[f.id] || '').includes('@'));
@@ -163,7 +163,6 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
                 ))}
               </div>
 
-              {/* Help Desk UI Block */}
               <div className="mt-20 p-8 bg-white/[0.03] backdrop-blur-sm rounded-[2rem] border border-white/5 text-center group hover:bg-white/[0.05] transition-all">
                 <div className="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center mx-auto mb-4 text-emerald-500 border border-white/5 shadow-lg">
                   <i className="fa-solid fa-headset"></i>
@@ -227,7 +226,6 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
                   {isSubmitting ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Processing Application...</> : <>Submit Official Request <i className="fa-solid fa-paper-plane text-sm"></i></>}
                 </button>
                 
-                {/* Legal Disclaimer Block */}
                 <p className="text-[11px] text-slate-500 font-medium text-center leading-relaxed max-w-lg mx-auto">
                   By submitting this application, you acknowledge that you have read and agree to our <Link to="/privacy-policy" className="text-emerald-600 font-black hover:underline transition-all">Privacy Policy</Link> and <Link to="/terms-of-service" className="text-emerald-600 font-black hover:underline transition-all">Terms of Service</Link>.
                 </p>

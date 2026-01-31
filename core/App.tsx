@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, Suspense, useMemo } from 'react';
 import { HashRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { INITIAL_CONTENT } from './data/defaultContent.ts';
@@ -48,22 +49,62 @@ const App: React.FC = () => {
         const response = await fetch('http://localhost:5000/api/config');
         const result = await response.json();
         
+        let finalData: AppState;
+
         if (result.success && result.data) {
-          setContent(prev => ({
+          finalData = {
             ...INITIAL_CONTENT,
             ...result.data,
-            site: { ...INITIAL_CONTENT.site, ...result.data.site },
+            site: { 
+              ...INITIAL_CONTENT.site, 
+              ...result.data.site,
+              contact: {
+                ...INITIAL_CONTENT.site.contact,
+                ...(result.data.site?.contact || {})
+              }
+            },
             home: { ...INITIAL_CONTENT.home, ...result.data.home },
             theme: { ...INITIAL_CONTENT.theme, ...result.data.theme }
-          }));
+          };
         } else {
           const saved = localStorage.getItem('edu_insta_content');
-          if (saved) setContent(JSON.parse(saved));
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            finalData = {
+              ...INITIAL_CONTENT,
+              ...parsed,
+              site: {
+                ...INITIAL_CONTENT.site,
+                ...parsed.site,
+                contact: {
+                  ...INITIAL_CONTENT.site.contact,
+                  ...(parsed.site?.contact || {})
+                }
+              }
+            };
+          } else {
+            finalData = INITIAL_CONTENT;
+          }
         }
+        setContent(finalData);
       } catch (err) {
         console.warn("Bootstrap: Backend DB unreachable. Using local cache.");
         const saved = localStorage.getItem('edu_insta_content');
-        if (saved) setContent(JSON.parse(saved));
+        if (saved) {
+           const parsed = JSON.parse(saved);
+           setContent({
+              ...INITIAL_CONTENT,
+              ...parsed,
+              site: {
+                ...INITIAL_CONTENT.site,
+                ...parsed.site,
+                contact: {
+                  ...INITIAL_CONTENT.site.contact,
+                  ...(parsed.site?.contact || {})
+                }
+              }
+           });
+        }
       } finally {
         setIsInitializing(false);
       }
@@ -133,7 +174,6 @@ const App: React.FC = () => {
       <ScrollToTop />
       <div className="flex flex-col min-h-screen overflow-x-hidden">
         <Header config={content.site} isAuthenticated={isAuthenticated} />
-        {/* pt-36 md:pt-[11.5rem] precisely matches the sum of alert (h-8/10) + header (h-28/36) */}
         <main id="main-content" className="flex-grow pt-36 md:pt-[11.5rem] focus:outline-none" tabIndex={-1}>
           <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><i className="fa-solid fa-spinner fa-spin text-4xl text-emerald-600"></i></div>}>
             <Routes>

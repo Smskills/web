@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { SiteConfig, SocialLink, FormField, AppState } from '../types.ts';
 
@@ -56,9 +57,10 @@ const ContactTab: React.FC<ContactTabProps> = ({
               <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Campus Address</label>
               <textarea value={contact.address} onChange={e => updateContactField('address', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200" rows={3} placeholder="Address" />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Phone</label>
+                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Phone Number</label>
                 <input value={contact.phone} onChange={e => updateContactField('phone', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200" placeholder="Phone" />
               </div>
               <div className="space-y-1">
@@ -66,6 +68,7 @@ const ContactTab: React.FC<ContactTabProps> = ({
                 <input value={contact.email} onChange={e => updateContactField('email', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200" placeholder="Email" />
               </div>
             </div>
+
             <div className="space-y-1">
               <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Map Iframe URL</label>
               <input value={contact.mapUrl} onChange={e => updateContactField('mapUrl', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-xs text-emerald-400 font-mono" placeholder="Map URL" />
