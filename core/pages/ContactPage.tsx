@@ -137,7 +137,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
                   {(contactForm.fields || []).map(field => {
                     const isWide = field.type === 'textarea' || (field.label && field.label.toLowerCase().includes('name'));
                     return (
-                      <div key={field.id} className={`space-y-3 ${isWide ? 'md:col-span-2' : 'md:col-span-1'}`}>
+                      <div key={field.id} className={`space-y-3 ${isWide ? 'md:col-span-2' : ''}`}>
                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1 block">
                           {field.label} {field.required && <span className="text-red-600">*</span>}
                         </label>
