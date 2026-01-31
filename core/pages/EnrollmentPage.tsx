@@ -187,7 +187,7 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
                    return (
                     <div key={field.id} className={`space-y-3 ${isWide ? 'md:col-span-2' : ''}`}>
                       <label className="text-[11px] font-black text-slate-800 uppercase tracking-[0.2em] ml-1 block">
-                        {field.label} {field.required && <span className="text-red-600">*</span>}
+                        {field.label} {field.required && <span className="text-emerald-600">*</span>}
                       </label>
                       {field.type === 'textarea' ? (
                         <textarea required={field.required} value={formData[field.id] || ''} onChange={(e) => handleChange(field.id, e.target.value)} rows={4} className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-medium text-slate-900 resize-none placeholder-slate-400 shadow-sm" placeholder={field.placeholder} />

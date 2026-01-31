@@ -16,6 +16,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
 
   const contactForm = content?.contactForm || { title: "Send Enquiry", fields: [] };
   const coursesList = content?.courses?.list || [];
+  const phoneNumbers = Array.isArray(config.phones) ? config.phones : [];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,8 +104,12 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
                 </div>
                 <div>
                   <h4 className="font-black text-slate-900 text-lg mb-2 uppercase tracking-tight">Call Center</h4>
-                  <p className="text-slate-500 font-medium">{config.phone}</p>
-                  <p className="text-[10px] text-emerald-600 mt-2 uppercase font-black tracking-widest">Mon - Sat, 10am - 6pm</p>
+                  <div className="space-y-1">
+                    {phoneNumbers.map((num, idx) => (
+                      <p key={idx} className="text-slate-500 font-medium">{num}</p>
+                    ))}
+                  </div>
+                  <p className="text-[10px] text-emerald-600 mt-3 uppercase font-black tracking-widest">Mon - Sat, 9am - 6pm</p>
                 </div>
               </div>
             </div>
@@ -139,7 +144,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
                     return (
                       <div key={field.id} className={`space-y-3 ${isWide ? 'md:col-span-2' : ''}`}>
                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1 block">
-                          {field.label} {field.required && <span className="text-red-600">*</span>}
+                          {field.label} {field.required && <span className="text-emerald-600">*</span>}
                         </label>
                         {field.type === 'textarea' ? (
                           <textarea required={field.required} value={formData[field.id] || ''} onChange={(e) => handleChange(field.id, e.target.value)} rows={5} className="w-full px-8 py-5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-medium text-slate-900 resize-none placeholder-slate-300" placeholder={field.placeholder} />

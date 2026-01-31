@@ -41,6 +41,26 @@ const ContactTab: React.FC<ContactTabProps> = ({
   };
 
   const formFields = contactForm?.fields || [];
+  const phones = Array.isArray(contact.phones) ? contact.phones : [];
+
+  const handleAddPhone = () => {
+    updateContactField('phones', [...phones, '']);
+  };
+
+  const handleUpdatePhone = (idx: number, val: string) => {
+    const newPhones = [...phones];
+    newPhones[idx] = val;
+    updateContactField('phones', newPhones);
+  };
+
+  const handleRemovePhone = (idx: number) => {
+    if (phones.length <= 1) {
+      alert("Institutional protocol requires at least one primary contact number.");
+      return;
+    }
+    const newPhones = phones.filter((_, i) => i !== idx);
+    updateContactField('phones', newPhones);
+  };
 
   return (
     <div className="space-y-12 animate-fade-in">
@@ -58,15 +78,42 @@ const ContactTab: React.FC<ContactTabProps> = ({
               <textarea value={contact.address} onChange={e => updateContactField('address', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200" rows={3} placeholder="Address" />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Phone Number</label>
-                <input value={contact.phone} onChange={e => updateContactField('phone', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200" placeholder="Phone" />
+            <div className="space-y-4">
+              <div className="flex justify-between items-center px-1">
+                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Contact Numbers</label>
+                <button 
+                  onClick={handleAddPhone}
+                  className="text-[9px] font-black text-emerald-500 uppercase tracking-widest hover:underline"
+                >
+                  + Add Option
+                </button>
               </div>
-              <div className="space-y-1">
-                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Email</label>
-                <input value={contact.email} onChange={e => updateContactField('email', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200" placeholder="Email" />
+              <div className="space-y-2">
+                {phones.map((p, idx) => (
+                  <div key={idx} className="flex gap-2 group">
+                    <div className="relative flex-grow">
+                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-600">#{idx + 1}</div>
+                      <input 
+                        value={p} 
+                        onChange={e => handleUpdatePhone(idx, e.target.value)} 
+                        className="w-full bg-slate-800 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-200 focus:border-emerald-500 outline-none transition-all" 
+                        placeholder="Phone Number" 
+                      />
+                    </div>
+                    <button 
+                      onClick={() => handleRemovePhone(idx)}
+                      className="w-12 h-11 bg-slate-800 hover:bg-red-500/10 text-slate-500 hover:text-red-500 rounded-xl border border-slate-700 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100"
+                    >
+                      <i className="fa-solid fa-trash-can text-xs"></i>
+                    </button>
+                  </div>
+                ))}
               </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Email</label>
+              <input value={contact.email} onChange={e => updateContactField('email', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200" placeholder="Email" />
             </div>
 
             <div className="space-y-1">

@@ -2,7 +2,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { SiteConfig } from '../types';
-import { getFeatureFooterLinks } from '../../featureRegistry.ts';
 
 interface FooterProps {
   config: SiteConfig;
@@ -12,7 +11,7 @@ const Footer: React.FC<FooterProps> = ({ config }) => {
   const socialLinks = Array.isArray(config.social) ? config.social : [];
   const navigationLinks = Array.isArray(config.navigation) ? config.navigation : [];
   const supportLinks = Array.isArray(config.footer?.supportLinks) ? config.footer.supportLinks : [];
-  const featureLinks = getFeatureFooterLinks();
+  const primaryPhone = Array.isArray(config.contact?.phones) ? config.contact.phones[0] : 'N/A';
 
   const isInternalLink = (path: string) => {
     if (!path) return false;
@@ -72,7 +71,7 @@ const Footer: React.FC<FooterProps> = ({ config }) => {
             </ul>
           </div>
 
-          {/* Support & Feature Links */}
+          {/* Support */}
           <div className="text-center sm:text-left">
             <h4 className="text-white font-black text-xs uppercase tracking-[0.3em] mb-8">{config.footer?.supportLinksLabel || 'Resources'}</h4>
             <ul className="space-y-4 text-sm font-medium">
@@ -81,7 +80,7 @@ const Footer: React.FC<FooterProps> = ({ config }) => {
                 const cleanPath = getCleanPath(link.path);
                 
                 return (
-                  <li key={`support-${idx}`}>
+                  <li key={idx}>
                     {isInternal ? (
                       <Link to={cleanPath} className="hover:text-emerald-500 transition-colors block py-1">{link.label}</Link>
                     ) : (
@@ -90,18 +89,6 @@ const Footer: React.FC<FooterProps> = ({ config }) => {
                   </li>
                 );
               })}
-              
-              {/* FEATURE INJECTED LINKS */}
-              {featureLinks.length > 0 && (
-                <div className="pt-4 mt-4 border-t border-slate-800">
-                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-4">Extra Extensions</span>
-                  {featureLinks.map((link, idx) => (
-                    <li key={`feature-${idx}`} className="mb-4">
-                      <Link to={link.path} className="hover:text-emerald-500 transition-colors block py-1">{link.label}</Link>
-                    </li>
-                  ))}
-                </div>
-              )}
             </ul>
           </div>
 
@@ -115,7 +102,7 @@ const Footer: React.FC<FooterProps> = ({ config }) => {
               </li>
               <li className="flex flex-col sm:flex-row items-center sm:items-start gap-3">
                 <i className="fa-solid fa-phone text-emerald-500 text-base" aria-hidden="true"></i>
-                <span>{config.contact?.phone}</span>
+                <span>{primaryPhone}</span>
               </li>
               <li className="flex flex-col sm:flex-row items-center sm:items-start gap-3">
                 <i className="fa-solid fa-envelope text-emerald-500 text-base" aria-hidden="true"></i>
