@@ -112,7 +112,7 @@ const Footer: React.FC<FooterProps> = ({ config }) => {
         </div>
 
         <div className="border-t border-slate-800 pt-10 flex flex-col md:flex-row items-center justify-between text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">
-          <p className="text-center md:text-left">© {new Date().getFullYear()} {config.name}. Professional Educational Entity.</p>
+          <p className="text-center md:text-left">Copyright © {new Date().getFullYear()} {config.name} Professional Educational Entity.</p>
           <p className="mt-6 md:mt-0 text-center md:text-right">{config.footer?.bottomText || 'Standard Excellence Protocol'}</p>
         </div>
       </div>

@@ -131,7 +131,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                 <div className="md:w-5/12 flex flex-col">
                   <img src={selectedCourse.image} className="w-full aspect-[4/5] object-cover rounded-[1.5rem] shadow-xl" alt={selectedCourse.name} />
                   <div className="mt-6 p-6 bg-slate-50 rounded-2xl border border-slate-100">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Program Value</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Course Fees</p>
                     <p className="text-2xl font-black text-emerald-600 leading-none">{selectedCourse.price || 'Rs. 0'}</p>
                   </div>
                 </div>

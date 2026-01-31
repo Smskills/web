@@ -88,7 +88,7 @@ const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ siteConfig }) =
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="email@sm-skills.edu"
+                      placeholder="example@gmail.com"
                       className="w-full pl-12 pr-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all text-slate-900 font-medium"
                     />
                   </div>
