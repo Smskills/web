@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { SiteConfig } from '../types';
@@ -9,9 +10,15 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAcademicsOpen, setIsAcademicsOpen] = useState(false);
   const location = useLocation();
   const logoUrl = config.logo || "https://lwfiles.mycourse.app/62a6cd5-public/6efdd5e.png";
   const alert = config.admissionAlert || { enabled: false, text: '', subtext: '', linkText: '', linkPath: '/enroll' };
+
+  const academicsMenu = {
+    categories: ["COURSES", "DEPARTMENTS", "FACULTIES", "STUDY CENTER", "DISTANCE LEARNING CENTER", "TEACHING PLAN", "CLASS ROUTINE", "ACADEMIC CALENDAR", "PROGRAMME OUTCOME"],
+    courses: ["UG CERTIFICATE COURSE", "UG DIPLOMA COURSE", "UG DEGREE COURSE", "POST GRADUATE COURSE", "UGC SPONSORED COURSE", "ADDON COURSE", "ITEP"]
+  };
 
   const isInternalLink = (path: string) => {
     if (!path) return false;
@@ -32,13 +39,8 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false }) => {
         : 'text-slate-600 hover:text-emerald-600'
     }`;
 
-  const btnNavAction = "px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shadow-2xl active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-500/30";
-  
-  const btnEnroll = "px-6 py-3 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg hover:bg-emerald-50 active:scale-95 shadow-emerald-600/10 hover:text-emerald-600";
-
   return (
-    <header className="fixed top-0 left-0 right-0 z-[100] transition-all duration-300 shadow-sm">
-      {/* Top Notification Bar - Admission Alert */}
+    <header className="fixed top-0 left-0 right-0 z-[100] transition-all duration-300 shadow-sm font-sans">
       {alert.enabled && (
         <div className="bg-slate-900 text-white py-2 px-4 border-b border-white/5 h-8 md:h-10 flex items-center">
           <div className="container mx-auto flex justify-between items-center text-[9px] font-black uppercase tracking-[0.2em]">
@@ -54,147 +56,105 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false }) => {
         </div>
       )}
 
-      {/* Main Header Row - Adjusted padding to move elements to edges */}
       <div className="bg-white/90 backdrop-blur-xl border-b border-slate-200/50 h-28 md:h-36 flex items-center">
-        <div className="container mx-auto pl-2 pr-2 md:pl-4 md:pr-4 h-full flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3 md:gap-5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-xl" aria-label={`${config.name} - Institutional Home`}>
-            {/* Logo size reduced slightly and shifted left via container padding */}
-            <div className="w-20 h-20 md:w-48 md:h-28 flex items-center justify-center transition-all group-hover:scale-105">
-              <img 
-                src={logoUrl} 
-                alt={`${config.name} Logo`} 
-                className="w-full h-full object-contain"
-              />
+        <div className="container mx-auto px-4 h-full flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-3 md:gap-5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-xl">
+            <div className="w-20 h-20 md:w-40 md:h-28 flex items-center justify-center transition-all group-hover:scale-105">
+              <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" />
             </div>
             <div className="flex flex-col leading-none">
-              <span className="font-black text-xl md:text-4xl text-emerald-600 tracking-tighter uppercase whitespace-nowrap">
+              <span className="font-black text-xl md:text-3xl text-emerald-600 tracking-tighter uppercase whitespace-nowrap">
                 {config.name}
               </span>
-              <span className="text-[9px] md:text-xs text-emerald-600 font-bold uppercase tracking-[0.3em] md:tracking-[0.4em] mt-1.5 opacity-90">
+              <span className="text-[9px] md:text-xs text-emerald-600 font-bold uppercase tracking-[0.3em] mt-1.5 opacity-90">
                 {config.tagline}
               </span>
             </div>
           </Link>
 
-          {/* Desktop Navigation - Shifted right via container padding */}
           <nav className="hidden lg:flex items-center space-x-8" aria-label="Main Navigation">
             {config.navigation.map((item) => {
-              const isInternal = isInternalLink(item.path);
+              const isAcademics = item.label.toUpperCase() === 'ACADEMICS';
               const cleanPath = getCleanPath(item.path);
-              
-              return isInternal ? (
-                <NavLink
-                  key={item.label}
-                  to={cleanPath}
-                  className={navLinkClasses}
-                  end={cleanPath === '/'}
-                >
+
+              if (isAcademics) {
+                return (
+                  <div 
+                    key={item.label}
+                    className="relative"
+                    onMouseEnter={() => setIsAcademicsOpen(true)}
+                    onMouseLeave={() => setIsAcademicsOpen(false)}
+                  >
+                    <NavLink to={cleanPath} className={navLinkClasses}>
+                      {item.label} <i className={`fa-solid fa-chevron-down ml-1 text-[8px] transition-transform ${isAcademicsOpen ? 'rotate-180' : ''}`}></i>
+                      <span className={`absolute bottom-0 left-0 w-full h-0.5 bg-emerald-600 transition-transform duration-300 origin-left scale-x-0 group-hover:scale-x-100 ${location.pathname.includes('/academics') ? 'scale-x-100' : ''}`}></span>
+                    </NavLink>
+                    
+                    {/* MEGA MENU - Styled to match screenshot provided */}
+                    {isAcademicsOpen && (
+                      <div className="absolute top-full -left-20 pt-8 animate-fade-in z-[120]">
+                        <div className="bg-white shadow-4xl border border-slate-100 flex overflow-hidden min-w-[500px]">
+                          {/* Left Column: List Categories */}
+                          <div className="w-1/2 bg-slate-50 py-6 border-r border-slate-200">
+                            {academicsMenu.categories.map((cat, i) => (
+                              <div key={i} className={`px-8 py-3 text-[11px] font-black tracking-widest cursor-pointer transition-colors ${i === 0 ? 'text-emerald-600' : 'text-slate-600 hover:text-emerald-600 hover:bg-emerald-50'}`}>
+                                {cat}
+                              </div>
+                            ))}
+                          </div>
+                          {/* Right Column: Course Types */}
+                          <div className="w-1/2 py-6">
+                             {academicsMenu.courses.map((course, i) => (
+                               <Link 
+                                 key={i} 
+                                 to={`/academics?level=${encodeURIComponent(course.replace(' COURSE', ''))}`}
+                                 className="block px-10 py-4 text-[11px] font-black text-slate-800 hover:text-emerald-600 tracking-widest uppercase transition-colors"
+                                 onClick={() => setIsAcademicsOpen(false)}
+                               >
+                                 {course}
+                               </Link>
+                             ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
+              return (
+                <NavLink key={item.label} to={cleanPath} className={navLinkClasses} end={cleanPath === '/'}>
                   {item.label}
                   <span className={`absolute bottom-0 left-0 w-full h-0.5 bg-emerald-600 transition-transform duration-300 origin-left scale-x-0 group-hover:scale-x-100 ${location.pathname === cleanPath ? 'scale-x-100' : ''}`}></span>
                 </NavLink>
-              ) : (
-                <a
-                  key={item.label}
-                  href={item.path}
-                  className="text-slate-600 hover:text-emerald-600 font-black transition-colors text-[11px] uppercase tracking-widest focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-lg px-2 py-1"
-                >
-                  {item.label}
-                </a>
               );
             })}
             
-            <div className="h-10 w-px bg-slate-200 mx-2"></div>
-
-            <Link to="/enroll" className={btnEnroll}>
+            <Link to="/enroll" className="px-6 py-3 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg hover:bg-slate-900 transition-all">
               Enroll Now
             </Link>
 
-            <Link
-              to={isAuthenticated ? "/admin" : "/login"}
-              className={`${btnNavAction} ${
-                location.pathname === '/login' || location.pathname === '/admin'
-                  ? 'bg-emerald-600 text-white shadow-emerald-600/20' 
-                  : 'bg-slate-900 text-white hover:bg-emerald-600 shadow-slate-900/10'
-              }`}
-            >
-              <i className={`fa-solid ${isAuthenticated ? 'fa-gauge-high' : 'fa-user-gear'} mr-2`} aria-hidden="true"></i>
-              {isAuthenticated ? "Dashboard" : (config.loginLabel || "Login")}
+            <Link to={isAuthenticated ? "/admin" : "/login"} className="px-6 py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all">
+              <i className={`fa-solid ${isAuthenticated ? 'fa-gauge-high' : 'fa-lock'} mr-2`}></i>
+              {isAuthenticated ? "Dashboard" : "Login"}
             </Link>
           </nav>
 
-          {/* Mobile Menu Toggle */}
-          <div className="flex lg:hidden items-center gap-4">
-             <Link to="/enroll" className="px-5 py-2.5 bg-emerald-600 text-white rounded-lg text-[10px] font-black uppercase tracking-widest shadow-lg">
-                Enroll
-             </Link>
-             <button 
-                className="w-12 h-12 flex flex-col items-center justify-center text-slate-900 bg-slate-50 border border-slate-200 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-all group z-[110]"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                aria-expanded={isMenuOpen}
-                aria-label="Toggle Navigation Menu"
-              >
-                <div className="relative w-6 h-5">
-                  <span className={`absolute left-0 w-6 h-0.5 bg-current transform transition-all duration-300 ease-in-out ${isMenuOpen ? 'rotate-45 top-2' : 'top-0'}`}></span>
-                  <span className={`absolute left-0 w-6 h-0.5 bg-current transform transition-all duration-300 ease-in-out top-2 ${isMenuOpen ? 'opacity-0 -translate-x-2' : 'opacity-100'}`}></span>
-                  <span className={`absolute left-0 w-6 h-0.5 bg-current transform transition-all duration-300 ease-in-out ${isMenuOpen ? '-rotate-45 top-2' : 'top-4'}`}></span>
-                </div>
-              </button>
-          </div>
+          <button className="lg:hidden w-12 h-12 flex flex-col items-center justify-center text-slate-900 bg-slate-50 border border-slate-200 rounded-xl" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            <i className={`fa-solid ${isMenuOpen ? 'fa-xmark' : 'fa-bars'} text-xl`}></i>
+          </button>
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
       {isMenuOpen && (
-        <div className="lg:hidden fixed inset-x-0 top-32 bg-white border-t border-slate-100 shadow-3xl animate-fade-in-down z-[90] overflow-y-auto max-h-[calc(100vh-8rem)]">
+        <div className="lg:hidden fixed inset-x-0 top-32 bg-white border-t border-slate-100 shadow-3xl z-[90] overflow-y-auto max-h-[calc(100vh-8rem)]">
           <div className="flex flex-col p-8 space-y-4">
-            {config.navigation.map((item) => {
-              const isInternal = isInternalLink(item.path);
-              const cleanPath = getCleanPath(item.path);
-
-              return isInternal ? (
-                <NavLink
-                  key={item.label}
-                  to={cleanPath}
-                  end={cleanPath === '/'}
-                  className={({ isActive }) => 
-                    `font-black text-lg uppercase tracking-widest px-6 py-5 rounded-2xl transition-colors ${
-                      isActive ? 'bg-emerald-50 text-emerald-600' : 'text-slate-900 hover:bg-slate-50'
-                    }`
-                  }
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.label}
-                </NavLink>
-              ) : (
-                <a
-                  key={item.label}
-                  href={item.path}
-                  className="text-slate-900 font-black text-lg uppercase tracking-widest px-6 py-5 hover:bg-slate-50 rounded-2xl transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.label}
-                </a>
-              );
-            })}
-            
-            <div className="h-px bg-slate-100 my-2"></div>
-
-            <Link
-              to="/enroll"
-              className="bg-emerald-600 text-white font-black py-6 rounded-3xl text-center shadow-2xl uppercase tracking-[0.3em] text-[11px] active:scale-95 transition-all"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <i className="fa-solid fa-graduation-cap mr-2"></i> Start Application
-            </Link>
-
-            <Link
-              to={isAuthenticated ? "/admin" : "/login"}
-              className="bg-slate-900 text-white font-black py-6 rounded-3xl text-center shadow-2xl uppercase tracking-[0.3em] text-[11px] active:scale-95 transition-all"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <i className={`fa-solid ${isAuthenticated ? 'fa-gauge-high' : 'fa-lock'} mr-2`} aria-hidden="true"></i>
-              {isAuthenticated ? "Go to Dashboard" : "Institutional Login"}
-            </Link>
+            {config.navigation.map((item) => (
+              <NavLink key={item.label} to={getCleanPath(item.path)} className="font-black text-lg uppercase tracking-widest px-6 py-5 rounded-2xl hover:bg-emerald-50 text-slate-900" onClick={() => setIsMenuOpen(false)}>
+                {item.label}
+              </NavLink>
+            ))}
+            <Link to="/enroll" className="bg-emerald-600 text-white font-black py-6 rounded-3xl text-center uppercase tracking-widest text-[11px]" onClick={() => setIsMenuOpen(false)}>Start Application</Link>
           </div>
         </div>
       )}

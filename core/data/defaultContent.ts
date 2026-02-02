@@ -1,10 +1,47 @@
 
-import { AppState } from '../types';
+import { AppState, Course } from '../types';
+
+const industries = [
+  "Tourism & Hospitality",
+  "Retail Management",
+  "Healthcare",
+  "Apparel",
+  "Automotive",
+  "Telecom",
+  "IT / ITES",
+  "Banking & Finance",
+  "Beauty & Wellness"
+];
+
+const levels: Array<Course['academicLevel']> = ["UG Certificate", "UG Diploma", "UG Degree", "Master"];
+
+const generatedCourses: Course[] = [];
+let idCounter = 1;
+
+levels.forEach(level => {
+  industries.forEach(industry => {
+    generatedCourses.push({
+      id: (idCounter++).toString(),
+      name: `${industry} ${level}`,
+      industry,
+      academicLevel: level,
+      duration: level.includes('Degree') ? "3 Years" : level.includes('Master') ? "2 Years" : "1 Year",
+      mode: 'Offline',
+      status: 'Active',
+      image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800&industry=${industry.replace(/\s+/g, '')}`,
+      description: `Comprehensive training program in ${industry} at the ${level} level, designed for industry readiness.`,
+      certification: "SMS National Vocational Board",
+      price: level.includes('Degree') ? "Rs. 45,000 / Sem" : "Rs. 25,000 / Year",
+      eligibility: "12th Grade pass from a recognized board.",
+      benefits: "• Industry Certified Mentors\n• 100% Placement Assistance\n• Practical Lab Access"
+    });
+  });
+});
 
 export const INITIAL_CONTENT: AppState = {
   site: {
     name: "S M Skills",
-    tagline: "Training Institute • ESTD 2024",
+    tagline: "Academic Training Institute • ESTD 2024",
     logo: "https://ibb.co/7J6NSF5C", 
     loginLabel: "Login",
     admissionAlert: {
@@ -28,7 +65,7 @@ export const INITIAL_CONTENT: AppState = {
     navigation: [
       { label: "Home", path: "/" },
       { label: "About", path: "/about" },
-      { label: "Courses", path: "/courses" },
+      { label: "Academics", path: "/academics" },
       { label: "Notices", path: "/notices" },
       { label: "Gallery", path: "/gallery" },
       { label: "FAQ", path: "/faq" },
@@ -58,8 +95,8 @@ export const INITIAL_CONTENT: AppState = {
     hero: {
       title: "Master Skills for the Modern Industry",
       subtitle: "Join S M Skills for specialized training programs. Build your career with veterans.",
-      ctaText: "Explore Courses",
-      ctaLink: "/courses",
+      ctaText: "Browse Academics",
+      ctaLink: "/academics",
       bgImage: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=1600",
       visible: true
     },
@@ -83,8 +120,8 @@ export const INITIAL_CONTENT: AppState = {
     sectionLabels: {
       noticesTitle: "Institute Feed",
       noticesSubtitle: "Recent announcements regarding batches, events, and scholarships.",
-      coursesTitle: "Vocational Programs",
-      coursesSubtitle: "Curated learning paths focused on high-demand professional skills.",
+      coursesTitle: "Academic Programs",
+      coursesSubtitle: "Explore our diverse range of UG, PG, and Specialized vocational tracks.",
       galleryTitle: "Campus Life",
       gallerySubtitle: "Explore our facilities, classroom interactions, and achievement galleries.",
       placementsTitle: "Our Placement Record",
@@ -200,22 +237,8 @@ export const INITIAL_CONTENT: AppState = {
     extraChapters: []
   },
   courses: {
-    list: [
-      {
-        id: "1",
-        name: "Software Architecture",
-        duration: "12 Months",
-        mode: "Offline",
-        description: "Comprehensive training on distributed systems and cloud-native engineering.",
-        status: "Active",
-        image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=800",
-        price: "Rs. 75,000",
-        certification: "SMS Technical Diploma",
-        eligibility: "<b>Educational Requirement:</b> Minimum 12th Grade or Equivalent.<br/><b>Prerequisites:</b> Basic understanding of computer systems.",
-        benefits: "• 100% Placement Support<br/>• Real-world Project Mentorship<br/>• Global Certification recognized by 200+ partners"
-      }
-    ],
-    pageMeta: { title: "Technical Programs", subtitle: "Browse through our industry-verified technical tracks optimized for global employability.", tagline: "Professional Curricula" }
+    list: generatedCourses,
+    pageMeta: { title: "Academic Programs", subtitle: "Browse through our industry-verified technical levels optimized for global employability.", tagline: "Institutional Academics" }
   },
   notices: {
     list: [

@@ -1,4 +1,3 @@
-
 import { Request, Response, NextFunction } from 'express';
 import pool from '../config/database';
 import { sendResponse } from '../utils/response';
@@ -21,33 +20,32 @@ export class LeadsController {
         [fullName, email, phone, course, message, source, JSON.stringify(details || {})]
       );
 
-      // BACKGROUND TASK: Find recipients and send email
-      (async () => {
-        try {
-          console.log(`📬 Lead received from ${fullName}. Fetching notification settings...`);
-          const [configRows]: any = await pool.execute('SELECT config_json FROM site_config WHERE id = 1');
-          
-          if (configRows.length > 0) {
-            const siteData = JSON.parse(configRows[0].config_json);
+      // Trigger Email Notification ONLY for applications (source: enrollment)
+      if (source === 'enrollment') {
+        (async () => {
+          try {
+            // Fetch the current site configuration from database
+            const [configRows]: any = await pool.execute('SELECT config_json FROM site_config WHERE id = 1');
             
-            // Extract recipients from the 'site' object within config_json
-            const recipients = siteData.site?.notificationEmails || [];
+            if (configRows.length > 0) {
+              const fullState = JSON.parse(configRows[0].config_json);
+              // The Admin Panel saves the whole state, notification emails are under state.site
+              const recipients = fullState.site?.notificationEmails || [];
 
-            if (recipients.length > 0) {
-              console.log(`📧 Notification System: Found ${recipients.length} recipients: ${recipients.join(', ')}`);
-              await EmailService.notifyNewLead((req as any).body, recipients);
-            } else {
-              console.warn('⚠️ Notification System: NO RECIPIENTS FOUND in database config. Please log into Admin Panel > Site Tab and add your email to the "Lead Notifications" field.');
+              if (recipients.length > 0) {
+                console.log(`📧 Dispatching application alert to: ${recipients.join(', ')}`);
+                await EmailService.notifyNewLead((req as any).body, recipients);
+              } else {
+                console.warn('⚠️ No notification emails configured in Admin Panel > Site Tab.');
+              }
             }
-          } else {
-            console.warn('⚠️ Notification System: No site configuration found in database (site_config table is empty).');
+          } catch (err: any) {
+            console.error("❌ Email Dispatch Failed:", err.message);
           }
-        } catch (emailError: any) {
-          console.error("❌ Notification System Error:", emailError.message);
-        }
-      })();
+        })();
+      }
 
-      return sendResponse(res, 201, true, 'Your enquiry has been received.', { id: result.insertId });
+      return sendResponse(res, 201, true, 'Your application has been received.', { id: result.insertId });
     } catch (error) {
       next(error);
     }

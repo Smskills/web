@@ -72,15 +72,7 @@ const App: React.FC = () => {
             const parsed = JSON.parse(saved);
             finalData = {
               ...INITIAL_CONTENT,
-              ...parsed,
-              site: {
-                ...INITIAL_CONTENT.site,
-                ...parsed.site,
-                contact: {
-                  ...INITIAL_CONTENT.site.contact,
-                  ...(parsed.site?.contact || {})
-                }
-              }
+              ...parsed
             };
           } else {
             finalData = INITIAL_CONTENT;
@@ -94,15 +86,7 @@ const App: React.FC = () => {
            const parsed = JSON.parse(saved);
            setContent({
               ...INITIAL_CONTENT,
-              ...parsed,
-              site: {
-                ...INITIAL_CONTENT.site,
-                ...parsed.site,
-                contact: {
-                  ...INITIAL_CONTENT.site.contact,
-                  ...(parsed.site?.contact || {})
-                }
-              }
+              ...parsed
            });
         }
       } finally {
@@ -179,7 +163,7 @@ const App: React.FC = () => {
             <Routes>
               <Route path="/" element={<HomePage content={content} />} />
               <Route path="/about" element={<AboutPage content={content.about} siteName={content.site.name} />} />
-              <Route path="/courses" element={<CoursesPage coursesState={content.courses} isLoading={isInitializing} />} />
+              <Route path="/academics" element={<CoursesPage coursesState={content.courses} isLoading={isInitializing} />} />
               <Route path="/notices" element={<NoticesPage noticesState={content.notices} />} />
               <Route path="/gallery" element={<GalleryPage content={content} />} />
               <Route path="/faq" element={<FAQPage faqsState={content.faqs} contact={content.site.contact} />} />

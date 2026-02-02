@@ -27,6 +27,7 @@ export interface SiteConfig {
   tagline: string;
   logo: string;
   loginLabel?: string;
+  notificationEmails?: string[];
   admissionAlert?: {
     enabled: boolean;
     text: string;
@@ -36,7 +37,7 @@ export interface SiteConfig {
   };
   contact: {
     email: string;
-    phones: string[]; // Changed from phone: string to phones: string[]
+    phones: string[];
     address: string;
     mapUrl: string;
   };
@@ -168,6 +169,8 @@ export interface Course {
   id: string;
   name: string;
   duration: string;
+  academicLevel: 'UG Certificate' | 'UG Diploma' | 'UG Degree' | 'Master' | 'ITEP' | 'Short Term';
+  industry: string;
   certification?: string;
   mode: 'Online' | 'Offline' | 'Hybrid';
   description: string;
@@ -223,15 +226,55 @@ export interface PageMeta {
   tagline?: string;
 }
 
+export interface PlacementStat {
+  id: string;
+  label: string;
+  value: string;
+  icon: string;
+}
+
+export interface StudentReview {
+  id: string;
+  name: string;
+  course: string;
+  company: string;
+  companyIcon: string;
+  image: string;
+  text: string;
+  salaryIncrease: string;
+  role?: string;
+}
+
+export interface IndustryPartner {
+  id: string;
+  name: string;
+  icon: string;
+  image?: string;
+}
+
+export interface LegalSection {
+  id: string;
+  title: string;
+  content: string;
+}
+
+export interface CareerService {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  image?: string;
+}
+
 export interface Lead {
   id: string;
   fullName: string;
   email: string;
   phone: string;
   course: string;
-  message?: string;
+  message: string;
   source: 'contact' | 'enrollment';
-  status: 'New' | 'Contacted' | 'Enrolled' | 'Closed';
+  status: 'New' | 'Contacted' | 'Enrolled';
   createdAt: string;
   details?: Record<string, any>;
 }
@@ -256,7 +299,6 @@ export interface AppState {
     list: FAQItem[];
     pageMeta: PageMeta;
   };
-  leads?: Lead[];
   customPages: CustomPage[];
   galleryMetadata?: Record<string, string>;
   enrollmentForm: {
@@ -306,44 +348,5 @@ export interface AppState {
       subtitle: string;
     };
   };
-}
-
-export interface PlacementStat {
-  id: string;
-  label: string;
-  value: string;
-  icon: string;
-}
-
-export interface StudentReview {
-  id: string;
-  name: string;
-  course: string;
-  company: string;
-  companyIcon: string;
-  image: string;
-  text: string;
-  salaryIncrease: string;
-  role?: string;
-}
-
-export interface IndustryPartner {
-  id: string;
-  name: string;
-  icon: string;
-  image?: string;
-}
-
-export interface LegalSection {
-  id: string;
-  title: string;
-  content: string;
-}
-
-export interface CareerService {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-  image?: string;
+  leads?: Lead[];
 }
