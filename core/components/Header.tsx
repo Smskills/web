@@ -15,12 +15,17 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false }) => {
   const logoUrl = config.logo || "https://lwfiles.mycourse.app/62a6cd5-public/6efdd5e.png";
   const alert = config.admissionAlert || { enabled: false, text: '', subtext: '', linkText: '', linkPath: '/enroll' };
 
-  // Academics dropdown structure as requested
+  // Academics dropdown structure updated with requested sectors
   const academicsMenu = [
-    { label: "UG CERTIFICATE COURSE", level: "UG Certificate" },
-    { label: "UG DIPLOMA COURSE", level: "UG Diploma" },
-    { label: "UG DEGREE COURSE", level: "UG Degree" },
-    { label: "MASTER COURSE", level: "Master" }
+    { label: "Tourism & Hospitality" },
+    { label: "Retail Management" },
+    { label: "Healthcare" },
+    { label: "Apparel" },
+    { label: "Automotive" },
+    { label: "Telecom" },
+    { label: "IT/ITES" },
+    { label: "Banking & Finance" },
+    { label: "Beauty & Wellness" }
   ];
 
   const getCleanPath = (path: string) => {
@@ -92,18 +97,18 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false }) => {
                       <i className={`fa-solid fa-chevron-down text-[9px] transition-transform ${isAcademicsOpen ? 'rotate-180' : ''}`}></i>
                     </NavLink>
                     
-                    {/* DROP DOWN MENU */}
+                    {/* DROP DOWN MENU - 2 COLUMNS FOR ACCESSIBILITY */}
                     {isAcademicsOpen && (
-                      <div className="absolute top-full left-[-20px] pt-2 animate-fade-in-down z-[120] min-w-[260px]">
-                        <div className="bg-white shadow-2xl border-t-4 border-emerald-600 flex flex-col overflow-hidden rounded-b-xl">
+                      <div className="absolute top-full left-[-100px] pt-2 animate-fade-in-down z-[120] min-w-[500px]">
+                        <div className="bg-white shadow-2xl border-t-4 border-emerald-600 grid grid-cols-2 overflow-hidden rounded-b-xl">
                             {academicsMenu.map((menuItem, i) => (
                               <Link 
                                 key={i} 
-                                to={`/academics?level=${encodeURIComponent(menuItem.level)}`}
-                                className="px-6 py-4 text-[10px] font-black tracking-widest flex justify-between items-center cursor-pointer transition-all border-b border-slate-50 text-slate-600 hover:text-emerald-600 hover:bg-slate-50"
+                                to={`/academics?industry=${encodeURIComponent(menuItem.label)}`}
+                                className="px-6 py-4 text-[10px] font-black tracking-widest flex justify-between items-center cursor-pointer transition-all border-b border-r border-slate-50 text-slate-600 hover:text-emerald-600 hover:bg-slate-50"
                                 onClick={() => setIsAcademicsOpen(false)}
                               >
-                                {menuItem.label}
+                                {menuItem.label.toUpperCase()}
                                 <i className="fa-solid fa-chevron-right text-[8px] opacity-40"></i>
                               </Link>
                             ))}

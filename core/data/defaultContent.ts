@@ -2,11 +2,15 @@
 import { AppState, Course } from '../types';
 
 const industries = [
+  "Tourism & Hospitality",
   "Retail Management",
-  "Tourism and Hospitality",
   "Healthcare",
-  "Information Technology",
-  "Banking and Finance"
+  "Apparel",
+  "Automotive",
+  "Telecom",
+  "IT/ITES",
+  "Banking & Finance",
+  "Beauty & Wellness"
 ];
 
 const levels: Array<Course['academicLevel']> = ["UG Certificate", "UG Diploma", "UG Degree", "Master"];
