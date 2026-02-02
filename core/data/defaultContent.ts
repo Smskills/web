@@ -87,7 +87,7 @@ export const INITIAL_CONTENT: AppState = {
   },
   theme: {
     primary: "#059669",
-    secondary: "#1e1b4b",
+    secondary: "#0f172a",
     accent: "#10b981",
     radius: "large"
   },
@@ -321,6 +321,5 @@ export const INITIAL_CONTENT: AppState = {
       title: "Ready for Launch?",
       subtitle: "Schedule a session."
     }
-  },
-  leads: []
+  }
 };
