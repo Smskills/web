@@ -28,7 +28,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
   // Fix: Access properties from the properly typed state object
   const pageMeta = state.pageMeta || { title: 'Technical Programs', subtitle: '', tagline: 'PROFESSIONAL CURRICULA' };
   
-  const academicLevels = ["All", "UG Certificate", "UG Diploma", "UG Degree", "Master"];
+  const academicLevels = ["All", "Certificate", "UG Certificate", "UG Diploma", "UG Degree", "Master"];
   
   // memoized industries list for performance and stability
   // Fix: Explicitly type industries as string[] and the Set as string to resolve unknown type errors in the map function

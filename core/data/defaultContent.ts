@@ -13,9 +13,10 @@ const industries = [
   "Beauty & Wellness"
 ];
 
-const levels: Array<Course['academicLevel']> = ["UG Certificate", "UG Diploma", "UG Degree", "Master"];
+const levels: Array<Course['academicLevel']> = ["Certificate", "UG Certificate", "UG Diploma", "UG Degree", "Master"];
 
 const levelDisplayNames: Record<string, string> = {
+  "Certificate": "Certificate",
   "UG Certificate": "U G Certificate",
   "UG Diploma": "U G Diploma",
   "UG Degree": "U G Degree",

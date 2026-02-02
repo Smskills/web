@@ -15,8 +15,9 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false }) => {
   const logoUrl = config.logo || "https://lwfiles.mycourse.app/62a6cd5-public/6efdd5e.png";
   const alert = config.admissionAlert || { enabled: false, text: '', subtext: '', linkText: '', linkPath: '/enroll' };
 
-  // Academics dropdown structure strictly showing the requested academic levels
+  // Academics dropdown structure updated with requested academic levels
   const academicsMenu = [
+    { label: "Certificate Course", level: "Certificate" },
     { label: "UG Certificate Course", level: "UG Certificate" },
     { label: "UG Diploma Course", level: "UG Diploma" },
     { label: "UG Degree Course", level: "UG Degree" },
