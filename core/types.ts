@@ -50,6 +50,8 @@ export interface SiteConfig {
     reachUsLabel: string;
     bottomText: string;
   };
+  // Fix: Added notificationEmails property to SiteConfig to match its usage in SiteTab.tsx and leads.controller.ts
+  notificationEmails?: string[];
 }
 
 export interface HomeConfig {

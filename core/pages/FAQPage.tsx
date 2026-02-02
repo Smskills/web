@@ -42,7 +42,8 @@ const FAQPage: React.FC<FAQPageProps> = ({ faqsState, contact }) => {
   });
 
   const categories = Array.from(new Set(list.map(f => f.category || 'General')));
-  const sanitizedPhone = (contact.phone || '').replace(/[^\d+]/g, '');
+  // Fix: Update sanitizedPhone to use contact.phones[0] instead of contact.phone as the latter does not exist on the contact object
+  const sanitizedPhone = (contact.phones?.[0] || '').replace(/[^\d+]/g, '');
 
   return (
     <div className="min-h-screen bg-slate-50">

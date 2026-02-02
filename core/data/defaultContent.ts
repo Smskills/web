@@ -2,18 +2,21 @@
 import { AppState, Course } from '../types';
 
 const industries = [
-  "Tourism & Hospitality",
   "Retail Management",
+  "Tourism and Hospitality",
   "Healthcare",
-  "Apparel",
-  "Automotive",
-  "Telecom",
-  "IT / ITES",
-  "Banking & Finance",
-  "Beauty & Wellness"
+  "Information Technology",
+  "Banking and Finance"
 ];
 
 const levels: Array<Course['academicLevel']> = ["UG Certificate", "UG Diploma", "UG Degree", "Master"];
+
+const levelDisplayNames: Record<string, string> = {
+  "UG Certificate": "U G Certificate",
+  "UG Diploma": "U G Diploma",
+  "UG Degree": "U G Degree",
+  "Master": "Master"
+};
 
 const generatedCourses: Course[] = [];
 let idCounter = 1;
@@ -22,18 +25,18 @@ levels.forEach(level => {
   industries.forEach(industry => {
     generatedCourses.push({
       id: (idCounter++).toString(),
-      name: `${industry} ${level}`,
+      name: `${levelDisplayNames[level]} in ${industry}`,
       industry,
       academicLevel: level,
-      duration: level.includes('Degree') ? "3 Years" : level.includes('Master') ? "2 Years" : "1 Year",
+      duration: level.includes('Degree') ? "3 YEARS" : level.includes('Master') ? "2 YEARS" : "1 YEAR",
       mode: 'Offline',
       status: 'Active',
       image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800&industry=${industry.replace(/\s+/g, '')}`,
-      description: `Comprehensive training program in ${industry} at the ${level} level, designed for industry readiness.`,
-      certification: "SMS National Vocational Board",
+      description: `Professional level training in ${industry} at the ${level} level. This curriculum is designed to meet international industry standards for vocational excellence.`,
+      certification: "SMS National Board of Vocational Training",
       price: level.includes('Degree') ? "Rs. 45,000 / Sem" : "Rs. 25,000 / Year",
-      eligibility: "12th Grade pass from a recognized board.",
-      benefits: "• Industry Certified Mentors\n• 100% Placement Assistance\n• Practical Lab Access"
+      eligibility: "12th Standard Pass from a recognized board.",
+      benefits: "• Industry Certified Mentors\n• 100% Placement Assistance\n• Modern Lab Facilities"
     });
   });
 });
@@ -41,25 +44,25 @@ levels.forEach(level => {
 export const INITIAL_CONTENT: AppState = {
   site: {
     name: "S M Skills",
-    tagline: "Academic Training Institute • ESTD 2024",
-    logo: "https://ibb.co/7J6NSF5C", 
-    loginLabel: "Login",
+    tagline: "TRAINING INSTITUTE • ESTD 2024",
+    logo: "https://lwfiles.mycourse.app/62a6cd5-public/6efdd5e.png", 
+    loginLabel: "DASHBOARD",
     admissionAlert: {
       enabled: true,
-      text: "2024 Admissions Now Open:",
-      subtext: "Secure your future with our vocational tracks.",
-      linkText: "Apply Today",
+      text: "2024 ADMISSIONS NOW OPEN:",
+      subtext: "SECURE YOUR FUTURE WITH OUR VOCATIONAL TRACKS.",
+      linkText: "APPLY TODAY",
       linkPath: "/enroll"
     },
     contact: {
-      email: "admissions@sm-skills.edu",
-      phones: ["+1 (555) 2024-SMS"],
-      address: "Campus A, Professional Avenue, Education District",
-      mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.835434509374!2d144.9537353153166!3d-37.81627977975171!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad642af0f11fd81%3A0x5045675218ce6e0!2zTWVsYm91cm5lIFZJQywgQXVzdHJhbGlh!5e0!3m2!1sen!2sus!4v1634567890123"
+      email: "info@smskills.in",
+      phones: ["+19 (600) 2313158"],
+      address: "J M Road, Christianpatty, Nagaon",
+      mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3579.544793616803!2d92.68652037525492!3d26.341258676993183!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x37452d3a33333333%3A0x3333333333333333!2sNagaon%2C%20Assam!5e0!3m2!1sen!2sin!4v1700000000000"
     },
     social: [
       { id: 's1', platform: 'Facebook', url: 'https://facebook.com', icon: 'fa-facebook-f' },
-      { id: 's2', platform: 'LinkedIn', url: 'https://linkedin.com', icon: 'fa-linkedin-in' },
+      { id: 's2', platform: 'YouTube', url: 'https://youtube.com', icon: 'fa-youtube' },
       { id: 's3', platform: 'Instagram', url: 'https://instagram.com', icon: 'fa-instagram' }
     ],
     navigation: [
@@ -73,9 +76,9 @@ export const INITIAL_CONTENT: AppState = {
     ],
     footer: {
       brandDescription: "S M Skills is a premier center for technical education, providing industry-aligned training designed for immediate employability.",
-      quickLinksLabel: "Navigation",
-      supportLinksLabel: "Resources",
-      reachUsLabel: "Connect",
+      quickLinksLabel: "NAVIGATION",
+      supportLinksLabel: "RESOURCES",
+      reachUsLabel: "CONNECT",
       bottomText: "S M Skills • ESTD 2024",
       supportLinks: [
         { label: "Privacy Policy", path: "/privacy-policy" },
@@ -87,7 +90,7 @@ export const INITIAL_CONTENT: AppState = {
   },
   theme: {
     primary: "#059669",
-    secondary: "#0f172a",
+    secondary: "#1e1b4b",
     accent: "#10b981",
     radius: "large"
   },
@@ -120,7 +123,7 @@ export const INITIAL_CONTENT: AppState = {
     sectionLabels: {
       noticesTitle: "Institute Feed",
       noticesSubtitle: "Recent announcements regarding batches, events, and scholarships.",
-      coursesTitle: "Academic Programs",
+      coursesTitle: "Technical Programs",
       coursesSubtitle: "Explore our diverse range of UG, PG, and Specialized vocational tracks.",
       galleryTitle: "Campus Life",
       gallerySubtitle: "Explore our facilities, classroom interactions, and achievement galleries.",
@@ -194,13 +197,13 @@ export const INITIAL_CONTENT: AppState = {
   },
   about: {
     beginning: {
-      label: "Chapter 01 — Our Genesis",
+      label: "CHAPTER 01 — OUR GENESIS",
       title: "Our Foundations",
       story: "Founded in 2024, S M Skills was born out of a critical observation: the widening gap between traditional academic knowledge and the rapidly evolving demands of the modern workforce. We set out to build an institution that treats education not as a gateway to professional mastery.",
       image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=1200"
     },
     learning: {
-      label: "Chapter 02 — Methodology",
+      label: "CHAPTER 02 — METHODOLOGY",
       title: "Learning by Doing",
       description: "We abandon the 'lecture-only' model. Here, learning happens through rigorous project-based simulations, high-discipline workshops, and constant mentorship. Our students don't just study architecture; they build it.",
       image1: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=800",
@@ -209,7 +212,7 @@ export const INITIAL_CONTENT: AppState = {
       caption2: "Practical labs led by industry veterans."
     },
     faculty: {
-      label: "Chapter 03 — The Guardians",
+      label: "CHAPTER 03 — THE GUARDIANS",
       title: "Taught by Practitioners",
       description: "Our mentors aren't just academics; they are industry veterans who have led teams at global tech firms. They bring real-world constraints and standards into every classroom interaction.",
       members: [
@@ -217,16 +220,16 @@ export const INITIAL_CONTENT: AppState = {
       ]
     },
     vision: {
-      label: "Chapter 04 — Core DNA",
+      label: "CHAPTER 04 — CORE DNA",
       title: "Vision & Values",
       content: "We envision a world where every learner is equipped with the precision and responsibility required to lead industries. Our values center on consistency, relentless skill development, and institutional integrity.",
       values: ["Relentless Practicality", "Absolute Transparency", "Industry Alignment", "Student Ownership"],
       image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200"
     },
     achievements: {
-      label: "Chapter 05 — Proof of Excellence",
+      label: "CHAPTER 05 — PROOF OF EXCELLENCE",
       title: "Milestones Achieved",
-      ctaLabel: "Join the Next Batch",
+      ctaLabel: "JOIN THE NEXT BATCH",
       image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1200",
       stats: [
         { id: "a1", label: "Years of Heritage", value: "ESTD 2024" },
@@ -238,7 +241,7 @@ export const INITIAL_CONTENT: AppState = {
   },
   courses: {
     list: generatedCourses,
-    pageMeta: { title: "Academic Programs", subtitle: "Browse through our industry-verified technical levels optimized for global employability.", tagline: "Institutional Academics" }
+    pageMeta: { title: "Technical Programs", subtitle: "Browse through our industry-verified technical tracks optimized for global employability.", tagline: "PROFESSIONAL CURRICULA" }
   },
   notices: {
     list: [
@@ -251,21 +254,21 @@ export const INITIAL_CONTENT: AppState = {
         category: 'New'
       }
     ],
-    pageMeta: { title: "Campus Announcements", subtitle: "Stay informed about batch timings, events, and scholarships.", tagline: "Official Feed" }
+    pageMeta: { title: "Campus Announcements", subtitle: "Stay informed about batch timings, events, and scholarships.", tagline: "OFFICIAL FEED" }
   },
   gallery: {
     list: [],
-    pageMeta: { title: "Our Campus Life", subtitle: "Explore our facilities, classroom interactions, and achievement galleries.", tagline: "Visual Archives" }
+    pageMeta: { title: "Our Campus Life", subtitle: "Explore our facilities, classroom interactions, and achievement galleries.", tagline: "VISUAL ARCHIVES" }
   },
   faqs: {
     list: [
       { id: "q1", question: "What is the admission criteria?", answer: "We look for a basic technical aptitude and a passion for learning. Previous experience is not mandatory for foundation tracks.", category: "Admissions" },
       { id: "q2", question: "Do you provide job assistance?", answer: "Yes, our Placement Cell works with 200+ global partners to ensure high-quality career launches for our graduates.", category: "Placements" }
     ],
-    pageMeta: { title: "Help Center", subtitle: "Find answers to common questions about enrollment, curriculum, and placement services.", tagline: "Institutional Assistance" }
+    pageMeta: { title: "Help Center", subtitle: "Find answers to common questions about enrollment, curriculum, and placement services.", tagline: "INSTITUTIONAL ASSISTANCE" }
   },
   placements: {
-    pageMeta: { title: "Placements Reviews", subtitle: "Celebrating S M Skills graduates who have joined industry-leading organizations.", tagline: "Proven Outcomes" },
+    pageMeta: { title: "Placements Reviews", subtitle: "Celebrating S M Skills graduates who have joined industry-leading organizations.", tagline: "PROVEN OUTCOMES" },
     pageDescription: "S M Skills graduates are consistently hired by the world's most innovative companies.",
     wallTitle: "Wall of Success",
     stats: [
@@ -308,7 +311,7 @@ export const INITIAL_CONTENT: AppState = {
     }
   },
   career: {
-    pageMeta: { title: "Career Lab", subtitle: "Interview prep with industry vets.", tagline: "Success Roadmap" },
+    pageMeta: { title: "Career Lab", subtitle: "Interview prep with industry vets.", tagline: "SUCCESS ROADMAP" },
     hero: {
       title: "Career Lab",
       subtitle: "Interview prep with industry vets.",
@@ -321,5 +324,6 @@ export const INITIAL_CONTENT: AppState = {
       title: "Ready for Launch?",
       subtitle: "Schedule a session."
     }
-  }
+  },
+  leads: []
 };

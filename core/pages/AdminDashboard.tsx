@@ -262,7 +262,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
             updateCourseItem={(id, f, v) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: prev.courses.list.map(c => c.id === id ? { ...c, [f]: v } : c) } })); trackChange(); }}
             updatePageMeta={(f, v) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, pageMeta: { ...prev.courses.pageMeta, [f]: v } } })); trackChange(); }}
             onCourseImageClick={(id) => { activeCourseId.current = id; triggerGenericUpload('courses.list'); }}
-            addItem={() => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: [{ id: Date.now().toString(), name: 'New Program', duration: '6 Months', mode: 'Offline', description: '', status: 'Active', image: 'https://picsum.photos/800/600', price: 'Rs. 0', certification: 'SMS Technical Diploma' }, ...prev.courses.list] } })); trackChange(); }}
+            // Fix: added missing 'academicLevel' and 'industry' properties to the new course object in addItem to correctly match the Course interface and resolve type mismatch error
+            addItem={() => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: [{ id: Date.now().toString(), name: 'New Program', duration: '6 Months', mode: 'Offline', academicLevel: 'UG Diploma', industry: 'General', description: '', status: 'Active', image: 'https://picsum.photos/800/600', price: 'Rs. 0', certification: 'SMS Technical Diploma' }, ...prev.courses.list] } })); trackChange(); }}
             deleteItem={(id) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: prev.courses.list.filter(c => c.id !== id) } })); trackChange(); }}
           />}
 

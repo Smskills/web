@@ -25,7 +25,7 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
       fields: [] 
     }, 
     courses, 
-    site = { contact: { phone: 'N/A' } } 
+    site = { contact: { phones: [] } } 
   } = content || {};
 
   useEffect(() => {
@@ -168,7 +168,8 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
                   <i className="fa-solid fa-headset"></i>
                 </div>
                 <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-500 mb-2">Help Desk</p>
-                <p className="text-lg font-black text-white group-hover:text-emerald-400 transition-colors tracking-tight">{site?.contact?.phone || 'N/A'}</p>
+                {/* Fix: use site?.contact?.phones?.[0] instead of site?.contact?.phone to correctly display the contact number as phone is not a property of the contact object */}
+                <p className="text-lg font-black text-white group-hover:text-emerald-400 transition-colors tracking-tight">{site?.contact?.phones?.[0] || 'N/A'}</p>
               </div>
           </div>
 

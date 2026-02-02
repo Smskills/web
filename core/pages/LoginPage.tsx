@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { SiteConfig } from '../types';
@@ -90,7 +89,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ siteConfig }) => {
               <div className="space-y-2">
                 <div className="flex justify-between items-center ml-1">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Password</label>
-                  <Link to="/forgot-password" size="sm" className="text-[9px] font-black text-emerald-600 hover:text-emerald-700 uppercase tracking-widest transition-colors">
+                  {/* Fix: Removed unsupported 'size' prop from Link component */}
+                  <Link to="/forgot-password" className="text-[9px] font-black text-emerald-600 hover:text-emerald-700 uppercase tracking-widest transition-colors">
                     Forgot Password?
                   </Link>
                 </div>
