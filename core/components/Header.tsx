@@ -16,18 +16,30 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false }) => {
   const alert = config.admissionAlert || { enabled: false, text: '', subtext: '', linkText: '', linkPath: '/enroll' };
 
   const academicsMenu = {
-    categories: ["COURSES", "DEPARTMENTS", "FACULTIES", "STUDY CENTER", "DISTANCE LEARNING CENTER", "TEACHING PLAN", "CLASS ROUTINE", "ACADEMIC CALENDAR", "PROGRAMME OUTCOME"],
-    courses: ["UG CERTIFICATE COURSE", "UG DIPLOMA COURSE", "UG DEGREE COURSE", "POST GRADUATE COURSE", "UGC SPONSORED COURSE", "ADDON COURSE", "ITEP"]
-  };
-
-  const isInternalLink = (path: string) => {
-    if (!path) return false;
-    return path.startsWith('#') || path.startsWith('/') || path.includes(window.location.origin);
+    categories: [
+      { label: "COURSES", hasArrow: true },
+      { label: "DEPARTMENTS", hasArrow: true },
+      { label: "FACULTIES", hasArrow: false },
+      { label: "STUDY CENTER", hasArrow: false },
+      { label: "DISTANCE LEARNING CENTER", hasArrow: false },
+      { label: "TEACHING PLAN", hasArrow: false },
+      { label: "CLASS ROUTINE", hasArrow: false },
+      { label: "ACADEMIC CALENDAR", hasArrow: false },
+      { label: "PROGRAMME OUTCOME", hasArrow: false }
+    ],
+    courses: [
+      "UG CERTIFICATE COURSE",
+      "UG DIPLOMA COURSE",
+      "UG DEGREE COURSE",
+      "POST GRADUATE COURSE",
+      "UGC SPONSORED COURSE",
+      "ADDON COURSE",
+      "ITEP"
+    ]
   };
 
   const getCleanPath = (path: string) => {
     if (!path) return '/';
-    // Robust cleanup to prevent /courses vs /academics mismatch errors
     let clean = path;
     if (clean.startsWith('#/')) clean = clean.substring(1);
     if (clean.startsWith('#') && !clean.startsWith('#/')) clean = `/${clean.substring(1)}`;
@@ -36,46 +48,48 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false }) => {
   };
 
   const navLinkClasses = ({ isActive }: { isActive: boolean }) => 
-    `relative text-[11px] font-black uppercase tracking-widest transition-all duration-300 py-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-lg ${
+    `relative text-[12px] font-extrabold uppercase tracking-wider transition-all duration-300 py-2 px-1 flex items-center gap-1 group focus-visible:outline-none ${
       isActive 
-        ? 'text-emerald-600' 
-        : 'text-slate-600 hover:text-emerald-600'
+        ? 'text-yellow-400' 
+        : 'text-white hover:text-yellow-400'
     }`;
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-[100] transition-all duration-300 shadow-sm font-sans">
+    <header className="fixed top-0 left-0 right-0 z-[100] transition-all duration-300 font-sans">
+      {/* Top Admission Bar */}
       {alert.enabled && (
-        <div className="bg-slate-900 text-white py-2 px-4 border-b border-white/5 h-8 md:h-10 flex items-center">
-          <div className="container mx-auto flex justify-between items-center text-[9px] font-black uppercase tracking-[0.2em]">
+        <div className="bg-slate-950 text-white py-2 px-4 border-b border-white/5 h-10 flex items-center">
+          <div className="container mx-auto flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
             <div className="flex items-center gap-3">
-               <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
+               <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
                <span className="text-emerald-400">{alert.text}</span>
-               <span className="hidden md:inline text-slate-300">{alert.subtext}</span>
+               <span className="hidden md:inline text-slate-400">{alert.subtext}</span>
             </div>
-            <Link to={alert.linkPath} className="text-emerald-400 hover:text-white transition-colors underline decoration-1 underline-offset-4 flex items-center gap-2">
-              {alert.linkText} <i className="fa-solid fa-chevron-right text-[7px]"></i>
+            <Link to={alert.linkPath} className="text-yellow-500 hover:text-white transition-colors flex items-center gap-2">
+              {alert.linkText} <i className="fa-solid fa-chevron-right text-[8px]"></i>
             </Link>
           </div>
         </div>
       )}
 
-      <div className="bg-white/90 backdrop-blur-xl border-b border-slate-200/50 h-24 md:h-32 flex items-center">
+      {/* Main Navigation Bar - Styled like the screenshot's dark header */}
+      <div className="bg-[#1e1b4b] border-b border-white/5 h-20 md:h-24 flex items-center shadow-xl">
         <div className="container mx-auto px-4 h-full flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3 md:gap-5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-xl">
-            <div className="w-16 h-16 md:w-40 md:h-28 flex items-center justify-center transition-all group-hover:scale-105">
+          <Link to="/" className="flex items-center gap-4 group">
+            <div className="w-12 h-12 md:w-16 md:h-16 bg-white rounded-lg p-1 transition-transform group-hover:scale-105">
               <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" />
             </div>
             <div className="flex flex-col leading-none">
-              <span className="font-black text-xl md:text-3xl text-emerald-600 tracking-tighter uppercase whitespace-nowrap">
+              <span className="font-black text-xl md:text-2xl text-white tracking-tighter uppercase whitespace-nowrap">
                 {config.name}
               </span>
-              <span className="text-[8px] md:text-xs text-emerald-600 font-bold uppercase tracking-[0.2em] md:tracking-[0.3em] mt-1.5 opacity-90">
+              <span className="text-[8px] md:text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">
                 {config.tagline}
               </span>
             </div>
           </Link>
 
-          <nav className="hidden lg:flex items-center space-x-8" aria-label="Main Navigation">
+          <nav className="hidden lg:flex items-center space-x-8">
             {config.navigation.map((item) => {
               const isAcademics = item.label.toUpperCase() === 'ACADEMICS';
               const cleanPath = getCleanPath(item.path);
@@ -84,34 +98,40 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false }) => {
                 return (
                   <div 
                     key={item.label}
-                    className="relative"
+                    className="relative h-full flex items-center"
                     onMouseEnter={() => setIsAcademicsOpen(true)}
                     onMouseLeave={() => setIsAcademicsOpen(false)}
                   >
                     <NavLink to={cleanPath} className={navLinkClasses}>
-                      {item.label} <i className={`fa-solid fa-chevron-down ml-1 text-[8px] transition-transform ${isAcademicsOpen ? 'rotate-180' : ''}`}></i>
-                      <span className={`absolute bottom-0 left-0 w-full h-0.5 bg-emerald-600 transition-transform duration-300 origin-left scale-x-0 group-hover:scale-x-100 ${location.pathname.includes('/academics') ? 'scale-x-100' : ''}`}></span>
+                      {item.label} 
+                      <i className={`fa-solid fa-chevron-down text-[10px] transition-transform ${isAcademicsOpen ? 'rotate-180' : ''}`}></i>
                     </NavLink>
                     
-                    {/* MEGA MENU - Professional dropdown structure */}
+                    {/* MEGA MENU - Matching Screenshot Appearance */}
                     {isAcademicsOpen && (
-                      <div className="absolute top-full -left-20 pt-6 animate-fade-in z-[120]">
-                        <div className="bg-white shadow-4xl border border-slate-100 flex overflow-hidden min-w-[550px] rounded-3xl">
-                          {/* Left Column: Categories */}
-                          <div className="w-1/2 bg-slate-50 py-6 border-r border-slate-200">
+                      <div className="absolute top-full -left-10 pt-0 animate-fade-in-down z-[120] min-w-[650px]">
+                        <div className="bg-white shadow-2xl border-t-[5px] border-yellow-500 flex overflow-hidden">
+                          {/* Sidebar Column */}
+                          <div className="w-[280px] bg-slate-50 border-r border-slate-200">
                             {academicsMenu.categories.map((cat, i) => (
-                              <div key={i} className={`px-8 py-3 text-[11px] font-black tracking-widest cursor-pointer transition-colors ${i === 0 ? 'text-emerald-600 bg-emerald-50/50' : 'text-slate-600 hover:text-emerald-600 hover:bg-emerald-50'}`}>
-                                {cat}
+                              <div 
+                                key={i} 
+                                className={`px-6 py-4 text-[11px] font-extrabold tracking-widest flex justify-between items-center cursor-pointer transition-all border-b border-slate-100 ${
+                                  i === 0 ? 'text-[#1e1b4b] bg-white' : 'text-slate-600 hover:text-[#1e1b4b] hover:bg-white'
+                                }`}
+                              >
+                                {cat.label}
+                                {cat.hasArrow && <i className="fa-solid fa-chevron-right text-[10px] opacity-40"></i>}
                               </div>
                             ))}
                           </div>
-                          {/* Right Column: Dynamic Course Types */}
-                          <div className="w-1/2 py-6">
+                          {/* Content Column */}
+                          <div className="flex-grow py-2 bg-white">
                              {academicsMenu.courses.map((course, i) => (
                                <Link 
                                  key={i} 
                                  to={`/academics?level=${encodeURIComponent(course.replace(' COURSE', ''))}`}
-                                 className="block px-10 py-4 text-[11px] font-black text-slate-800 hover:text-emerald-600 tracking-widest uppercase transition-colors"
+                                 className="block px-8 py-3.5 text-[11px] font-black text-slate-800 hover:text-yellow-600 hover:bg-slate-50 tracking-wider uppercase transition-colors"
                                  onClick={() => setIsAcademicsOpen(false)}
                                >
                                  {course}
@@ -128,39 +148,48 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false }) => {
               return (
                 <NavLink key={item.label} to={cleanPath} className={navLinkClasses} end={cleanPath === '/'}>
                   {item.label}
-                  <span className={`absolute bottom-0 left-0 w-full h-0.5 bg-emerald-600 transition-transform duration-300 origin-left scale-x-0 group-hover:scale-x-100 ${location.pathname === cleanPath ? 'scale-x-100' : ''}`}></span>
                 </NavLink>
               );
             })}
             
-            <Link to="/enroll" className="px-6 py-3 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg hover:bg-slate-900 transition-all">
+            <Link to="/enroll" className="px-6 py-3 bg-yellow-500 text-slate-950 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all shadow-lg">
               Enroll Now
             </Link>
 
-            <Link to={isAuthenticated ? "/admin" : "/login"} className="px-6 py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all">
-              <i className={`fa-solid ${isAuthenticated ? 'fa-gauge-high' : 'fa-lock'} mr-2`}></i>
-              {isAuthenticated ? "Dashboard" : "Login"}
+            <Link to={isAuthenticated ? "/admin" : "/login"} className="text-white hover:text-yellow-400 transition-colors">
+               <i className={`fa-solid ${isAuthenticated ? 'fa-gauge-high' : 'fa-lock'} text-lg`}></i>
             </Link>
           </nav>
 
-          <button className="lg:hidden w-12 h-12 flex flex-col items-center justify-center text-slate-900 bg-slate-50 border border-slate-200 rounded-xl" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          <button className="lg:hidden w-10 h-10 flex items-center justify-center text-white bg-white/10 rounded-lg" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             <i className={`fa-solid ${isMenuOpen ? 'fa-xmark' : 'fa-bars'} text-xl`}></i>
           </button>
         </div>
       </div>
 
+      {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="lg:hidden fixed inset-x-0 top-24 md:top-32 bg-white border-t border-slate-100 shadow-3xl z-[90] overflow-y-auto max-h-[calc(100vh-8rem)]">
-          <div className="flex flex-col p-8 space-y-4">
+        <div className="lg:hidden fixed inset-x-0 top-20 md:top-24 bg-[#1e1b4b] shadow-2xl z-[90] overflow-y-auto max-h-[calc(100vh-6rem)] border-t border-white/5">
+          <div className="flex flex-col p-6 space-y-2">
             {config.navigation.map((item) => (
-              <NavLink key={item.label} to={getCleanPath(item.path)} className="font-black text-lg uppercase tracking-widest px-6 py-5 rounded-2xl hover:bg-emerald-50 text-slate-900" onClick={() => setIsMenuOpen(false)}>
+              <NavLink key={item.label} to={getCleanPath(item.path)} className="font-bold text-white text-base uppercase tracking-widest px-4 py-4 rounded-xl hover:bg-white/5" onClick={() => setIsMenuOpen(false)}>
                 {item.label}
               </NavLink>
             ))}
-            <Link to="/enroll" className="bg-emerald-600 text-white font-black py-6 rounded-3xl text-center uppercase tracking-widest text-[11px]" onClick={() => setIsMenuOpen(false)}>Start Application</Link>
+            <Link to="/enroll" className="bg-yellow-500 text-slate-950 font-black py-5 rounded-xl text-center uppercase tracking-widest text-[11px] mt-4" onClick={() => setIsMenuOpen(false)}>Start Application</Link>
           </div>
         </div>
       )}
+      
+      <style>{`
+        @keyframes fadeInDown {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-down {
+          animation: fadeInDown 0.3s ease-out forwards;
+        }
+      `}</style>
     </header>
   );
 };
