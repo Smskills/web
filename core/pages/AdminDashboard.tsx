@@ -167,11 +167,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
     genericUploadRef.current?.click();
   };
 
+  // Sticky offset calculation (Header height + Alert height)
+  const stickyTopClass = content.site.admissionAlert?.enabled 
+    ? "top-[8.5rem]" // 136px 
+    : "top-24 md:top-32"; // 96px or 128px
+
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 pb-20 font-sans">
       <input type="file" ref={genericUploadRef} className="hidden" accept="image/*" onChange={handleGenericUpload} />
 
-      <div className="bg-slate-800 border-b border-slate-700 p-6 sticky top-36 md:top-[11.5rem] z-[80] shadow-2xl">
+      {/* FIXED OFFSET FOR ADMIN HEADER */}
+      <div className={`bg-slate-800 border-b border-slate-700 p-6 sticky ${stickyTopClass} z-[80] shadow-2xl transition-all duration-300`}>
         <div className="container mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <h1 className="text-2xl font-black uppercase tracking-tight">
@@ -180,21 +186,22 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
             {statusMsg && <span className="text-emerald-400 text-[10px] font-black bg-emerald-500/10 px-3 py-1 rounded-full uppercase tracking-widest">{statusMsg}</span>}
           </div>
           <div className="flex items-center gap-2">
-              <button onClick={handleDiscard} className="px-5 py-2 text-slate-400 hover:text-white text-xs font-black transition-all border border-slate-700 rounded-lg">DISCARD</button>
-              <button onClick={handleSave} className={`px-8 py-2 rounded-lg text-xs font-black transition-all active:scale-95 shadow-lg ${hasUnsavedChanges ? 'bg-emerald-600 hover:bg-emerald-500 text-white animate-pulse shadow-emerald-500/20' : 'bg-slate-700 text-slate-300 cursor-default'}`}>SAVE DATABASE</button>
+              <button onClick={handleDiscard} className="px-5 py-2 text-slate-400 hover:text-white text-xs font-black transition-all border border-slate-700 rounded-lg uppercase tracking-widest">Discard</button>
+              <button onClick={handleSave} className={`px-8 py-2 rounded-lg text-xs font-black transition-all active:scale-95 shadow-lg uppercase tracking-widest ${hasUnsavedChanges ? 'bg-emerald-600 hover:bg-emerald-500 text-white animate-pulse shadow-emerald-500/20' : 'bg-slate-700 text-slate-300 cursor-default'}`}>Save Database</button>
               <div className="w-px h-8 bg-slate-700 mx-2"></div>
-              <button onClick={handleLogout} className="px-4 py-2 text-slate-400 hover:text-red-500 text-xs font-black transition-all flex items-center gap-2 group">
-                <i className="fa-solid fa-power-off group-hover:scale-110 transition-transform"></i> LOGOUT
+              <button onClick={handleLogout} className="px-4 py-2 text-slate-400 hover:text-red-500 text-xs font-black transition-all flex items-center gap-2 group uppercase tracking-widest">
+                <i className="fa-solid fa-power-off group-hover:scale-110 transition-transform"></i> Logout
               </button>
           </div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 mt-8 flex flex-col md:flex-row gap-8">
-        <div className="w-full md:w-64 space-y-2 shrink-0">
+        {/* STICKY SIDEBAR TO PREVENT HALF-SHOWING CLIPPING */}
+        <div className={`w-full md:w-64 space-y-2 shrink-0 md:sticky ${stickyTopClass} md:pt-6 h-fit z-50`}>
           <button
               onClick={() => setActiveTab('leads')}
-              className={`w-full text-left px-5 py-4 rounded-2xl font-black transition-all capitalize flex items-center gap-3 border ${activeTab === 'leads' ? 'bg-emerald-600 border-emerald-500 text-white shadow-xl' : 'text-emerald-500/70 bg-emerald-500/5 border-emerald-500/10 hover:bg-emerald-500/10'}`}
+              className={`w-full text-left px-5 py-4 rounded-2xl font-black transition-all capitalize flex items-center gap-3 border shadow-2xl ${activeTab === 'leads' ? 'bg-emerald-600 border-emerald-500 text-white translate-x-1' : 'text-emerald-500 bg-emerald-500/5 border-emerald-500/10 hover:bg-emerald-500/10'}`}
             >
               <i className="fa-solid fa-user-graduate"></i>
               Student Leads
@@ -203,19 +210,21 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
           
           <div className="h-px bg-slate-700/50 my-4"></div>
 
-          {(['site', 'home', 'pages', 'about', 'courses', 'notices', 'gallery', 'faq', 'form', 'contact', 'footer', 'placements', 'legal', 'career'] as const).map(tab => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`w-full text-left px-5 py-4 rounded-2xl font-black transition-all capitalize flex items-center gap-3 border ${activeTab === tab ? 'bg-emerald-600 border-emerald-500 text-white shadow-xl' : 'text-slate-500 border-transparent hover:bg-slate-800'}`}
-            >
-              <i className={`fa-solid fa-${tab === 'site' ? 'globe' : tab === 'home' ? 'house' : tab === 'pages' ? 'file-lines' : tab === 'about' ? 'circle-info' : tab === 'courses' ? 'graduation-cap' : tab === 'notices' ? 'bullhorn' : tab === 'gallery' ? 'images' : tab === 'faq' ? 'circle-question' : tab === 'contact' ? 'address-book' : tab === 'footer' ? 'shoe-prints' : tab === 'placements' ? 'briefcase' : tab === 'career' ? 'user-graduate' : tab === 'legal' ? 'scale-balanced' : 'wpforms'}`}></i>
-              {tab === 'form' ? 'Enroll Page' : tab}
-            </button>
-          ))}
+          <div className="space-y-1.5 overflow-y-auto max-h-[60vh] custom-scrollbar pr-1">
+            {(['site', 'home', 'pages', 'about', 'courses', 'notices', 'gallery', 'faq', 'form', 'contact', 'footer', 'placements', 'legal', 'career'] as const).map(tab => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`w-full text-left px-5 py-3.5 rounded-2xl font-black transition-all capitalize flex items-center gap-3 border text-[13px] ${activeTab === tab ? 'bg-emerald-600 border-emerald-500 text-white shadow-xl translate-x-1' : 'text-slate-500 border-transparent hover:bg-slate-800'}`}
+              >
+                <i className={`fa-solid fa-${tab === 'site' ? 'globe' : tab === 'home' ? 'house' : tab === 'pages' ? 'file-lines' : tab === 'about' ? 'circle-info' : tab === 'courses' ? 'graduation-cap' : tab === 'notices' ? 'bullhorn' : tab === 'gallery' ? 'images' : tab === 'faq' ? 'circle-question' : tab === 'contact' ? 'address-book' : tab === 'footer' ? 'shoe-prints' : tab === 'placements' ? 'briefcase' : tab === 'career' ? 'user-graduate' : tab === 'legal' ? 'scale-balanced' : 'wpforms'}`}></i>
+                {tab === 'form' ? 'Enroll Page' : tab}
+              </button>
+            ))}
+          </div>
         </div>
 
-        <div className="flex-grow bg-slate-800 rounded-[2.5rem] p-8 md:p-12 border border-slate-700 shadow-3xl min-h-[70vh]">
+        <div className="flex-grow bg-slate-800 rounded-[2.5rem] p-8 md:p-12 border border-slate-700 shadow-4xl min-h-[75vh]">
           {activeTab === 'leads' && <LeadsTab leads={localContent.leads || []} onUpdateLeads={(updated) => { setLocalContent(prev => ({ ...prev, leads: updated })); trackChange(); }} />}
           
           {activeTab === 'site' && <SiteTab 
@@ -262,7 +271,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
             updateCourseItem={(id, f, v) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: prev.courses.list.map(c => c.id === id ? { ...c, [f]: v } : c) } })); trackChange(); }}
             updatePageMeta={(f, v) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, pageMeta: { ...prev.courses.pageMeta, [f]: v } } })); trackChange(); }}
             onCourseImageClick={(id) => { activeCourseId.current = id; triggerGenericUpload('courses.list'); }}
-            // Fix: added missing 'academicLevel' and 'industry' properties to the new course object in addItem to correctly match the Course interface and resolve type mismatch error
             addItem={() => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: [{ id: Date.now().toString(), name: 'New Program', duration: '6 Months', mode: 'Offline', academicLevel: 'UG Diploma', industry: 'General', description: '', status: 'Active', image: 'https://picsum.photos/800/600', price: 'Rs. 0', certification: 'SMS Technical Diploma' }, ...prev.courses.list] } })); trackChange(); }}
             deleteItem={(id) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: prev.courses.list.filter(c => c.id !== id) } })); trackChange(); }}
           />}
