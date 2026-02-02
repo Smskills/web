@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Course, PageMeta } from '../types.ts';
 import FormattedText from '../components/FormattedText.tsx';
@@ -20,20 +20,35 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
   const currentLevel = searchParams.get('level') || 'All';
   const currentIndustry = searchParams.get('industry') || 'All';
   
-  const { list = [], pageMeta = { title: 'Technical Programs', subtitle: '', tagline: 'PROFESSIONAL CURRICULA' } } = coursesState || {};
+  // Defensive Data Access
+  // Fix: Provide a properly typed fallback object for coursesState to avoid 'Property does not exist on type {}' errors
+  const state = coursesState || { list: [] as Course[], pageMeta: { title: 'Technical Programs', subtitle: '', tagline: 'PROFESSIONAL CURRICULA' } as PageMeta };
+  // Fix: Access properties from the properly typed state object
+  const list = Array.isArray(state.list) ? state.list : [];
+  // Fix: Access properties from the properly typed state object
+  const pageMeta = state.pageMeta || { title: 'Technical Programs', subtitle: '', tagline: 'PROFESSIONAL CURRICULA' };
   
   const academicLevels = ["All", "UG Certificate", "UG Diploma", "UG Degree", "Master"];
-  const industries = ["All", ...Array.from(new Set(list.map(c => c.industry)))];
+  
+  // memoized industries list for performance and stability
+  // Fix: Explicitly type industries as string[] and the Set as string to resolve unknown type errors in the map function
+  const industries = useMemo<string[]>(() => {
+    const baseSet = new Set<string>(list.filter(c => c && c.industry).map(c => c.industry));
+    return ["All", ...Array.from(baseSet)];
+  }, [list]);
 
-  const filteredCourses = list.filter(c => {
-    const levelMatch = currentLevel === 'All' || c.academicLevel === currentLevel;
-    const industryMatch = currentIndustry === 'All' || c.industry === currentIndustry;
-    return levelMatch && industryMatch && c.status === 'Active';
-  });
+  const filteredCourses = useMemo(() => {
+    return list.filter(c => {
+      if (!c) return false;
+      const levelMatch = currentLevel === 'All' || c.academicLevel === currentLevel;
+      const industryMatch = currentIndustry === 'All' || c.industry === currentIndustry;
+      return levelMatch && industryMatch && c.status === 'Active';
+    });
+  }, [list, currentLevel, currentIndustry]);
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans">
-      {/* Header Section as per Screenshot */}
+      {/* Header Section */}
       <section className="bg-[#1e1b4b] pt-32 pb-24 text-white relative overflow-hidden text-center">
         <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-500/5 rounded-full blur-3xl opacity-30"></div>
         <div className="container mx-auto px-4 relative z-10 max-w-4xl">
@@ -43,7 +58,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
         </div>
       </section>
 
-      {/* Filter Bar as per Screenshot */}
+      {/* Filter Bar */}
       <div className="bg-[#f1f5f9] border-b border-slate-200 py-6 sticky top-24 md:top-32 z-40">
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
@@ -87,7 +102,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
             filteredCourses.map(course => (
               <div key={course.id} className="bg-white rounded-[1.5rem] border border-slate-100 overflow-hidden shadow-sm hover:shadow-2xl transition-all flex flex-col group">
                 <div className="h-64 relative overflow-hidden">
-                  <img src={course.image} alt={course.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1.5s]" />
+                  <img src={course.image || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800'} alt={course.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1.5s]" />
                 </div>
                 <div className="p-10 flex flex-col flex-grow">
                   <div className="flex items-center gap-2 mb-4 text-[#059669] font-black text-[10px] uppercase tracking-widest">
@@ -125,9 +140,9 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                <i className="fa-solid fa-xmark text-lg"></i>
             </button>
             <div className="md:w-2/5 shrink-0 h-[300px] md:h-auto">
-               <img src={selectedCourse.image} className="w-full h-full object-cover" alt={selectedCourse.name} />
+               <img src={selectedCourse.image || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800'} className="w-full h-full object-cover" alt={selectedCourse.name} />
             </div>
-            <div className="md:w-3/5 p-10 md:p-14 overflow-y-auto custom-scrollbar">
+            <div className="md:w-3/5 p-10 md:p-14 overflow-y-auto custom-scrollbar flex-grow">
                <div className="flex items-center gap-3 mb-6">
                  <span className="px-3 py-1 bg-[#059669] text-white rounded font-black text-[9px] uppercase tracking-widest">{selectedCourse.academicLevel}</span>
                  <span className="px-3 py-1 bg-[#1e1b4b] text-white rounded font-black text-[9px] uppercase tracking-widest">{selectedCourse.industry}</span>

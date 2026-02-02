@@ -47,25 +47,68 @@ const App: React.FC = () => {
     const bootstrapConfig = async () => {
       try {
         const saved = localStorage.getItem('edu_insta_content');
+        let localData = INITIAL_CONTENT;
+        
         if (saved) {
-           const parsed = JSON.parse(saved);
-           setContent({
-              ...INITIAL_CONTENT,
-              ...parsed
-           });
+           try {
+             const parsed = JSON.parse(saved);
+             localData = { ...INITIAL_CONTENT, ...parsed };
+           } catch (e) {
+             console.error("Local storage parse failed");
+           }
         }
 
         const response = await fetch('http://localhost:5000/api/config');
         const result = await response.json();
         
-        if (result.success && result.data) {
-          setContent(prev => ({
-            ...prev,
-            ...result.data
-          }));
-        }
+        const apiData = (result.success && result.data) ? result.data : {};
+        
+        // Comprehensive deep merge to ensure structure integrity
+        const finalContent: AppState = {
+          ...INITIAL_CONTENT,
+          ...localData,
+          ...apiData,
+          site: { 
+            ...INITIAL_CONTENT.site, 
+            ...(localData.site || {}), 
+            ...(apiData.site || {}),
+            contact: { ...INITIAL_CONTENT.site.contact, ...(localData.site?.contact || {}), ...(apiData.site?.contact || {}) },
+            footer: { ...INITIAL_CONTENT.site.footer, ...(localData.site?.footer || {}), ...(apiData.site?.footer || {}) }
+          },
+          home: { 
+            ...INITIAL_CONTENT.home, 
+            ...(localData.home || {}), 
+            ...(apiData.home || {}),
+            sectionLabels: { ...INITIAL_CONTENT.home.sectionLabels, ...(localData.home?.sectionLabels || {}), ...(apiData.home?.sectionLabels || {}) },
+            ctaBlock: { ...INITIAL_CONTENT.home.ctaBlock, ...(localData.home?.ctaBlock || {}), ...(apiData.home?.ctaBlock || {}) },
+            sections: { ...INITIAL_CONTENT.home.sections, ...(localData.home?.sections || {}), ...(apiData.home?.sections || {}) },
+            bigShowcase: { ...INITIAL_CONTENT.home.bigShowcase, ...(localData.home?.bigShowcase || {}), ...(apiData.home?.bigShowcase || {}) }
+          },
+          courses: {
+            ...INITIAL_CONTENT.courses,
+            ...(localData.courses && !Array.isArray(localData.courses) ? localData.courses : {}),
+            ...(apiData.courses && !Array.isArray(apiData.courses) ? apiData.courses : {})
+          },
+          notices: {
+            ...INITIAL_CONTENT.notices,
+            ...(localData.notices && !Array.isArray(localData.notices) ? localData.notices : {}),
+            ...(apiData.notices && !Array.isArray(apiData.notices) ? apiData.notices : {})
+          },
+          gallery: {
+            ...INITIAL_CONTENT.gallery,
+            ...(localData.gallery && !Array.isArray(localData.gallery) ? localData.gallery : {}),
+            ...(apiData.gallery && !Array.isArray(apiData.gallery) ? apiData.gallery : {})
+          },
+          faqs: {
+            ...INITIAL_CONTENT.faqs,
+            ...(localData.faqs && !Array.isArray(localData.faqs) ? localData.faqs : {}),
+            ...(apiData.faqs && !Array.isArray(apiData.faqs) ? apiData.faqs : {})
+          }
+        };
+
+        setContent(finalContent);
       } catch (err) {
-        console.warn("Bootstrap: Backend DB unreachable. Using local cache.");
+        console.warn("Bootstrap: Data sync issues. Using fallback content.");
       } finally {
         setIsInitializing(false);
       }
@@ -140,13 +183,8 @@ const App: React.FC = () => {
             <Routes>
               <Route path="/" element={<HomePage content={content} />} />
               <Route path="/about" element={<AboutPage content={content.about} siteName={content.site.name} />} />
-              
-              {/* Main Academics Route */}
               <Route path="/academics" element={<CoursesPage coursesState={content.courses} isLoading={isInitializing} />} />
-              
-              {/* Fix for User Screenshot: Redirect legacy /courses path to new /academics path */}
               <Route path="/courses" element={<Navigate to="/academics" replace />} />
-              
               <Route path="/notices" element={<NoticesPage noticesState={content.notices} />} />
               <Route path="/gallery" element={<GalleryPage content={content} />} />
               <Route path="/faq" element={<FAQPage faqsState={content.faqs} contact={content.site.contact} />} />
