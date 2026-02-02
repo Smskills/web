@@ -15,17 +15,12 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false }) => {
   const logoUrl = config.logo || "https://lwfiles.mycourse.app/62a6cd5-public/6efdd5e.png";
   const alert = config.admissionAlert || { enabled: false, text: '', subtext: '', linkText: '', linkPath: '/enroll' };
 
-  // Academics dropdown structure updated with requested sectors
+  // Academics dropdown structure strictly showing the requested academic levels
   const academicsMenu = [
-    { label: "Tourism & Hospitality" },
-    { label: "Retail Management" },
-    { label: "Healthcare" },
-    { label: "Apparel" },
-    { label: "Automotive" },
-    { label: "Telecom" },
-    { label: "IT/ITES" },
-    { label: "Banking & Finance" },
-    { label: "Beauty & Wellness" }
+    { label: "UG Certificate Course", level: "UG Certificate" },
+    { label: "UG Diploma Course", level: "UG Diploma" },
+    { label: "UG Degree Course", level: "UG Degree" },
+    { label: "Master", level: "Master" }
   ];
 
   const getCleanPath = (path: string) => {
@@ -46,7 +41,7 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false }) => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-[100] transition-all duration-300 font-sans shadow-sm">
-      {/* Top Admission Bar - Very dark as per image */}
+      {/* Top Admission Bar */}
       {alert.enabled && (
         <div className="bg-[#0f172a] text-white py-2 px-4 border-b border-white/5 h-10 flex items-center">
           <div className="container mx-auto flex justify-between items-center text-[9px] font-black uppercase tracking-widest">
@@ -62,7 +57,7 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false }) => {
         </div>
       )}
 
-      {/* Main Navigation Bar - White as per image */}
+      {/* Main Navigation Bar - White */}
       <div className="bg-white border-b border-slate-100 h-20 md:h-24 flex items-center">
         <div className="container mx-auto px-4 h-full flex items-center justify-between">
           <Link to="/" className="flex items-center gap-4 group">
@@ -97,15 +92,15 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false }) => {
                       <i className={`fa-solid fa-chevron-down text-[9px] transition-transform ${isAcademicsOpen ? 'rotate-180' : ''}`}></i>
                     </NavLink>
                     
-                    {/* DROP DOWN MENU - 2 COLUMNS FOR ACCESSIBILITY */}
+                    {/* DROP DOWN MENU */}
                     {isAcademicsOpen && (
-                      <div className="absolute top-full left-[-100px] pt-2 animate-fade-in-down z-[120] min-w-[500px]">
-                        <div className="bg-white shadow-2xl border-t-4 border-emerald-600 grid grid-cols-2 overflow-hidden rounded-b-xl">
+                      <div className="absolute top-full left-[-20px] pt-2 animate-fade-in-down z-[120] min-w-[280px]">
+                        <div className="bg-white shadow-2xl border-t-4 border-emerald-600 flex flex-col overflow-hidden rounded-b-xl">
                             {academicsMenu.map((menuItem, i) => (
                               <Link 
                                 key={i} 
-                                to={`/academics?industry=${encodeURIComponent(menuItem.label)}`}
-                                className="px-6 py-4 text-[10px] font-black tracking-widest flex justify-between items-center cursor-pointer transition-all border-b border-r border-slate-50 text-slate-600 hover:text-emerald-600 hover:bg-slate-50"
+                                to={`/academics?level=${encodeURIComponent(menuItem.level)}`}
+                                className="px-6 py-4 text-[10px] font-black tracking-widest flex justify-between items-center cursor-pointer transition-all border-b border-slate-50 text-slate-600 hover:text-emerald-600 hover:bg-slate-50"
                                 onClick={() => setIsAcademicsOpen(false)}
                               >
                                 {menuItem.label.toUpperCase()}
