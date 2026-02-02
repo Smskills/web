@@ -27,9 +27,12 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false }) => {
 
   const getCleanPath = (path: string) => {
     if (!path) return '/';
-    if (path.startsWith('#/')) return path.substring(1);
-    if (path.startsWith('#') && !path.startsWith('#/')) return `/${path}`;
-    return path;
+    // Robust cleanup to prevent /courses vs /academics mismatch errors
+    let clean = path;
+    if (clean.startsWith('#/')) clean = clean.substring(1);
+    if (clean.startsWith('#') && !clean.startsWith('#/')) clean = `/${clean.substring(1)}`;
+    if (!clean.startsWith('/')) clean = `/${clean}`;
+    return clean;
   };
 
   const navLinkClasses = ({ isActive }: { isActive: boolean }) => 
@@ -56,17 +59,17 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false }) => {
         </div>
       )}
 
-      <div className="bg-white/90 backdrop-blur-xl border-b border-slate-200/50 h-28 md:h-36 flex items-center">
+      <div className="bg-white/90 backdrop-blur-xl border-b border-slate-200/50 h-24 md:h-32 flex items-center">
         <div className="container mx-auto px-4 h-full flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 md:gap-5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-xl">
-            <div className="w-20 h-20 md:w-40 md:h-28 flex items-center justify-center transition-all group-hover:scale-105">
+            <div className="w-16 h-16 md:w-40 md:h-28 flex items-center justify-center transition-all group-hover:scale-105">
               <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" />
             </div>
             <div className="flex flex-col leading-none">
               <span className="font-black text-xl md:text-3xl text-emerald-600 tracking-tighter uppercase whitespace-nowrap">
                 {config.name}
               </span>
-              <span className="text-[9px] md:text-xs text-emerald-600 font-bold uppercase tracking-[0.3em] mt-1.5 opacity-90">
+              <span className="text-[8px] md:text-xs text-emerald-600 font-bold uppercase tracking-[0.2em] md:tracking-[0.3em] mt-1.5 opacity-90">
                 {config.tagline}
               </span>
             </div>
@@ -90,19 +93,19 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false }) => {
                       <span className={`absolute bottom-0 left-0 w-full h-0.5 bg-emerald-600 transition-transform duration-300 origin-left scale-x-0 group-hover:scale-x-100 ${location.pathname.includes('/academics') ? 'scale-x-100' : ''}`}></span>
                     </NavLink>
                     
-                    {/* MEGA MENU - Styled to match screenshot provided */}
+                    {/* MEGA MENU - Professional dropdown structure */}
                     {isAcademicsOpen && (
-                      <div className="absolute top-full -left-20 pt-8 animate-fade-in z-[120]">
-                        <div className="bg-white shadow-4xl border border-slate-100 flex overflow-hidden min-w-[500px]">
-                          {/* Left Column: List Categories */}
+                      <div className="absolute top-full -left-20 pt-6 animate-fade-in z-[120]">
+                        <div className="bg-white shadow-4xl border border-slate-100 flex overflow-hidden min-w-[550px] rounded-3xl">
+                          {/* Left Column: Categories */}
                           <div className="w-1/2 bg-slate-50 py-6 border-r border-slate-200">
                             {academicsMenu.categories.map((cat, i) => (
-                              <div key={i} className={`px-8 py-3 text-[11px] font-black tracking-widest cursor-pointer transition-colors ${i === 0 ? 'text-emerald-600' : 'text-slate-600 hover:text-emerald-600 hover:bg-emerald-50'}`}>
+                              <div key={i} className={`px-8 py-3 text-[11px] font-black tracking-widest cursor-pointer transition-colors ${i === 0 ? 'text-emerald-600 bg-emerald-50/50' : 'text-slate-600 hover:text-emerald-600 hover:bg-emerald-50'}`}>
                                 {cat}
                               </div>
                             ))}
                           </div>
-                          {/* Right Column: Course Types */}
+                          {/* Right Column: Dynamic Course Types */}
                           <div className="w-1/2 py-6">
                              {academicsMenu.courses.map((course, i) => (
                                <Link 
@@ -147,7 +150,7 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false }) => {
       </div>
 
       {isMenuOpen && (
-        <div className="lg:hidden fixed inset-x-0 top-32 bg-white border-t border-slate-100 shadow-3xl z-[90] overflow-y-auto max-h-[calc(100vh-8rem)]">
+        <div className="lg:hidden fixed inset-x-0 top-24 md:top-32 bg-white border-t border-slate-100 shadow-3xl z-[90] overflow-y-auto max-h-[calc(100vh-8rem)]">
           <div className="flex flex-col p-8 space-y-4">
             {config.navigation.map((item) => (
               <NavLink key={item.label} to={getCleanPath(item.path)} className="font-black text-lg uppercase tracking-widest px-6 py-5 rounded-2xl hover:bg-emerald-50 text-slate-900" onClick={() => setIsMenuOpen(false)}>

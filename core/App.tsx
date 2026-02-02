@@ -46,41 +46,6 @@ const App: React.FC = () => {
   useEffect(() => {
     const bootstrapConfig = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/config');
-        const result = await response.json();
-        
-        let finalData: AppState;
-
-        if (result.success && result.data) {
-          finalData = {
-            ...INITIAL_CONTENT,
-            ...result.data,
-            site: { 
-              ...INITIAL_CONTENT.site, 
-              ...result.data.site,
-              contact: {
-                ...INITIAL_CONTENT.site.contact,
-                ...(result.data.site?.contact || {})
-              }
-            },
-            home: { ...INITIAL_CONTENT.home, ...result.data.home },
-            theme: { ...INITIAL_CONTENT.theme, ...result.data.theme }
-          };
-        } else {
-          const saved = localStorage.getItem('edu_insta_content');
-          if (saved) {
-            const parsed = JSON.parse(saved);
-            finalData = {
-              ...INITIAL_CONTENT,
-              ...parsed
-            };
-          } else {
-            finalData = INITIAL_CONTENT;
-          }
-        }
-        setContent(finalData);
-      } catch (err) {
-        console.warn("Bootstrap: Backend DB unreachable. Using local cache.");
         const saved = localStorage.getItem('edu_insta_content');
         if (saved) {
            const parsed = JSON.parse(saved);
@@ -89,6 +54,18 @@ const App: React.FC = () => {
               ...parsed
            });
         }
+
+        const response = await fetch('http://localhost:5000/api/config');
+        const result = await response.json();
+        
+        if (result.success && result.data) {
+          setContent(prev => ({
+            ...prev,
+            ...result.data
+          }));
+        }
+      } catch (err) {
+        console.warn("Bootstrap: Backend DB unreachable. Using local cache.");
       } finally {
         setIsInitializing(false);
       }
@@ -158,12 +135,18 @@ const App: React.FC = () => {
       <ScrollToTop />
       <div className="flex flex-col min-h-screen overflow-x-hidden">
         <Header config={content.site} isAuthenticated={isAuthenticated} />
-        <main id="main-content" className="flex-grow pt-36 md:pt-[11.5rem] focus:outline-none" tabIndex={-1}>
+        <main id="main-content" className="flex-grow pt-24 md:pt-32 focus:outline-none" tabIndex={-1}>
           <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><i className="fa-solid fa-spinner fa-spin text-4xl text-emerald-600"></i></div>}>
             <Routes>
               <Route path="/" element={<HomePage content={content} />} />
               <Route path="/about" element={<AboutPage content={content.about} siteName={content.site.name} />} />
+              
+              {/* Main Academics Route */}
               <Route path="/academics" element={<CoursesPage coursesState={content.courses} isLoading={isInitializing} />} />
+              
+              {/* Fix for User Screenshot: Redirect legacy /courses path to new /academics path */}
+              <Route path="/courses" element={<Navigate to="/academics" replace />} />
+              
               <Route path="/notices" element={<NoticesPage noticesState={content.notices} />} />
               <Route path="/gallery" element={<GalleryPage content={content} />} />
               <Route path="/faq" element={<FAQPage faqsState={content.faqs} contact={content.site.contact} />} />

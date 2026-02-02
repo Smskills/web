@@ -27,7 +27,6 @@ export interface SiteConfig {
   tagline: string;
   logo: string;
   loginLabel?: string;
-  notificationEmails?: string[];
   admissionAlert?: {
     enabled: boolean;
     text: string;
