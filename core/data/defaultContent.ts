@@ -198,6 +198,10 @@ levels.forEach(level => {
             "Retail Sales Associate",
             "Retail Trainee Associate"
           ];
+        } else if (industry === "Telecom") {
+          tracks = [
+            "Call Center Executive"
+          ];
         }
       }
 
@@ -205,10 +209,13 @@ levels.forEach(level => {
         let finalName = `${levelDisplayNames[level]} in ${trackName}`;
         
         // Media & Telecom overrides (Specific Institutional Request)
-        if (industry === "Media & Entertainment") {
-          finalName = "B. Voc. in Multimedia";
-        } else if (industry === "Telecom") {
-          finalName = "B. Voc. in Telecommunication";
+        // Ensure Certificate level maintains its "Certificate in..." naming pattern
+        if (level !== "Certificate") {
+          if (industry === "Media & Entertainment") {
+            finalName = "B. Voc. in Multimedia";
+          } else if (industry === "Telecom") {
+            finalName = "B. Voc. in Telecommunication";
+          }
         }
 
         generatedCourses.push({
