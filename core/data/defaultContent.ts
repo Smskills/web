@@ -1,7 +1,7 @@
 
 import { AppState, Course } from '../types';
 
-const industries = [
+const ugIndustries = [
   "Agriculture",
   "Automotive",
   "Apparel",
@@ -28,6 +28,15 @@ const industries = [
   "Tourism & Hospitality"
 ];
 
+const masterIndustries = [
+  "Automotive",
+  "BSFI",
+  "Electronics & Hardware",
+  "IT-ITes",
+  "Retails",
+  "Tourism & Hospitality"
+];
+
 const levels: Array<Course['academicLevel']> = ["Certificate", "UG Certificate", "UG Diploma", "UG Degree", "Master"];
 
 const levelDisplayNames: Record<string, string> = {
@@ -42,7 +51,9 @@ const generatedCourses: Course[] = [];
 let idCounter = 1;
 
 levels.forEach(level => {
-  industries.forEach(industry => {
+  const targetIndustries = level === "Master" ? masterIndustries : ugIndustries;
+  
+  targetIndustries.forEach(industry => {
     generatedCourses.push({
       id: (idCounter++).toString(),
       name: `${levelDisplayNames[level]} in ${industry}`,
