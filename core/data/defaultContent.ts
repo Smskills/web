@@ -185,6 +185,11 @@ levels.forEach(level => {
             "Domestic Biometric Data Operator",
             "Domestic Data Entry Operator"
           ];
+        } else if (industry === "Logistics") {
+          tracks = [
+            "Courier Delivery Executive",
+            "Consignment Booking Assistant"
+          ];
         }
       }
 
