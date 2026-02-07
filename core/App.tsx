@@ -63,6 +63,7 @@ const App: React.FC = () => {
         
         const apiData = (result.success && result.data) ? result.data : {};
         
+        // Comprehensive deep merge to ensure structure integrity
         const finalContent: AppState = {
           ...INITIAL_CONTENT,
           ...localData,
@@ -176,7 +177,7 @@ const App: React.FC = () => {
       <style>{brandingStyles}</style>
       <ScrollToTop />
       <div className="flex flex-col min-h-screen overflow-x-hidden">
-        <Header config={content.site} isAuthenticated={isAuthenticated} courses={content.courses.list} />
+        <Header config={content.site} isAuthenticated={isAuthenticated} />
         <main id="main-content" className="flex-grow pt-24 md:pt-32 focus:outline-none" tabIndex={-1}>
           <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><i className="fa-solid fa-spinner fa-spin text-4xl text-emerald-600"></i></div>}>
             <Routes>

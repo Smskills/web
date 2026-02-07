@@ -29,7 +29,7 @@ interface AdminDashboardProps {
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'site' | 'home' | 'pages' | 'about' | 'academics' | 'notices' | 'gallery' | 'faq' | 'form' | 'contact' | 'footer' | 'placements' | 'legal' | 'career' | 'leads'>('site');
+  const [activeTab, setActiveTab] = useState<'site' | 'home' | 'pages' | 'about' | 'courses' | 'notices' | 'gallery' | 'faq' | 'form' | 'contact' | 'footer' | 'placements' | 'legal' | 'career' | 'leads'>('site');
   const [localContent, setLocalContent] = useState(content);
   const [statusMsg, setStatusMsg] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -197,6 +197,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
       </div>
 
       <div className="container mx-auto px-4 mt-8 flex flex-col md:flex-row gap-8">
+        {/* STICKY SIDEBAR TO PREVENT HALF-SHOWING CLIPPING */}
         <div className={`w-full md:w-64 space-y-2 shrink-0 md:sticky ${stickyTopClass} md:pt-6 h-fit z-50`}>
           <button
               onClick={() => setActiveTab('leads')}
@@ -210,14 +211,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
           <div className="h-px bg-slate-700/50 my-4"></div>
 
           <div className="space-y-1.5 overflow-y-auto max-h-[60vh] custom-scrollbar pr-1">
-            {(['site', 'home', 'pages', 'about', 'academics', 'notices', 'gallery', 'faq', 'form', 'contact', 'footer', 'placements', 'legal', 'career'] as const).map(tab => (
+            {(['site', 'home', 'pages', 'about', 'courses', 'notices', 'gallery', 'faq', 'form', 'contact', 'footer', 'placements', 'legal', 'career'] as const).map(tab => (
               <button
                 key={tab}
-                onClick={() => setActiveTab(tab === 'academics' ? 'academics' : tab)}
+                onClick={() => setActiveTab(tab)}
                 className={`w-full text-left px-5 py-3.5 rounded-2xl font-black transition-all capitalize flex items-center gap-3 border text-[13px] ${activeTab === tab ? 'bg-emerald-600 border-emerald-500 text-white shadow-xl translate-x-1' : 'text-slate-500 border-transparent hover:bg-slate-800'}`}
               >
-                <i className={`fa-solid fa-${tab === 'site' ? 'globe' : tab === 'home' ? 'house' : tab === 'pages' ? 'file-lines' : tab === 'about' ? 'circle-info' : tab === 'academics' ? 'graduation-cap' : tab === 'notices' ? 'bullhorn' : tab === 'gallery' ? 'images' : tab === 'faq' ? 'circle-question' : tab === 'contact' ? 'address-book' : tab === 'footer' ? 'shoe-prints' : tab === 'placements' ? 'briefcase' : tab === 'career' ? 'user-graduate' : tab === 'legal' ? 'scale-balanced' : 'wpforms'}`}></i>
-                {tab === 'form' ? 'Enroll Page' : (tab === 'academics' ? 'Academic Section' : tab)}
+                <i className={`fa-solid fa-${tab === 'site' ? 'globe' : tab === 'home' ? 'house' : tab === 'pages' ? 'file-lines' : tab === 'about' ? 'circle-info' : tab === 'courses' ? 'graduation-cap' : tab === 'notices' ? 'bullhorn' : tab === 'gallery' ? 'images' : tab === 'faq' ? 'circle-question' : tab === 'contact' ? 'address-book' : tab === 'footer' ? 'shoe-prints' : tab === 'placements' ? 'briefcase' : tab === 'career' ? 'user-graduate' : tab === 'legal' ? 'scale-balanced' : 'wpforms'}`}></i>
+                {tab === 'form' ? 'Enroll Page' : tab}
               </button>
             ))}
           </div>
@@ -265,12 +266,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
             removeExtraChapter={(id) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, extraChapters: prev.about.extraChapters.filter(c => c.id !== id) } })); trackChange(); }}
           />}
 
-          {activeTab === 'academics' && <CoursesTab 
+          {activeTab === 'courses' && <CoursesTab 
             coursesState={localContent.courses}
             updateCourseItem={(id, f, v) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: prev.courses.list.map(c => c.id === id ? { ...c, [f]: v } : c) } })); trackChange(); }}
             updatePageMeta={(f, v) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, pageMeta: { ...prev.courses.pageMeta, [f]: v } } })); trackChange(); }}
             onCourseImageClick={(id) => { activeCourseId.current = id; triggerGenericUpload('courses.list'); }}
-            addItem={() => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: [{ id: Date.now().toString(), name: 'New Program', duration: '1 Year', mode: 'Offline', academicLevel: 'Certificate', industry: 'Tourism & Hospitality', description: '', eligibility: '', benefits: '', status: 'Active', image: 'https://picsum.photos/800/600', price: 'Rs. 0', certification: 'Institutional Certificate' }, ...prev.courses.list] } })); trackChange(); }}
+            addItem={() => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: [{ id: Date.now().toString(), name: 'New Program', duration: '6 Months', mode: 'Offline', academicLevel: 'UG Diploma', industry: 'General', description: '', status: 'Active', image: 'https://picsum.photos/800/600', price: 'Rs. 0', certification: 'SMS Technical Diploma' }, ...prev.courses.list] } })); trackChange(); }}
             deleteItem={(id) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: prev.courses.list.filter(c => c.id !== id) } })); trackChange(); }}
           />}
 

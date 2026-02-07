@@ -1,285 +1,47 @@
+
 import { AppState, Course } from '../types';
 
-const ugIndustries = [
-  "Agriculture",
-  "Automotive",
-  "Apparel",
-  "Banking, Finance Services & Insurance",
-  "Beauty & Wellness",
-  "Capital Goods",
-  "Construction",
-  "Electronics & Hardware",
-  "Food Processing",
-  "Furniture & Fitting",
-  "Green Jobs",
+const industries = [
+  "Tourism & Hospitality",
+  "Retail Management",
   "Healthcare",
-  "IT-ITeS",
-  "Life Sciences",
-  "Logistics",
-  "Media & Entertainment",
-  "Mining",
-  "Plumbing",
-  "Retail",
-  "Rubber, Chemical & Petrochemical",
-  "Telecom",
-  "Textile & Handloom",
-  "Tourism & Hospitality"
-];
-
-const certificateIndustries = [
   "Apparel",
   "Automotive",
-  "Beauty & Wellness",
-  "Banking, Finance Services & Insurance",
-  "Electronics & Hardware",
-  "Food Processing",
-  "IT-ITeS",
-  "Logistics",
-  "Retail",
   "Telecom",
-  "Tourism & Hospitality"
+  "IT/ITES",
+  "Banking & Finance",
+  "Beauty & Wellness"
 ];
-
-const masterIndustries = [
-  "Automotive",
-  "BSFI",
-  "Electronics & Hardware",
-  "IT-ITes",
-  "Retails",
-  "Tourism & Hospitality"
-];
-
-// Shared mapping for specific vocational tracks used for UG Diploma and UG Degree
-const vocationalTrackMapping: Record<string, string[]> = {
-  "Agriculture": ["Agriculture"],
-  "Automotive": [
-    "Automobile Servicing",
-    "Automobile Production (Welding)",
-    "Automobile Production (Machining)"
-  ],
-  "Apparel": ["Fashion Designing"], 
-  "Banking, Finance Services & Insurance": [
-    "Banking, Financial Services & Insurance",
-    "Account & Taxation"
-  ],
-  "Beauty & Wellness": ["Therapeutic Yoga"],
-  "Capital Goods": ["Production", "Manufacturing"],
-  "Construction": ["Construction Technology"],
-  "Electronics & Hardware": [
-    "Refrigeration & Air Conditioning",
-    "Electronics Manufacturing Services",
-    "Computer Hardware & Networking",
-    "Electrical & Electronic Assembly"
-  ],
-  "Food Processing": ["Food processing"],
-  "Furniture & Fitting": ["Interior Designing"],
-  "Green Jobs": ["Renewable Energy"],
-  "Healthcare": [
-    "Patient Care Management",
-    "Medical Laboratory Technician",
-    "Radiology & Imaging Technology",
-    "Operation Theatre Technology",
-    "Nursing Care",
-    "Central Sterile Supply Department",
-    "Dialysis Technology",
-    "Hospital Administration"
-  ],
-  "IT-ITeS": ["Application Development", "Information Technology"],
-  "Life Sciences": ["Life Sciences"],
-  "Logistics": ["Logistic Operations Management"],
-  "Media & Entertainment": ["Multimedia"], 
-  "Mining": ["Mining"],
-  "Plumbing": ["Plumbing Skills"],
-  "Retail": ["Retail Management"],
-  "Rubber, Chemical & Petrochemical": ["Plastic Technology", "Polymer Technology"],
-  "Telecom": ["Telecommunication"], 
-  "Textile & Handloom": ["Textile Technology"],
-  "Tourism & Hospitality": ["Hotel Management", "Travel & Tourism"]
-};
 
 const levels: Array<Course['academicLevel']> = ["Certificate", "UG Certificate", "UG Diploma", "UG Degree", "Master"];
 
 const levelDisplayNames: Record<string, string> = {
   "Certificate": "Certificate",
-  "UG Certificate": "UG Certificate",
-  "UG Diploma": "UG Diploma",
-  "UG Degree": "UG Degree Certificate",
-  "Master": "M. Voc."
+  "UG Certificate": "U G Certificate",
+  "UG Diploma": "U G Diploma",
+  "UG Degree": "U G Degree",
+  "Master": "Master"
 };
 
 const generatedCourses: Course[] = [];
 let idCounter = 1;
 
 levels.forEach(level => {
-  let targetIndustries = ugIndustries;
-  if (level === "Master") {
-    targetIndustries = masterIndustries;
-  } else if (level === "Certificate") {
-    targetIndustries = certificateIndustries;
-  }
-  
-  targetIndustries.forEach(industry => {
-    // Multi-Track logic for Course generation
-    if (vocationalTrackMapping[industry]) {
-      
-      let tracks = vocationalTrackMapping[industry];
-      
-      // Certificate Level Specific Overrides as requested
-      if (level === "Certificate") {
-        if (industry === "Apparel") {
-          tracks = ["Fashion Designer", "Self Employed Tailor"];
-        } else if (industry === "Automotive") {
-          tracks = [
-            "Showroom Host",
-            "Automotive",
-            "Telecaller",
-            "Four Wheel Service Assistant",
-            "Two Wheel Service Assistant",
-            "Commercial Vehicle Driver",
-            "Automotive Welding Machine Operator (Manual & Robotics)",
-            "Automotive Sales Lead",
-            "Automotive Sales Consultant",
-            "Automotive Accessory Fitter",
-            "Sales Consultant (Pre-Owned Vehicles)"
-          ];
-        } else if (industry === "Beauty & Wellness") {
-          tracks = [
-            "Assistant Beauty Therapist",
-            "Beauty Therapist",
-            "Hair Dresser & Stylist",
-            "Assistant Spa Therapist",
-            "Pedicurist & Manicurist",
-            "Bridal Makeup Artist",
-            "Professional Makeup Artist"
-          ];
-        } else if (industry === "Banking, Finance Services & Insurance") {
-          tracks = [
-            "Debt Recovery Agent",
-            "Account Executive",
-            "Business Correspondence & Business Facilitator (CFBCBF)"
-          ];
-        } else if (industry === "Electronics & Hardware") {
-          tracks = [
-            "Customer Care Executive",
-            "Field Technician Computing & Peripherals",
-            "Field Technician Networking & Storage",
-            "Solar Panel Installation Technician",
-            "Field Technician Other Home Appliances",
-            "DTH Set Top Box Installation & Service Technician"
-          ];
-        } else if (industry === "Food Processing") {
-          tracks = [
-            "Multi Skills Technician (Food Processing)",
-            "Pickle Making Technician",
-            "Assistant Baking Technician",
-            "Baking Assistant",
-            "Certification in Food Production"
-          ];
-        } else if (industry === "IT-ITeS") {
-          tracks = [
-            "Junior Software Development",
-            "IT Helpdesk Attendant",
-            "Digital Mitra",
-            "Domestic Biometric Data Operator",
-            "Domestic Data Entry Operator"
-          ];
-        } else if (industry === "Logistics") {
-          tracks = [
-            "Courier Delivery Executive",
-            "Consignment Booking Assistant"
-          ];
-        } else if (industry === "Retail") {
-          tracks = [
-            "Retail Sales Assistant",
-            "Salesperson (Distribution)",
-            "Retail Cashier",
-            "Retail Sales Associate",
-            "Retail Trainee Associate"
-          ];
-        } else if (industry === "Telecom") {
-          // Specific request: Telecom Certificate -> Call Center Executive
-          tracks = ["Call Center Executive"];
-        } else if (industry === "Tourism & Hospitality") {
-          // Specific request: Detailed Tourism tracks
-          tracks = [
-            "Customer Service Representative (Meet & Greet)",
-            "Guest Service Executive (Housekeeping)",
-            "Guest Service Assistant (Housekeeping)",
-            "Pantry Assistant",
-            "Guest Service Associate (Front Office)",
-            "Guest Service Associate-Food & Beverage Service",
-            "Food & Beverage Service Assistant",
-            "Travel Consultant",
-            "Tour Guide",
-            "Tour Escort",
-            "Counter Sales Executive (Tourism & Hospitality)",
-            "Food Delivery Associate",
-            "Front Office Assistant",
-            "Front Office Executive",
-            "Transport Coordinator-Tourism & Hospitality"
-          ];
-        }
-      }
-
-      tracks.forEach(trackName => {
-        let finalName = `${levelDisplayNames[level]} in ${trackName}`;
-        
-        // Special Naming Rules for Higher Tiers
-        if (level !== "Certificate") {
-          if (industry === "Media & Entertainment") {
-            finalName = "B. Voc. in Multimedia";
-          } else if (industry === "Telecom") {
-            finalName = "B. Voc. in Telecommunication";
-          }
-        }
-
-        generatedCourses.push({
-          id: (idCounter++).toString(),
-          name: finalName,
-          industry,
-          academicLevel: level,
-          duration: level === "UG Degree" ? "3 YEARS" : (level === "UG Diploma" ? "2 YEARS" : "1 YEAR"),
-          mode: 'Offline',
-          status: 'Active',
-          image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800&industry=${industry.replace(/\s+/g, '')}`,
-          description: `Industry-standard training in ${trackName}. This course covers both fundamental theories and practical workshop applications required for the modern ${industry} sector.`,
-          certification: "SMS National Board of Vocational Training",
-          price: level === "UG Degree" ? "Rs. 45,000 / Sem" : (level === "UG Diploma" ? "Rs. 35,000 / Year" : "Rs. 25,000 / Year"),
-          eligibility: "12th Pass in any stream from a recognized board.",
-          benefits: "• Expert Mentorship\n• Hands-on Lab Training\n• Global Placement Support"
-        });
-      });
-      return; 
-    }
-
-    // Default Fallback Generation
-    let courseName = `${levelDisplayNames[level]} in ${industry}`;
-    
-    if (level === "Master") {
-      switch (industry) {
-        case "Automotive": courseName = "M. Voc. in Automobile Production"; break;
-        case "BSFI": courseName = "M. Voc. in Banking, Financial Services & Insurance"; break;
-        case "Electronics & Hardware": courseName = "M. Voc. in Electronics Manufacturing"; break;
-        case "IT-ITes": courseName = "M. Voc. in Application of Computer"; break;
-        case "Retails": courseName = "M. Voc. in Retail Management"; break;
-        case "Tourism & Hospitality": courseName = "M. Voc. in Travel & Tourism"; break;
-      }
-    }
-
+  industries.forEach(industry => {
     generatedCourses.push({
       id: (idCounter++).toString(),
-      name: courseName,
+      name: `${levelDisplayNames[level]} in ${industry}`,
       industry,
       academicLevel: level,
-      duration: level === 'UG Degree' ? "3 YEARS" : (level === 'Master' ? "2 YEARS" : "1 YEAR"),
+      duration: level.includes('Degree') ? "3 YEARS" : level.includes('Master') ? "2 YEARS" : "1 YEAR",
       mode: 'Offline',
       status: 'Active',
       image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800&industry=${industry.replace(/\s+/g, '')}`,
-      description: `High-impact vocational training in ${industry} at the ${level} level. Focused on immediate workplace competency.`,
+      description: `Professional level training in ${industry} at the ${level} level. This curriculum is designed to meet international industry standards for vocational excellence.`,
       certification: "SMS National Board of Vocational Training",
-      price: level === 'UG Degree' ? "Rs. 45,000 / Sem" : (level === 'Master' ? "Rs. 55,000 / Sem" : "Rs. 25,000 / Year"),
-      eligibility: level === 'Master' ? "Graduate in any stream." : "12th Pass from a recognized board.",
-      benefits: "• Real-world Project Experience\n• Industry Placement Support\n• Certified Faculty"
+      price: level.includes('Degree') ? "Rs. 45,000 / Sem" : "Rs. 25,000 / Year",
+      eligibility: "12th Standard Pass from a recognized board.",
+      benefits: "• Industry Certified Mentors\n• 100% Placement Assistance\n• Modern Lab Facilities"
     });
   });
 });
