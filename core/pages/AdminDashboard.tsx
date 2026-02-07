@@ -167,16 +167,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
     genericUploadRef.current?.click();
   };
 
-  // Sticky offset calculation (Header height + Alert height)
   const stickyTopClass = content.site.admissionAlert?.enabled 
-    ? "top-[8.5rem]" // 136px 
-    : "top-24 md:top-32"; // 96px or 128px
+    ? "top-[8.5rem]" 
+    : "top-24 md:top-32";
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 pb-20 font-sans">
       <input type="file" ref={genericUploadRef} className="hidden" accept="image/*" onChange={handleGenericUpload} />
 
-      {/* FIXED OFFSET FOR ADMIN HEADER */}
       <div className={`bg-slate-800 border-b border-slate-700 p-6 sticky ${stickyTopClass} z-[80] shadow-2xl transition-all duration-300`}>
         <div className="container mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
@@ -213,7 +211,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
             {(['site', 'home', 'pages', 'about', 'academics', 'notices', 'gallery', 'faq', 'form', 'contact', 'footer', 'placements', 'legal', 'career'] as const).map(tab => (
               <button
                 key={tab}
-                onClick={() => setActiveTab(tab === 'academics' ? 'academics' : tab)}
+                onClick={() => setActiveTab(tab)}
                 className={`w-full text-left px-5 py-3.5 rounded-2xl font-black transition-all capitalize flex items-center gap-3 border text-[13px] ${activeTab === tab ? 'bg-emerald-600 border-emerald-500 text-white shadow-xl translate-x-1' : 'text-slate-500 border-transparent hover:bg-slate-800'}`}
               >
                 <i className={`fa-solid fa-${tab === 'site' ? 'globe' : tab === 'home' ? 'house' : tab === 'pages' ? 'file-lines' : tab === 'about' ? 'circle-info' : tab === 'academics' ? 'graduation-cap' : tab === 'notices' ? 'bullhorn' : tab === 'gallery' ? 'images' : tab === 'faq' ? 'circle-question' : tab === 'contact' ? 'address-book' : tab === 'footer' ? 'shoe-prints' : tab === 'placements' ? 'briefcase' : tab === 'career' ? 'user-graduate' : tab === 'legal' ? 'scale-balanced' : 'wpforms'}`}></i>
@@ -270,7 +268,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
             updateCourseItem={(id, f, v) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: prev.courses.list.map(c => c.id === id ? { ...c, [f]: v } : c) } })); trackChange(); }}
             updatePageMeta={(f, v) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, pageMeta: { ...prev.courses.pageMeta, [f]: v } } })); trackChange(); }}
             onCourseImageClick={(id) => { activeCourseId.current = id; triggerGenericUpload('courses.list'); }}
-            addItem={() => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: [{ id: Date.now().toString(), name: 'New Program', duration: '6 Months', mode: 'Offline', academicLevel: 'UG Diploma', industry: 'General', description: '', status: 'Active', image: 'https://picsum.photos/800/600', price: 'Rs. 0', certification: 'SMS Technical Diploma' }, ...prev.courses.list] } })); trackChange(); }}
+            addItem={() => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: [{ id: Date.now().toString(), name: 'New Program', duration: '6 Months', mode: 'Offline', academicLevel: 'Certificate', industry: 'General', description: '', status: 'Active', image: 'https://picsum.photos/800/600', price: 'Rs. 0', certification: 'SMS Technical Diploma', eligibility: '', benefits: '' }, ...prev.courses.list] } })); trackChange(); }}
             deleteItem={(id) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: prev.courses.list.filter(c => c.id !== id) } })); trackChange(); }}
           />}
 

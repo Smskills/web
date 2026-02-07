@@ -20,8 +20,11 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
 
   // Fully Dynamic Sector & Level Generator
   const academicsMenu = useMemo(() => {
+    // Ensure courses is an array and filter out inactive ones for the menu
+    const activeList = (courses || []).filter(c => c && c.status === 'Active');
+    
     // 1. Extract every unique level present in the database
-    const uniqueLevels = Array.from(new Set(courses.map(c => c.academicLevel).filter(Boolean)));
+    const uniqueLevels = Array.from(new Set(activeList.map(c => c.academicLevel).filter(Boolean)));
     
     // Sort levels in a logical sequence
     const preferredOrder = ["Certificate", "UG Certificate", "UG Diploma", "UG Degree", "Master", "ITEP", "Short Term"];
@@ -34,7 +37,7 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
     return sortedLevels.map(level => {
       // 2. Extract every unique industry/sector for THIS specific level
       const sectorsForLevel = Array.from(new Set(
-        courses
+        activeList
           .filter(c => c.academicLevel === level)
           .map(c => c.industry)
           .filter(Boolean)
@@ -101,7 +104,7 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
 
           <nav className="hidden lg:flex items-center space-x-7">
             {config.navigation.map((item) => {
-              const isAcademics = item.label.toUpperCase() === 'ACADEMICS' || item.label.toUpperCase() === 'COURSES';
+              const isAcademics = item.label.toUpperCase() === 'ACADEMICS';
               const cleanPath = getCleanPath(item.path);
 
               if (isAcademics) {
@@ -200,7 +203,7 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
         <div className="lg:hidden fixed inset-x-0 top-20 md:top-24 bg-white shadow-2xl z-[90] overflow-y-auto max-h-[calc(100vh-6rem)] border-t border-slate-100">
           <div className="flex flex-col p-6 space-y-2">
             {config.navigation.map((item) => {
-              const isAcademics = item.label.toUpperCase() === 'ACADEMICS' || item.label.toUpperCase() === 'COURSES';
+              const isAcademics = item.label.toUpperCase() === 'ACADEMICS';
               if (isAcademics) {
                 return (
                   <div key={item.label} className="space-y-2">
