@@ -177,6 +177,14 @@ levels.forEach(level => {
             "Baking Assistant",
             "Certification in Food Production"
           ];
+        } else if (industry === "IT-ITeS") {
+          tracks = [
+            "Junior Software Development",
+            "IT Helpdesk Attendant",
+            "Digital Mitra",
+            "Domestic Biometric Data Operator",
+            "Domestic Data Entry Operator"
+          ];
         }
       }
 
