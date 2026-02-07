@@ -58,7 +58,7 @@ const vocationalTrackMapping: Record<string, string[]> = {
     "Automobile Production (Welding)",
     "Automobile Production (Machining)"
   ],
-  "Apparel": ["Fashion Designing"], // Default track for Apparel
+  "Apparel": ["Fashion Designing"], 
   "Banking, Finance Services & Insurance": [
     "Banking, Financial Services & Insurance",
     "Account & Taxation"
@@ -127,9 +127,25 @@ levels.forEach(level => {
       // Determine tracks for this specific level and industry
       let tracks = vocationalTrackMapping[industry];
       
-      // Specific Override for Apparel at Certificate level
-      if (level === "Certificate" && industry === "Apparel") {
-        tracks = ["Fashion Designer", "Self Employed Tailor"];
+      // Level-Specific Overrides
+      if (level === "Certificate") {
+        if (industry === "Apparel") {
+          tracks = ["Fashion Designer", "Self Employed Tailor"];
+        } else if (industry === "Automotive") {
+          tracks = [
+            "Showroom Host",
+            "Automotive",
+            "Telecaller",
+            "Four Wheel Service Assistant",
+            "Two Wheel Service Assistant",
+            "Commercial Vehicle Driver",
+            "Automotive Welding Machine Operator (Manual & Robotics)",
+            "Automotive Sales Lead",
+            "Automotive Sales Consultant",
+            "Automotive Accessory Fitter",
+            "Sales Consultant (Pre-Owned Vehicles)"
+          ];
+        }
       }
 
       tracks.forEach(trackName => {
