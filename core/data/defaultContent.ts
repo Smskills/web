@@ -190,6 +190,14 @@ levels.forEach(level => {
             "Courier Delivery Executive",
             "Consignment Booking Assistant"
           ];
+        } else if (industry === "Retail") {
+          tracks = [
+            "Retail Sales Assistant",
+            "Salesperson (Distribution)",
+            "Retail Cashier",
+            "Retail Sales Associate",
+            "Retail Trainee Associate"
+          ];
         }
       }
 
