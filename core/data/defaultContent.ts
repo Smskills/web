@@ -202,6 +202,23 @@ levels.forEach(level => {
           tracks = [
             "Call Center Executive"
           ];
+        } else if (industry === "Tourism & Hospitality") {
+          tracks = [
+            "Customer Service Representative (Meet & Greet)",
+            "Guest Service Executive (Housekeeping)",
+            "Guest Service Assistant (Housekeeping)",
+            "Pantry Assistant",
+            "Guest Service Associate (Front Office)",
+            "Guest Service Associate-Food & Beverage Service",
+            "Food & Beverage Service Assistant",
+            "Travel Consultant",
+            "Tour Guide",
+            "Counter Sales Executive (Tourism & Hospitality)",
+            "Food Delivery Associate",
+            "Front Office Assistant",
+            "Front Office Executive",
+            "Transport Coordinator-Tourism & Hospitality"
+          ];
         }
       }
 
