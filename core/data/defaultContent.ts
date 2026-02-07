@@ -160,6 +160,15 @@ levels.forEach(level => {
             "Account Executive",
             "Business Correspondence & Business Facilitator (CFBCBF)"
           ];
+        } else if (industry === "Electronics & Hardware") {
+          tracks = [
+            "Customer Care Executive",
+            "Field Technician Computing & Peripherals",
+            "Field Technician Networking & Storage",
+            "Solar Panel Installation Technician",
+            "Field Technician Other Home Appliances",
+            "DTH Set Top Box Installation & Service Technician"
+          ];
         }
       }
 
