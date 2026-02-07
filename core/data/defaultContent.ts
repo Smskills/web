@@ -27,6 +27,20 @@ const ugIndustries = [
   "Tourism & Hospitality"
 ];
 
+const certificateIndustries = [
+  "Apparel",
+  "Automotive",
+  "Beauty & Wellness",
+  "Banking, Finance Services & Insurance",
+  "Electronics & Hardware",
+  "Food Processing",
+  "IT-ITeS",
+  "Logistics",
+  "Retail",
+  "Telecom",
+  "Tourism & Hospitality"
+];
+
 const masterIndustries = [
   "Automotive",
   "BSFI",
@@ -36,7 +50,7 @@ const masterIndustries = [
   "Tourism & Hospitality"
 ];
 
-// Shared mapping for specific vocational tracks (used by Certificate, Diploma, and Degree logic)
+// Shared mapping for specific vocational tracks (used by Certificate, UG Certificate, Diploma, and Degree logic)
 const vocationalTrackMapping: Record<string, string[]> = {
   "Agriculture": ["Agriculture"],
   "Automotive": [
@@ -98,11 +112,17 @@ const generatedCourses: Course[] = [];
 let idCounter = 1;
 
 levels.forEach(level => {
-  const targetIndustries = level === "Master" ? masterIndustries : ugIndustries;
+  // Determine which industry list to use for this level
+  let targetIndustries = ugIndustries;
+  if (level === "Master") {
+    targetIndustries = masterIndustries;
+  } else if (level === "Certificate") {
+    targetIndustries = certificateIndustries;
+  }
   
   targetIndustries.forEach(industry => {
-    // Multi-Track logic for UG Certificate, UG Diploma, and UG Degree
-    if ((level === "UG Certificate" || level === "UG Diploma" || level === "UG Degree") && vocationalTrackMapping[industry]) {
+    // Multi-Track logic for Certificate, UG Certificate, UG Diploma, and UG Degree
+    if ((level === "Certificate" || level === "UG Certificate" || level === "UG Diploma" || level === "UG Degree") && vocationalTrackMapping[industry]) {
       vocationalTrackMapping[industry].forEach(trackName => {
         let finalName = `${levelDisplayNames[level]} in ${trackName}`;
         
