@@ -213,6 +213,7 @@ levels.forEach(level => {
             "Food & Beverage Service Assistant",
             "Travel Consultant",
             "Tour Guide",
+            "Tour Escort",
             "Counter Sales Executive (Tourism & Hospitality)",
             "Food Delivery Associate",
             "Front Office Assistant",
