@@ -145,6 +145,16 @@ levels.forEach(level => {
             "Automotive Accessory Fitter",
             "Sales Consultant (Pre-Owned Vehicles)"
           ];
+        } else if (industry === "Beauty & Wellness") {
+          tracks = [
+            "Assistant Beauty Therapist",
+            "Beauty Therapist",
+            "Hair Dresser & Stylist",
+            "Assistant Spa Therapist",
+            "Pedicurist & Manicurist",
+            "Bridal Makeup Artist",
+            "Professional Makeup Artist"
+          ];
         }
       }
 
