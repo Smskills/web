@@ -1,4 +1,3 @@
-
 import { AppState, Course } from '../types';
 
 const ugIndustries = [
@@ -154,6 +153,12 @@ levels.forEach(level => {
             "Pedicurist & Manicurist",
             "Bridal Makeup Artist",
             "Professional Makeup Artist"
+          ];
+        } else if (industry === "Banking, Finance Services & Insurance") {
+          tracks = [
+            "Debt Recovery Agent",
+            "Account Executive",
+            "Business Correspondence & Business Facilitator (CFBCBF)"
           ];
         }
       }
