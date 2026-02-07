@@ -49,7 +49,7 @@ const masterIndustries = [
   "Tourism & Hospitality"
 ];
 
-// Shared mapping for specific vocational tracks
+// Shared mapping for specific vocational tracks used for UG Diploma and UG Degree
 const vocationalTrackMapping: Record<string, string[]> = {
   "Agriculture": ["Agriculture"],
   "Automotive": [
@@ -111,7 +111,6 @@ const generatedCourses: Course[] = [];
 let idCounter = 1;
 
 levels.forEach(level => {
-  // Determine which industry list to use for this level
   let targetIndustries = ugIndustries;
   if (level === "Master") {
     targetIndustries = masterIndustries;
@@ -120,13 +119,12 @@ levels.forEach(level => {
   }
   
   targetIndustries.forEach(industry => {
-    // Multi-Track logic for Certificate, UG Certificate, UG Diploma, and UG Degree
-    if ((level === "Certificate" || level === "UG Certificate" || level === "UG Diploma" || level === "UG Degree") && vocationalTrackMapping[industry]) {
+    // Multi-Track logic for Course generation
+    if (vocationalTrackMapping[industry]) {
       
-      // Determine tracks for this specific level and industry
       let tracks = vocationalTrackMapping[industry];
       
-      // Level-Specific Overrides
+      // Certificate Level Specific Overrides as requested
       if (level === "Certificate") {
         if (industry === "Apparel") {
           tracks = ["Fashion Designer", "Self Employed Tailor"];
@@ -199,10 +197,10 @@ levels.forEach(level => {
             "Retail Trainee Associate"
           ];
         } else if (industry === "Telecom") {
-          tracks = [
-            "Call Center Executive"
-          ];
+          // Specific request: Telecom Certificate -> Call Center Executive
+          tracks = ["Call Center Executive"];
         } else if (industry === "Tourism & Hospitality") {
+          // Specific request: Detailed Tourism tracks
           tracks = [
             "Customer Service Representative (Meet & Greet)",
             "Guest Service Executive (Housekeeping)",
@@ -226,8 +224,7 @@ levels.forEach(level => {
       tracks.forEach(trackName => {
         let finalName = `${levelDisplayNames[level]} in ${trackName}`;
         
-        // Media & Telecom overrides (Specific Institutional Request)
-        // Ensure Certificate level maintains its "Certificate in..." naming pattern
+        // Special Naming Rules for Higher Tiers
         if (level !== "Certificate") {
           if (industry === "Media & Entertainment") {
             finalName = "B. Voc. in Multimedia";
@@ -245,17 +242,17 @@ levels.forEach(level => {
           mode: 'Offline',
           status: 'Active',
           image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800&industry=${industry.replace(/\s+/g, '')}`,
-          description: `Comprehensive technical training in ${industry}. Professional curriculum designed for the ${level} tier to meet global industry standards.`,
+          description: `Industry-standard training in ${trackName}. This course covers both fundamental theories and practical workshop applications required for the modern ${industry} sector.`,
           certification: "SMS National Board of Vocational Training",
           price: level === "UG Degree" ? "Rs. 45,000 / Sem" : (level === "UG Diploma" ? "Rs. 35,000 / Year" : "Rs. 25,000 / Year"),
           eligibility: "12th Pass in any stream from a recognized board.",
-          benefits: "• Industry Certified Mentors\n• 100% Placement Assistance\n• Advanced Workshop Training"
+          benefits: "• Expert Mentorship\n• Hands-on Lab Training\n• Global Placement Support"
         });
       });
       return; 
     }
 
-    // Default/Master logic
+    // Default Fallback Generation
     let courseName = `${levelDisplayNames[level]} in ${industry}`;
     
     if (level === "Master") {
