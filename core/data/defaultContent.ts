@@ -50,7 +50,7 @@ const masterIndustries = [
   "Tourism & Hospitality"
 ];
 
-// Shared mapping for specific vocational tracks (used by Certificate, UG Certificate, Diploma, and Degree logic)
+// Shared mapping for specific vocational tracks
 const vocationalTrackMapping: Record<string, string[]> = {
   "Agriculture": ["Agriculture"],
   "Automotive": [
@@ -58,7 +58,7 @@ const vocationalTrackMapping: Record<string, string[]> = {
     "Automobile Production (Welding)",
     "Automobile Production (Machining)"
   ],
-  "Apparel": ["Fashion Designing"],
+  "Apparel": ["Fashion Designing"], // Default track for Apparel
   "Banking, Finance Services & Insurance": [
     "Banking, Financial Services & Insurance",
     "Account & Taxation"
@@ -88,12 +88,12 @@ const vocationalTrackMapping: Record<string, string[]> = {
   "IT-ITeS": ["Application Development", "Information Technology"],
   "Life Sciences": ["Life Sciences"],
   "Logistics": ["Logistic Operations Management"],
-  "Media & Entertainment": ["Multimedia"], // Specialized case override handled in loop
+  "Media & Entertainment": ["Multimedia"], 
   "Mining": ["Mining"],
   "Plumbing": ["Plumbing Skills"],
   "Retail": ["Retail Management"],
   "Rubber, Chemical & Petrochemical": ["Plastic Technology", "Polymer Technology"],
-  "Telecom": ["Telecommunication"], // Specialized case override handled in loop
+  "Telecom": ["Telecommunication"], 
   "Textile & Handloom": ["Textile Technology"],
   "Tourism & Hospitality": ["Hotel Management", "Travel & Tourism"]
 };
@@ -123,7 +123,16 @@ levels.forEach(level => {
   targetIndustries.forEach(industry => {
     // Multi-Track logic for Certificate, UG Certificate, UG Diploma, and UG Degree
     if ((level === "Certificate" || level === "UG Certificate" || level === "UG Diploma" || level === "UG Degree") && vocationalTrackMapping[industry]) {
-      vocationalTrackMapping[industry].forEach(trackName => {
+      
+      // Determine tracks for this specific level and industry
+      let tracks = vocationalTrackMapping[industry];
+      
+      // Specific Override for Apparel at Certificate level
+      if (level === "Certificate" && industry === "Apparel") {
+        tracks = ["Fashion Designer", "Self Employed Tailor"];
+      }
+
+      tracks.forEach(trackName => {
         let finalName = `${levelDisplayNames[level]} in ${trackName}`;
         
         // Media & Telecom overrides (Specific Institutional Request)
