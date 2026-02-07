@@ -36,7 +36,7 @@ const masterIndustries = [
   "Tourism & Hospitality"
 ];
 
-// Shared mapping for specific vocational tracks (used by both Certificate and Diploma logic)
+// Shared mapping for specific vocational tracks (used by Certificate, Diploma, and Degree logic)
 const vocationalTrackMapping: Record<string, string[]> = {
   "Agriculture": ["Agriculture"],
   "Automotive": [
@@ -74,12 +74,12 @@ const vocationalTrackMapping: Record<string, string[]> = {
   "IT-ITeS": ["Application Development", "Information Technology"],
   "Life Sciences": ["Life Sciences"],
   "Logistics": ["Logistic Operations Management"],
-  "Media & Entertainment": ["Multimedia"], // Specialized case: B.Voc prefix handled in loop
+  "Media & Entertainment": ["Multimedia"], // Specialized case override handled in loop
   "Mining": ["Mining"],
   "Plumbing": ["Plumbing Skills"],
   "Retail": ["Retail Management"],
   "Rubber, Chemical & Petrochemical": ["Plastic Technology", "Polymer Technology"],
-  "Telecom": ["Telecommunication"], // Specialized case: B.Voc prefix handled in loop
+  "Telecom": ["Telecommunication"], // Specialized case override handled in loop
   "Textile & Handloom": ["Textile Technology"],
   "Tourism & Hospitality": ["Hotel Management", "Travel & Tourism"]
 };
@@ -90,7 +90,7 @@ const levelDisplayNames: Record<string, string> = {
   "Certificate": "Certificate",
   "UG Certificate": "UG Certificate",
   "UG Diploma": "UG Diploma",
-  "UG Degree": "B. Voc.",
+  "UG Degree": "UG Degree Certificate",
   "Master": "M. Voc."
 };
 
@@ -101,12 +101,12 @@ levels.forEach(level => {
   const targetIndustries = level === "Master" ? masterIndustries : ugIndustries;
   
   targetIndustries.forEach(industry => {
-    // Logic for UG Certificate and UG Diploma (Multi-Track Mapping)
-    if ((level === "UG Certificate" || level === "UG Diploma") && vocationalTrackMapping[industry]) {
+    // Multi-Track logic for UG Certificate, UG Diploma, and UG Degree
+    if ((level === "UG Certificate" || level === "UG Diploma" || level === "UG Degree") && vocationalTrackMapping[industry]) {
       vocationalTrackMapping[industry].forEach(trackName => {
         let finalName = `${levelDisplayNames[level]} in ${trackName}`;
         
-        // Handle User Request: Media & Telecom overrides to B. Voc even in Certificate/Diploma tiers
+        // Media & Telecom overrides (Specific Institutional Request)
         if (industry === "Media & Entertainment") {
           finalName = "B. Voc. in Multimedia";
         } else if (industry === "Telecom") {
@@ -118,21 +118,21 @@ levels.forEach(level => {
           name: finalName,
           industry,
           academicLevel: level,
-          duration: level === "UG Diploma" ? "2 YEARS" : "1 YEAR",
+          duration: level === "UG Degree" ? "3 YEARS" : (level === "UG Diploma" ? "2 YEARS" : "1 YEAR"),
           mode: 'Offline',
           status: 'Active',
           image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800&industry=${industry.replace(/\s+/g, '')}`,
-          description: `Professional level vocational training in ${industry}. This curriculum is designed to meet international industry standards for technical excellence.`,
+          description: `Comprehensive technical training in ${industry}. Professional curriculum designed for the ${level} tier to meet global industry standards.`,
           certification: "SMS National Board of Vocational Training",
-          price: level === "UG Diploma" ? "Rs. 35,000 / Year" : "Rs. 25,000 / Year",
-          eligibility: "12th Standard Pass from a recognized board.",
-          benefits: "• Industry Certified Mentors\n• 100% Placement Assistance\n• State-of-the-art Labs"
+          price: level === "UG Degree" ? "Rs. 45,000 / Sem" : (level === "UG Diploma" ? "Rs. 35,000 / Year" : "Rs. 25,000 / Year"),
+          eligibility: "12th Pass in any stream from a recognized board.",
+          benefits: "• Industry Certified Mentors\n• 100% Placement Assistance\n• Advanced Workshop Training"
         });
       });
       return; 
     }
 
-    // Standard naming for other levels (Degree, Master, basic Certificate)
+    // Default/Master logic
     let courseName = `${levelDisplayNames[level]} in ${industry}`;
     
     if (level === "Master") {
@@ -155,11 +155,11 @@ levels.forEach(level => {
       mode: 'Offline',
       status: 'Active',
       image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800&industry=${industry.replace(/\s+/g, '')}`,
-      description: `Professional level training in ${industry} at the ${level} level. Optimized for immediate industry employability.`,
+      description: `High-impact vocational training in ${industry} at the ${level} level. Focused on immediate workplace competency.`,
       certification: "SMS National Board of Vocational Training",
       price: level === 'UG Degree' ? "Rs. 45,000 / Sem" : (level === 'Master' ? "Rs. 55,000 / Sem" : "Rs. 25,000 / Year"),
-      eligibility: level === 'Master' ? "Graduation in any discipline." : "12th Standard Pass from a recognized board.",
-      benefits: "• Industry Certified Mentors\n• 100% Placement Assistance\n• Modern Lab Facilities"
+      eligibility: level === 'Master' ? "Graduate in any stream." : "12th Pass from a recognized board.",
+      benefits: "• Real-world Project Experience\n• Industry Placement Support\n• Certified Faculty"
     });
   });
 });
