@@ -1,3 +1,4 @@
+
 import { AppState, Course } from '../types';
 
 const ugIndustries = [

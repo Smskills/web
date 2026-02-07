@@ -18,10 +18,21 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
   const logoUrl = config.logo || "https://lwfiles.mycourse.app/62a6cd5-public/6efdd5e.png";
   const alert = config.admissionAlert || { enabled: false, text: '', subtext: '', linkText: '', linkPath: '/enroll' };
 
-  // Dynamic sectors based on course data
+  // Fully Dynamic Sector & Level Generator
   const academicsMenu = useMemo(() => {
-    const levels = ["Certificate", "UG Certificate", "UG Diploma", "UG Degree", "Master"];
-    return levels.map(level => {
+    // 1. Extract every unique level present in the database
+    const uniqueLevels = Array.from(new Set(courses.map(c => c.academicLevel).filter(Boolean)));
+    
+    // Sort levels in a logical sequence
+    const preferredOrder = ["Certificate", "UG Certificate", "UG Diploma", "UG Degree", "Master", "ITEP", "Short Term"];
+    const sortedLevels = uniqueLevels.sort((a, b) => {
+      const idxA = preferredOrder.indexOf(a);
+      const idxB = preferredOrder.indexOf(b);
+      return (idxA === -1 ? 99 : idxA) - (idxB === -1 ? 99 : idxB);
+    });
+
+    return sortedLevels.map(level => {
+      // 2. Extract every unique industry/sector for THIS specific level
       const sectorsForLevel = Array.from(new Set(
         courses
           .filter(c => c.academicLevel === level)
@@ -71,7 +82,7 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
         </div>
       )}
 
-      {/* Main Navigation Bar - White */}
+      {/* Main Navigation Bar */}
       <div className="bg-white border-b border-slate-100 h-20 md:h-24 flex items-center">
         <div className="container mx-auto px-4 h-full flex items-center justify-between">
           <Link to="/" className="flex items-center gap-4 group">
@@ -104,7 +115,7 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
                       setActiveLevel(null);
                     }}
                   >
-                    <NavLink to={cleanPath} className={navLinkClasses}>
+                    <NavLink to="/academics" className={navLinkClasses}>
                       {item.label} 
                       <i className={`fa-solid fa-chevron-down text-[9px] transition-transform ${isAcademicsOpen ? 'rotate-180' : ''}`}></i>
                     </NavLink>
@@ -173,7 +184,7 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
 
               <Link to={isAuthenticated ? "/admin" : "/login"} className="px-6 py-3.5 bg-[#1e1b4b] text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-md flex items-center gap-2 active:scale-95">
                  <i className={`fa-solid ${isAuthenticated ? 'fa-gauge-high' : 'fa-lock'} text-xs`}></i>
-                 {isAuthenticated ? "Dashboard" : "Dashboard"}
+                 Dashboard
               </Link>
             </div>
           </nav>
