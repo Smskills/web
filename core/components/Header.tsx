@@ -18,10 +18,23 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
   const logoUrl = config.logo || "https://lwfiles.mycourse.app/62a6cd5-public/6efdd5e.png";
   const alert = config.admissionAlert || { enabled: false, text: '', subtext: '', linkText: '', linkPath: '/enroll' };
 
-  // Dynamic sectors based on course data
+  // Dynamic menu generator: Scans your actual course list to build the menu
   const academicsMenu = useMemo(() => {
-    const levels = ["Certificate", "UG Certificate", "UG Diploma", "UG Degree", "Master"];
-    return levels.map(level => {
+    // 1. Get all unique academic levels present in your current course data
+    const uniqueLevels = Array.from(new Set(courses.map(c => c.academicLevel).filter(Boolean)));
+    
+    // 2. Sort them based on a logical order if possible
+    const levelOrder = ["Certificate", "UG Certificate", "UG Diploma", "UG Degree", "Master", "ITEP", "Short Term"];
+    const sortedLevels = uniqueLevels.sort((a, b) => {
+      const idxA = levelOrder.indexOf(a);
+      const idxB = levelOrder.indexOf(b);
+      if (idxA === -1) return 1;
+      if (idxB === -1) return -1;
+      return idxA - idxB;
+    });
+
+    return sortedLevels.map(level => {
+      // 3. For each level, find the unique industries (sectors)
       const sectorsForLevel = Array.from(new Set(
         courses
           .filter(c => c.academicLevel === level)
@@ -71,7 +84,7 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
         </div>
       )}
 
-      {/* Main Navigation Bar - White */}
+      {/* Main Navigation Bar */}
       <div className="bg-white border-b border-slate-100 h-20 md:h-24 flex items-center">
         <div className="container mx-auto px-4 h-full flex items-center justify-between">
           <Link to="/" className="flex items-center gap-4 group">
@@ -173,7 +186,7 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
 
               <Link to={isAuthenticated ? "/admin" : "/login"} className="px-6 py-3.5 bg-[#1e1b4b] text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-md flex items-center gap-2 active:scale-95">
                  <i className={`fa-solid ${isAuthenticated ? 'fa-gauge-high' : 'fa-lock'} text-xs`}></i>
-                 {isAuthenticated ? "Dashboard" : "Dashboard"}
+                 Dashboard
               </Link>
             </div>
           </nav>
