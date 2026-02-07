@@ -169,6 +169,14 @@ levels.forEach(level => {
             "Field Technician Other Home Appliances",
             "DTH Set Top Box Installation & Service Technician"
           ];
+        } else if (industry === "Food Processing") {
+          tracks = [
+            "Multi Skills Technician (Food Processing)",
+            "Pickle Making Technician",
+            "Assistant Baking Technician",
+            "Baking Assistant",
+            "Certification in Food Production"
+          ];
         }
       }
 
