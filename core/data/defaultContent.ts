@@ -36,52 +36,52 @@ const masterIndustries = [
   "Tourism & Hospitality"
 ];
 
-// Mapping for UG Certificate programs (Industry -> Specific Course Names)
-const ugCertificateMapping: Record<string, string[]> = {
-  "Agriculture": ["UG Certificate in Agriculture"],
+// Shared mapping for specific vocational tracks (used by both Certificate and Diploma logic)
+const vocationalTrackMapping: Record<string, string[]> = {
+  "Agriculture": ["Agriculture"],
   "Automotive": [
-    "UG Certificate in Automobile Servicing",
-    "UG Certificate in Automobile Production (Welding)",
-    "UG Certificate in Automobile Production (Machining)"
+    "Automobile Servicing",
+    "Automobile Production (Welding)",
+    "Automobile Production (Machining)"
   ],
-  "Apparel": ["UG Certificate in Fashion Designing"],
+  "Apparel": ["Fashion Designing"],
   "Banking, Finance Services & Insurance": [
-    "UG Certificate in Banking, Financial Services & Insurance",
-    "UG Certificate in Account & Taxation"
+    "Banking, Financial Services & Insurance",
+    "Account & Taxation"
   ],
-  "Beauty & Wellness": ["UG Certificate in Therapeutic Yoga"],
-  "Capital Goods": ["UG Certificate in Production", "UG Certificate in Manufacturing"],
-  "Construction": ["UG Certificate in Construction Technology"],
+  "Beauty & Wellness": ["Therapeutic Yoga"],
+  "Capital Goods": ["Production", "Manufacturing"],
+  "Construction": ["Construction Technology"],
   "Electronics & Hardware": [
-    "UG Certificate in Refrigeration & Air Conditioning",
-    "UG Certificate in Electronics Manufacturing Services",
-    "UG Certificate in Computer Hardware & Networking",
-    "UG Certificate in Electrical & Electronic Assembly"
+    "Refrigeration & Air Conditioning",
+    "Electronics Manufacturing Services",
+    "Computer Hardware & Networking",
+    "Electrical & Electronic Assembly"
   ],
-  "Food Processing": ["UG Certificate in Food processing"],
-  "Furniture & Fitting": ["UG Certificate in Interior Designing"],
-  "Green Jobs": ["UG Certificate in Renewable Energy"],
+  "Food Processing": ["Food processing"],
+  "Furniture & Fitting": ["Interior Designing"],
+  "Green Jobs": ["Renewable Energy"],
   "Healthcare": [
-    "UG Certificate in Patient Care Management",
-    "UG Certificate in Medical Laboratory Technician",
-    "UG Certificate in Radiology & Imaging Technology",
-    "UG Certificate in Operation Theatre Technology",
-    "UG Certificate in Nursing Care",
-    "UG Certificate in Central Sterile Supply Department",
-    "UG Certificate in Dialysis Technology",
-    "UG Certificate in Hospital Administration"
+    "Patient Care Management",
+    "Medical Laboratory Technician",
+    "Radiology & Imaging Technology",
+    "Operation Theatre Technology",
+    "Nursing Care",
+    "Central Sterile Supply Department",
+    "Dialysis Technology",
+    "Hospital Administration"
   ],
-  "IT-ITeS": ["UG Certificate in Application Development", "UG Certificate in Information Technology"],
-  "Life Sciences": ["UG Certificate in Life Sciences"],
-  "Logistics": ["UG Certificate in Logistic Operations Management"],
-  "Media & Entertainment": ["B. Voc. in Multimedia"],
-  "Mining": ["UG Certificate in Mining"],
-  "Plumbing": ["UG Certificate in Plumbing Skills"],
-  "Retail": ["UG Certificate in Retail Management"],
-  "Rubber, Chemical & Petrochemical": ["UG Certificate in Plastic Technology", "UG Certificate in Polymer Technology"],
-  "Telecom": ["B. Voc. in Telecommunication"],
-  "Textile & Handloom": ["UG Certificate in Textile Technology"],
-  "Tourism & Hospitality": ["UG Certificate in Hotel Management", "UG Certificate in Travel & Tourism"]
+  "IT-ITeS": ["Application Development", "Information Technology"],
+  "Life Sciences": ["Life Sciences"],
+  "Logistics": ["Logistic Operations Management"],
+  "Media & Entertainment": ["Multimedia"], // Specialized case: B.Voc prefix handled in loop
+  "Mining": ["Mining"],
+  "Plumbing": ["Plumbing Skills"],
+  "Retail": ["Retail Management"],
+  "Rubber, Chemical & Petrochemical": ["Plastic Technology", "Polymer Technology"],
+  "Telecom": ["Telecommunication"], // Specialized case: B.Voc prefix handled in loop
+  "Textile & Handloom": ["Textile Technology"],
+  "Tourism & Hospitality": ["Hotel Management", "Travel & Tourism"]
 };
 
 const levels: Array<Course['academicLevel']> = ["Certificate", "UG Certificate", "UG Diploma", "UG Degree", "Master"];
@@ -89,7 +89,7 @@ const levels: Array<Course['academicLevel']> = ["Certificate", "UG Certificate",
 const levelDisplayNames: Record<string, string> = {
   "Certificate": "Certificate",
   "UG Certificate": "UG Certificate",
-  "UG Diploma": "D. Voc.",
+  "UG Diploma": "UG Diploma",
   "UG Degree": "B. Voc.",
   "Master": "M. Voc."
 };
@@ -101,32 +101,40 @@ levels.forEach(level => {
   const targetIndustries = level === "Master" ? masterIndustries : ugIndustries;
   
   targetIndustries.forEach(industry => {
-    // Handling UG Certificate level specifically with the multi-course mapping
-    if (level === "UG Certificate" && ugCertificateMapping[industry]) {
-      ugCertificateMapping[industry].forEach(specificName => {
+    // Logic for UG Certificate and UG Diploma (Multi-Track Mapping)
+    if ((level === "UG Certificate" || level === "UG Diploma") && vocationalTrackMapping[industry]) {
+      vocationalTrackMapping[industry].forEach(trackName => {
+        let finalName = `${levelDisplayNames[level]} in ${trackName}`;
+        
+        // Handle User Request: Media & Telecom overrides to B. Voc even in Certificate/Diploma tiers
+        if (industry === "Media & Entertainment") {
+          finalName = "B. Voc. in Multimedia";
+        } else if (industry === "Telecom") {
+          finalName = "B. Voc. in Telecommunication";
+        }
+
         generatedCourses.push({
           id: (idCounter++).toString(),
-          name: specificName,
+          name: finalName,
           industry,
           academicLevel: level,
-          duration: "1 YEAR",
+          duration: level === "UG Diploma" ? "2 YEARS" : "1 YEAR",
           mode: 'Offline',
           status: 'Active',
           image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800&industry=${industry.replace(/\s+/g, '')}`,
-          description: `Professional level training in ${industry}. This curriculum is designed to meet international industry standards for vocational excellence at the certificate level.`,
+          description: `Professional level vocational training in ${industry}. This curriculum is designed to meet international industry standards for technical excellence.`,
           certification: "SMS National Board of Vocational Training",
-          price: "Rs. 25,000 / Year",
+          price: level === "UG Diploma" ? "Rs. 35,000 / Year" : "Rs. 25,000 / Year",
           eligibility: "12th Standard Pass from a recognized board.",
-          benefits: "• Industry Certified Mentors\n• 100% Placement Assistance\n• Modern Lab Facilities"
+          benefits: "• Industry Certified Mentors\n• 100% Placement Assistance\n• State-of-the-art Labs"
         });
       });
-      return; // Skip standard generation for this industry since we handled it
+      return; 
     }
 
-    // Standard naming for other levels
+    // Standard naming for other levels (Degree, Master, basic Certificate)
     let courseName = `${levelDisplayNames[level]} in ${industry}`;
     
-    // Previous Overrides for Master Level
     if (level === "Master") {
       switch (industry) {
         case "Automotive": courseName = "M. Voc. in Automobile Production"; break;
@@ -147,7 +155,7 @@ levels.forEach(level => {
       mode: 'Offline',
       status: 'Active',
       image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800&industry=${industry.replace(/\s+/g, '')}`,
-      description: `Professional level training in ${industry} at the ${level} level. This curriculum is designed to meet international industry standards for vocational excellence.`,
+      description: `Professional level training in ${industry} at the ${level} level. Optimized for immediate industry employability.`,
       certification: "SMS National Board of Vocational Training",
       price: level === 'UG Degree' ? "Rs. 45,000 / Sem" : (level === 'Master' ? "Rs. 55,000 / Sem" : "Rs. 25,000 / Year"),
       eligibility: level === 'Master' ? "Graduation in any discipline." : "12th Standard Pass from a recognized board.",
