@@ -41,10 +41,10 @@ const levels: Array<Course['academicLevel']> = ["Certificate", "UG Certificate",
 
 const levelDisplayNames: Record<string, string> = {
   "Certificate": "Certificate",
-  "UG Certificate": "U G Certificate",
-  "UG Diploma": "U G Diploma",
-  "UG Degree": "U G Degree",
-  "Master": "Master"
+  "UG Certificate": "UG Certificate",
+  "UG Diploma": "D. Voc.",
+  "UG Degree": "B. Voc.",
+  "Master": "M. Voc."
 };
 
 const generatedCourses: Course[] = [];
@@ -54,9 +54,20 @@ levels.forEach(level => {
   const targetIndustries = level === "Master" ? masterIndustries : ugIndustries;
   
   targetIndustries.forEach(industry => {
+    let courseName = `${levelDisplayNames[level]} in ${industry}`;
+    
+    // Specific Override for Master Automotive
+    if (level === "Master" && industry === "Automotive") {
+      courseName = "M. Voc. in Automobile Production";
+    } else if (level === "Master" && industry === "BSFI") {
+      courseName = "M. Voc. in Banking, Financial Services & Insurance";
+    } else if (level === "Master" && industry === "Retails") {
+      courseName = "M. Voc. in Retail Management";
+    }
+
     generatedCourses.push({
       id: (idCounter++).toString(),
-      name: `${levelDisplayNames[level]} in ${industry}`,
+      name: courseName,
       industry,
       academicLevel: level,
       duration: level.includes('Degree') ? "3 YEARS" : level.includes('Master') ? "2 YEARS" : "1 YEAR",
@@ -65,8 +76,8 @@ levels.forEach(level => {
       image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800&industry=${industry.replace(/\s+/g, '')}`,
       description: `Professional level training in ${industry} at the ${level} level. This curriculum is designed to meet international industry standards for vocational excellence.`,
       certification: "SMS National Board of Vocational Training",
-      price: level.includes('Degree') ? "Rs. 45,000 / Sem" : "Rs. 25,000 / Year",
-      eligibility: "12th Standard Pass from a recognized board.",
+      price: level === 'UG Degree' ? "Rs. 45,000 / Sem" : level === 'Master' ? "Rs. 55,000 / Sem" : "Rs. 25,000 / Year",
+      eligibility: level === 'Master' ? "Graduation in any discipline." : "12th Standard Pass from a recognized board.",
       benefits: "• Industry Certified Mentors\n• 100% Placement Assistance\n• Modern Lab Facilities"
     });
   });
