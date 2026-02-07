@@ -129,16 +129,16 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
 
                                 {/* LEVEL 2 DROP DOWN (Sectors/Industries) */}
                                 {activeLevel === tier.level && tier.sectors.length > 0 && (
-                                  <div className="absolute top-0 left-full ml-0.5 min-w-[260px] animate-fade-in-left">
-                                     <div className="bg-white shadow-2xl border-l-4 border-emerald-500 rounded-r-xl overflow-hidden py-2">
-                                        <div className="px-5 py-2 border-b border-slate-50 mb-2">
-                                           <span className="text-[8px] font-black text-slate-400 uppercase tracking-[0.2em]">Select Sector</span>
+                                  <div className="absolute top-0 left-full ml-0.5 min-w-[300px] animate-fade-in-left">
+                                     <div className="bg-white shadow-2xl border-l-4 border-emerald-500 rounded-r-xl overflow-hidden py-2 max-h-[70vh] overflow-y-auto custom-scrollbar">
+                                        <div className="px-5 py-3 border-b border-slate-100 mb-2 sticky top-0 bg-white z-10">
+                                           <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Select Vocational Sector</span>
                                         </div>
                                         {tier.sectors.map((sector, idx) => (
                                           <Link
                                             key={idx}
                                             to={`/academics?level=${encodeURIComponent(tier.level)}&industry=${encodeURIComponent(sector)}`}
-                                            className="block px-6 py-3 text-[9px] font-black text-slate-500 hover:text-emerald-600 hover:bg-emerald-50/50 transition-all uppercase tracking-widest"
+                                            className="block px-6 py-3 text-[10px] font-black text-slate-600 hover:text-emerald-600 hover:bg-emerald-50/50 transition-all uppercase tracking-widest border-b border-slate-50/50 last:border-0"
                                             onClick={() => {
                                               setIsAcademicsOpen(false);
                                               setActiveLevel(null);
@@ -261,6 +261,10 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
         .animate-fade-in-left {
           animation: fadeInLeft 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f8fafc; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
       `}</style>
     </header>
   );
