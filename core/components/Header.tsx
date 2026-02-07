@@ -1,28 +1,41 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { SiteConfig } from '../types';
+import { SiteConfig, Course } from '../types';
 
 interface HeaderProps {
   config: SiteConfig;
   isAuthenticated?: boolean;
+  courses?: Course[];
 }
 
-const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false }) => {
+const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, courses = [] }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAcademicsOpen, setIsAcademicsOpen] = useState(false);
+  const [activeLevel, setActiveLevel] = useState<string | null>(null);
+  
   const location = useLocation();
   const logoUrl = config.logo || "https://lwfiles.mycourse.app/62a6cd5-public/6efdd5e.png";
   const alert = config.admissionAlert || { enabled: false, text: '', subtext: '', linkText: '', linkPath: '/enroll' };
 
-  // Academics dropdown structure updated with requested academic levels
-  const academicsMenu = [
-    { label: "Certificate Course", level: "Certificate" },
-    { label: "UG Certificate Course", level: "UG Certificate" },
-    { label: "UG Diploma Course", level: "UG Diploma" },
-    { label: "UG Degree Course", level: "UG Degree" },
-    { label: "Master", level: "Master" }
-  ];
+  // Dynamic sectors based on course data
+  const academicsMenu = useMemo(() => {
+    const levels = ["Certificate", "UG Certificate", "UG Diploma", "UG Degree", "Master"];
+    return levels.map(level => {
+      const sectorsForLevel = Array.from(new Set(
+        courses
+          .filter(c => c.academicLevel === level)
+          .map(c => c.industry)
+          .filter(Boolean)
+      )).sort();
+      
+      return {
+        label: level,
+        level: level,
+        sectors: sectorsForLevel
+      };
+    });
+  }, [courses]);
 
   const getCleanPath = (path: string) => {
     if (!path) return '/';
@@ -86,27 +99,58 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false }) => {
                     key={item.label}
                     className="relative h-full flex items-center"
                     onMouseEnter={() => setIsAcademicsOpen(true)}
-                    onMouseLeave={() => setIsAcademicsOpen(false)}
+                    onMouseLeave={() => {
+                      setIsAcademicsOpen(false);
+                      setActiveLevel(null);
+                    }}
                   >
                     <NavLink to={cleanPath} className={navLinkClasses}>
                       {item.label} 
                       <i className={`fa-solid fa-chevron-down text-[9px] transition-transform ${isAcademicsOpen ? 'rotate-180' : ''}`}></i>
                     </NavLink>
                     
-                    {/* DROP DOWN MENU */}
+                    {/* LEVEL 1 DROP DOWN (Academic Tiers) */}
                     {isAcademicsOpen && (
-                      <div className="absolute top-full left-[-20px] pt-2 animate-fade-in-down z-[120] min-w-[280px]">
-                        <div className="bg-white shadow-2xl border-t-4 border-emerald-600 flex flex-col overflow-hidden rounded-b-xl">
-                            {academicsMenu.map((menuItem, i) => (
-                              <Link 
-                                key={i} 
-                                to={`/academics?level=${encodeURIComponent(menuItem.level)}`}
-                                className="px-6 py-4 text-[10px] font-black tracking-widest flex justify-between items-center cursor-pointer transition-all border-b border-slate-50 text-slate-600 hover:text-emerald-600 hover:bg-slate-50"
-                                onClick={() => setIsAcademicsOpen(false)}
+                      <div className="absolute top-full left-[-20px] pt-2 animate-fade-in-down z-[120] min-w-[240px]">
+                        <div className="bg-white shadow-2xl border-t-4 border-emerald-600 flex flex-col overflow-visible rounded-b-xl">
+                            {academicsMenu.map((tier, i) => (
+                              <div 
+                                key={i}
+                                className="relative group/tier"
+                                onMouseEnter={() => setActiveLevel(tier.level)}
                               >
-                                {menuItem.label.toUpperCase()}
-                                <i className="fa-solid fa-chevron-right text-[8px] opacity-40"></i>
-                              </Link>
+                                <Link 
+                                  to={`/academics?level=${encodeURIComponent(tier.level)}`}
+                                  className={`px-6 py-4 text-[10px] font-black tracking-widest flex justify-between items-center cursor-pointer transition-all border-b border-slate-50 ${activeLevel === tier.level ? 'text-emerald-600 bg-slate-50' : 'text-slate-600 hover:text-emerald-600 hover:bg-slate-50'}`}
+                                >
+                                  {tier.label.toUpperCase()}
+                                  <i className={`fa-solid fa-chevron-right text-[8px] opacity-40 transition-transform ${activeLevel === tier.level ? 'translate-x-1' : ''}`}></i>
+                                </Link>
+
+                                {/* LEVEL 2 DROP DOWN (Sectors/Industries) */}
+                                {activeLevel === tier.level && tier.sectors.length > 0 && (
+                                  <div className="absolute top-0 left-full ml-0.5 min-w-[260px] animate-fade-in-left">
+                                     <div className="bg-white shadow-2xl border-l-4 border-emerald-500 rounded-r-xl overflow-hidden py-2">
+                                        <div className="px-5 py-2 border-b border-slate-50 mb-2">
+                                           <span className="text-[8px] font-black text-slate-400 uppercase tracking-[0.2em]">Select Sector</span>
+                                        </div>
+                                        {tier.sectors.map((sector, idx) => (
+                                          <Link
+                                            key={idx}
+                                            to={`/academics?level=${encodeURIComponent(tier.level)}&industry=${encodeURIComponent(sector)}`}
+                                            className="block px-6 py-3 text-[9px] font-black text-slate-500 hover:text-emerald-600 hover:bg-emerald-50/50 transition-all uppercase tracking-widest"
+                                            onClick={() => {
+                                              setIsAcademicsOpen(false);
+                                              setActiveLevel(null);
+                                            }}
+                                          >
+                                            {sector}
+                                          </Link>
+                                        ))}
+                                     </div>
+                                  </div>
+                                )}
+                              </div>
                             ))}
                         </div>
                       </div>
@@ -144,11 +188,56 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false }) => {
       {isMenuOpen && (
         <div className="lg:hidden fixed inset-x-0 top-20 md:top-24 bg-white shadow-2xl z-[90] overflow-y-auto max-h-[calc(100vh-6rem)] border-t border-slate-100">
           <div className="flex flex-col p-6 space-y-2">
-            {config.navigation.map((item) => (
-              <NavLink key={item.label} to={getCleanPath(item.path)} className="font-black text-slate-800 text-sm uppercase tracking-widest px-4 py-4 rounded-xl hover:bg-slate-50" onClick={() => setIsMenuOpen(false)}>
-                {item.label}
-              </NavLink>
-            ))}
+            {config.navigation.map((item) => {
+              const isAcademics = item.label.toUpperCase() === 'ACADEMICS' || item.label.toUpperCase() === 'COURSES';
+              if (isAcademics) {
+                return (
+                  <div key={item.label} className="space-y-2">
+                    <button 
+                      onClick={() => setIsAcademicsOpen(!isAcademicsOpen)}
+                      className="w-full flex justify-between items-center font-black text-slate-800 text-sm uppercase tracking-widest px-4 py-4 rounded-xl hover:bg-slate-50"
+                    >
+                      {item.label}
+                      <i className={`fa-solid fa-chevron-${isAcademicsOpen ? 'up' : 'down'} text-xs`}></i>
+                    </button>
+                    {isAcademicsOpen && (
+                      <div className="pl-6 space-y-1 border-l-2 border-emerald-100 ml-4">
+                        {academicsMenu.map((tier, i) => (
+                           <div key={i} className="space-y-1">
+                             <button 
+                               onClick={() => setActiveLevel(activeLevel === tier.level ? null : tier.level)}
+                               className="w-full text-left font-black text-slate-500 text-[11px] uppercase tracking-widest py-3 px-4 flex justify-between items-center"
+                             >
+                               {tier.label}
+                               <i className={`fa-solid fa-chevron-${activeLevel === tier.level ? 'up' : 'down'} text-[10px]`}></i>
+                             </button>
+                             {activeLevel === tier.level && (
+                               <div className="pl-4 space-y-1">
+                                 {tier.sectors.map((sector, idx) => (
+                                   <Link 
+                                      key={idx} 
+                                      to={`/academics?level=${encodeURIComponent(tier.level)}&industry=${encodeURIComponent(sector)}`}
+                                      className="block font-bold text-slate-400 text-[10px] uppercase py-2 px-4 hover:text-emerald-600"
+                                      onClick={() => setIsMenuOpen(false)}
+                                   >
+                                      {sector}
+                                   </Link>
+                                 ))}
+                               </div>
+                             )}
+                           </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+              return (
+                <NavLink key={item.label} to={getCleanPath(item.path)} className="font-black text-slate-800 text-sm uppercase tracking-widest px-4 py-4 rounded-xl hover:bg-slate-50" onClick={() => setIsMenuOpen(false)}>
+                  {item.label}
+                </NavLink>
+              );
+            })}
             <div className="grid grid-cols-2 gap-3 pt-4">
               <Link to="/enroll" className="bg-[#059669] text-white font-black py-4 rounded-xl text-center uppercase tracking-widest text-[10px]" onClick={() => setIsMenuOpen(false)}>Enroll</Link>
               <Link to={isAuthenticated ? "/admin" : "/login"} className="bg-[#1e1b4b] text-white font-black py-4 rounded-xl text-center uppercase tracking-widest text-[10px]" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
@@ -162,8 +251,15 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false }) => {
           from { opacity: 0; transform: translateY(-15px); }
           to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes fadeInLeft {
+          from { opacity: 0; transform: translateX(-10px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
         .animate-fade-in-down {
           animation: fadeInDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .animate-fade-in-left {
+          animation: fadeInLeft 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
       `}</style>
     </header>
