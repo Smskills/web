@@ -89,8 +89,8 @@ const generateCourses = (): Course[] => {
 
         if (level === 'Certificate') {
             duration = "3 Months";
-            price = "Rs. 50,000";
-            eligibility = "10th Pass";
+            price = "Rs. 12,000";
+            eligibility = "12th Pass";
             benefits = "• Industry Internship\n• Hands-on Lab Training\n• Placement Assistance";
         } else if (level === 'UG Certificate') {
             duration = "1 Year";
