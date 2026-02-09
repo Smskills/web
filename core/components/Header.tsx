@@ -26,8 +26,8 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
     // 1. Extract every unique level present in the database
     const uniqueLevels = Array.from(new Set(activeList.map(c => c.academicLevel).filter(Boolean)));
     
-    // Institutional Ordering for Levels
-    const preferredOrder = ["Certificate", "UG Certificate", "UG Diploma", "B. Voc", "UG Degree", "Master", "ITEP", "Short Term"];
+    // Institutional Ordering for Levels (Removed B. Voc)
+    const preferredOrder = ["Certificate", "UG Certificate", "UG Diploma", "UG Degree", "Master", "ITEP", "Short Term"];
     const sortedLevels = uniqueLevels.sort((a, b) => {
       const idxA = preferredOrder.indexOf(a);
       const idxB = preferredOrder.indexOf(b);
@@ -44,7 +44,7 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
       )).sort();
       
       let label = level;
-      if (level === 'B. Voc') label = 'B. Voc Degree';
+      if (level === 'Certificate') label = 'Certificate Course';
       if (level === 'UG Certificate') label = 'UG Certificate Course';
       if (level === 'UG Diploma') label = 'UG Diploma Course';
       if (level === 'UG Degree') label = 'UG Degree Course';
@@ -155,20 +155,10 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Select Vocational Sector</span>
                                         </div>
                                         {tier.sectors.map((sector, idx) => {
-                                          // USER SPECIAL REQUIREMENT: 
-                                          // Redirect "UG Certificate Course" and "UG Diploma Course" to "B. Voc"
-                                          // Redirect "UG Degree Course" to "UG Degree"
-                                          let targetLevel = tier.level;
-                                          if (tier.level === 'UG Certificate' || tier.level === 'UG Diploma') {
-                                            targetLevel = 'B. Voc';
-                                          } else if (tier.level === 'UG Degree') {
-                                            targetLevel = 'UG Degree'; // In this app, level is 'UG Degree' but label is 'UG Degree Course'
-                                          }
-                                          
                                           return (
                                             <Link
                                               key={idx}
-                                              to={`/academics?level=${encodeURIComponent(targetLevel)}&industry=${encodeURIComponent(sector)}`}
+                                              to={`/academics?level=${encodeURIComponent(tier.level)}&industry=${encodeURIComponent(sector)}`}
                                               className="block px-6 py-3 text-[10px] font-black text-slate-600 hover:text-emerald-600 hover:bg-emerald-50/50 transition-all uppercase tracking-widest border-b border-slate-50/50 last:border-0"
                                               onClick={() => {
                                                 setIsAcademicsOpen(false);
@@ -246,16 +236,10 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
                              {activeLevel === tier.level && (
                                <div className="pl-4 space-y-1">
                                  {tier.sectors.map((sector, idx) => {
-                                   let targetLevel = tier.level;
-                                   if (tier.level === 'UG Certificate' || tier.level === 'UG Diploma') {
-                                     targetLevel = 'B. Voc';
-                                   } else if (tier.level === 'UG Degree') {
-                                     targetLevel = 'UG Degree';
-                                   }
                                    return (
                                      <Link 
                                         key={idx} 
-                                        to={`/academics?level=${encodeURIComponent(targetLevel)}&industry=${encodeURIComponent(sector)}`}
+                                        to={`/academics?level=${encodeURIComponent(tier.level)}&industry=${encodeURIComponent(sector)}`}
                                         className="block font-bold text-slate-400 text-[10px] uppercase py-2 px-4 hover:text-emerald-600"
                                         onClick={() => setIsMenuOpen(false)}
                                      >

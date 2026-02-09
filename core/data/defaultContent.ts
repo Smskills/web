@@ -1,127 +1,67 @@
 
 import { AppState, Course } from '../types';
 
-const bVocMapping: Record<string, string[]> = {
-  "Agriculture": ["B. Voc in Agriculture"],
-  "Automotive": ["B. Voc. in Automobile Servicing", "B. Voc in Automobile Production (Welding)", "B. Voc. in Automobile Production (Machining)"],
-  "Apparel": ["B. Voc. in Fashion Designing"],
-  "Banking, Financial Services & Insurance": ["B. Voc. in Banking, financial Services & Insurance", "B. Voc in Account & Taxation"],
-  "Beauty & Wellness": ["B. Voc. in Therapeutic Yoga"],
-  "Capital Goods": ["B. Voc in Production", "B. Voc. in Manufacturing"],
-  "Construction": ["B. Voc. in Construction Technology"],
-  "Electronics and Hardware": ["B. Voc. in Refrigeration & Air Conditioning", "B. Voc. in Electronics Manufacturing Services", "B. Voc. in Computer Hardware & Networking", "B. Voc. in Electrical & Electronic Assembly"],
-  "Food Processing": ["B. Voc. in Food processing"],
-  "Furniture & Fitting": ["B. Voc. in Interior Designing"],
-  "Green Jobs": ["B. Voc. in Renewable Energy"],
-  "Healthcare": ["B. Voc. in Patient Care Management", "B. Voc in Medical Laboratory Technician", "B. Voc. in Radiology & Imaging Technology", "B. Voc in Operation Theatre Technology", "B. Voc in Nursing Care", "B. Voc in Central Sterile Supply Department", "B. Voc. in Dialysis Technology", "B. Voc. In Hospital Administration"],
-  "IT/ITES": ["B. Voc in Application Development", "B. Voc in Information Technology"],
-  "Life Science": ["B. Voc in Life Sciences"],
-  "Logistics": ["B. Voc in Logistic Operations Management"],
-  "Media & Entertainment": ["B Voc in Multimedia"],
-  "Mining": ["B. Voc. In Mining"],
-  "Plumbing": ["B. Voc in Plumbing Skills"],
-  "Retail": ["B. Voc in Retail Management"],
-  "Rubber, Chemical & Petrochemical": ["B. Voc in Plastic Technology", "B. Voc. In Polymer Technology"],
-  "Telecom": ["B.Voc. in Telecommunication"],
-  "Textile & Handloom": ["B. Voc in Textile Technology"],
-  "Tourism and Hospitality": ["B. Voc. In Hotel Management", "B. Voc in Travel & Tourism"]
-};
-
-const ugDegreeMapping: Record<string, string[]> = {
-  "Agriculture": ["UG Degree in Agriculture"],
-  "Automotive": ["UG Degree. in Automobile Servicing", "UG Degree in Automobile Production (Welding)", "UG Degree. in Automobile Production (Machining)"],
-  "Apparel": ["UG Degree. in Fashion Designing"],
-  "Banking, Financial Services & Insurance": ["UG Degree. in Banking, financial Services & Insurance", "UG Degree in Account & Taxation"],
-  "Beauty & Wellness": ["UG Degree. in Therapeutic Yoga"],
-  "Capital Goods": ["UG Degree in Production", "UG Degree. in Manufacturing"],
-  "Construction": ["UG Degree. in Construction Technology"],
-  "Electronics and Hardware": ["UG Degree. in Refrigeration & Air Conditioning", "UG Degree. in Electronics Manufacturing Services", "UG Degree. in Computer Hardware & Networking", "UG Degree. in Electrical & Electronic Assembly"],
-  "Food Processing": ["UG Degree. in Food processing"],
-  "Furniture & Fitting": ["UG Degree. in Interior Designing"],
-  "Green Jobs": ["UG Degree. in Renewable Energy"],
-  "Healthcare": ["UG Degree. in Patient Care Management", "UG Degree in Medical Laboratory Technician", "UG Degree. in Radiology & Imaging Technology", "UG Degree in Operation Theatre Technology", "UG Degree in Nursing Care", "UG Degree in Central Sterile Supply Department", "UG Degree. in Dialysis Technology", "UG Degree. In Hospital Administration"],
-  "IT/ITES": ["UG Degree in Application Development", "UG Degree in Information Technology"],
-  "Life Science": ["UG Degree in Life Sciences"],
-  "Logistics": ["UG Degree in Logistic Operations Management"],
-  "Media & Entertainment": ["UG Degree in Multimedia"],
-  "Mining": ["UG Degree. In Mining"],
-  "Plumbing": ["UG Degree in Plumbing Skills"],
-  "Retail": ["UG Degree in Retail Management"],
-  "Rubber, Chemical & Petrochemical": ["UG Degree in Plastic Technology", "UG Degree. In Polymer Technology"],
-  "Telecom": ["UG Degree in Telecommunication"],
-  "Textile & Handloom": ["UG Degree in Textile Technology"],
-  "Tourism and Hospitality": ["UG Degree. In Hotel Management", "UG Degree in Travel & Tourism"]
+const sectorSpecialties: Record<string, string[]> = {
+  "Agriculture": ["Agriculture"],
+  "Automotive": ["Automobile Servicing", "Automobile Production (Welding)", "Automobile Production (Machining)"],
+  "Apparel": ["Fashion Designing"],
+  "Banking, Financial Services & Insurance": ["Banking, financial Services & Insurance", "Account & Taxation"],
+  "Beauty & Wellness": ["Therapeutic Yoga"],
+  "Capital Goods": ["Production", "Manufacturing"],
+  "Construction": ["Construction Technology"],
+  "Electronics and Hardware": ["Refrigeration & Air Conditioning", "Electronics Manufacturing Services", "Computer Hardware & Networking", "Electrical & Electronic Assembly"],
+  "Food Processing": ["Food processing"],
+  "Furniture & Fitting": ["Interior Designing"],
+  "Green Jobs": ["Renewable Energy"],
+  "Healthcare": ["Patient Care Management", "Medical Laboratory Technician", "Radiology & Imaging Technology", "Operation Theatre Technology", "Nursing Care", "Central Sterile Supply Department", "Dialysis Technology", "Hospital Administration"],
+  "IT/ITES": ["Application Development", "Information Technology"],
+  "Life Science": ["Life Sciences"],
+  "Logistics": ["Logistic Operations Management"],
+  "Media & Entertainment": ["Multimedia"],
+  "Mining": ["Mining"],
+  "Plumbing": ["Plumbing Skills"],
+  "Retail": ["Retail Management"],
+  "Rubber, Chemical & Petrochemical": ["Plastic Technology", "Polymer Technology"],
+  "Telecom": ["Telecommunication"],
+  "Textile & Handloom": ["Textile Technology"],
+  "Tourism and Hospitality": ["Hotel Management", "Travel & Tourism"]
 };
 
 const generateCourses = (): Course[] => {
   const list: Course[] = [];
   let idCounter = 1;
 
-  // Add B. Voc tracks
-  Object.entries(bVocMapping).forEach(([industry, programs]) => {
-    programs.forEach(progName => {
-      list.push({
-        id: `bvoc-${idCounter++}`,
-        name: progName,
-        academicLevel: 'B. Voc',
-        industry: industry,
-        duration: "3 Years",
-        mode: 'Offline',
-        status: 'Active',
-        image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800&industry=${industry.replace(/\s+/g, '')}`,
-        description: `Professional academic track in ${progName}. This 3-year program provides extensive technical mastery and workplace experience.`,
-        price: "Rs. 35,000 / Sem",
-        certification: "University B. Voc Degree",
-        eligibility: "12th Pass",
-        benefits: "• 100% Internship Coverage\n• Industry Certified Curriculum"
-      });
-    });
+  const academicLevels: Array<'Certificate' | 'UG Certificate' | 'UG Diploma' | 'UG Degree'> = [
+    'Certificate', 
+    'UG Certificate', 
+    'UG Diploma', 
+    'UG Degree'
+  ];
 
-    // Placeholders for menu redirection entry points
-    list.push({
-      id: `cert-${idCounter++}`,
-      name: `Certificate in ${industry}`,
-      academicLevel: 'UG Certificate',
-      industry: industry,
-      duration: "1 Year",
-      mode: 'Offline',
-      status: 'Active',
-      image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800',
-      description: `Foundation Course in ${industry}. Note: Clicks from the menu redirect to higher degree tracks.`,
-      price: "Rs. 20,000"
-    } as any);
-
-    list.push({
-      id: `dip-${idCounter++}`,
-      name: `Diploma in ${industry}`,
-      academicLevel: 'UG Diploma',
-      industry: industry,
-      duration: "2 Years",
-      mode: 'Offline',
-      status: 'Active',
-      image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800',
-      description: `Diploma program in ${industry}. Note: Clicks from the menu redirect to higher degree tracks.`,
-      price: "Rs. 25,000"
-    } as any);
-  });
-
-  // Add UG Degree tracks
-  Object.entries(ugDegreeMapping).forEach(([industry, programs]) => {
-    programs.forEach(progName => {
-      list.push({
-        id: `ugdeg-${idCounter++}`,
-        name: progName,
-        academicLevel: 'UG Degree',
-        industry: industry,
-        duration: "3-4 Years",
-        mode: 'Offline',
-        status: 'Active',
-        image: `https://images.unsplash.com/photo-1523050853063-bd8012fec046?auto=format&fit=crop&q=80&w=800&industry=${industry.replace(/\s+/g, '')}`,
-        description: `Full academic UG Degree program in ${progName}. Focused on theoretical foundations and practical application in the field.`,
-        price: "Rs. 45,000 / Sem",
-        certification: "Bachelor's Degree",
-        eligibility: "12th Pass",
-        benefits: "• Comprehensive Career Coaching\n• Global Recognition"
+  academicLevels.forEach(level => {
+    Object.entries(sectorSpecialties).forEach(([industry, specialties]) => {
+      specialties.forEach(specName => {
+        // Humanized Level Names for Course Titles
+        // Explicitly ensuring 'UG Diploma' is used as the prefix for diploma tracks
+        let titleLevel = level;
+        if (level === 'Certificate') titleLevel = 'Certificate';
+        if (level === 'UG Diploma') titleLevel = 'UG Diploma';
+        
+        list.push({
+          id: `c-${idCounter++}`,
+          name: `${titleLevel} in ${specName}`,
+          academicLevel: level,
+          industry: industry,
+          duration: level === 'Certificate' ? "6 Months" : (level.includes('UG') && !level.includes('Degree') ? "1-2 Years" : "3 Years"),
+          mode: 'Offline',
+          status: 'Active',
+          image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800&industry=${industry.replace(/\s+/g, '')}`,
+          description: `Institutional academic track in ${specName}. This ${level} program provides specialized technical proficiency and industry-aligned skills.`,
+          price: level === 'Certificate' ? "Rs. 15,000" : "Rs. 35,000 / Sem",
+          certification: `${level} Certification`,
+          eligibility: level === 'UG Degree' ? "12th Pass" : "10th/12th Pass",
+          benefits: "• Industry Internship\n• Hands-on Lab Training\n• Placement Assistance"
+        });
       });
     });
   });
@@ -138,7 +78,7 @@ export const INITIAL_CONTENT: AppState = {
     admissionAlert: {
       enabled: true,
       text: "2024 ADMISSIONS NOW OPEN:",
-      subtext: "SECURE YOUR FUTURE WITH OUR B. VOC TRACKS.",
+      subtext: "SECURE YOUR FUTURE WITH OUR CERTIFICATE & DEGREE TRACKS.",
       linkText: "APPLY TODAY",
       linkPath: "/enroll"
     },
@@ -184,9 +124,9 @@ export const INITIAL_CONTENT: AppState = {
   home: {
     hero: {
       title: "Master Skills for the Modern Industry",
-      subtitle: "Join S M Skills for specialized B. Voc degree programs. Build your career with veterans.",
-      ctaText: "Browse B. Voc Tracks",
-      ctaLink: "/academics?level=B. Voc",
+      subtitle: "Join S M Skills for specialized vocational tracks. Build your career with veterans.",
+      ctaText: "Browse Programs",
+      ctaLink: "/academics",
       bgImage: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=1600",
       visible: true
     },
@@ -210,8 +150,8 @@ export const INITIAL_CONTENT: AppState = {
     sectionLabels: {
       noticesTitle: "Institute Feed",
       noticesSubtitle: "Recent announcements regarding batches, events, and scholarships.",
-      coursesTitle: "Vocational Degree Tracks",
-      coursesSubtitle: "Explore our diverse range of 3-year vocational tracks.",
+      coursesTitle: "Vocational Tracks",
+      coursesSubtitle: "Explore our diverse range of technical programs.",
       galleryTitle: "Campus Life",
       gallerySubtitle: "Explore our facilities, classroom interactions, and achievement galleries.",
       placementsTitle: "Our Placement Record",
@@ -327,7 +267,7 @@ export const INITIAL_CONTENT: AppState = {
         id: "n1",
         date: "2024-06-01",
         title: "Fall 2024 Intake Open",
-        description: "Secure your place in our flagship degree programs.",
+        description: "Secure your place in our flagship programs.",
         isImportant: true,
         category: 'New'
       }
@@ -340,7 +280,7 @@ export const INITIAL_CONTENT: AppState = {
   },
   faqs: {
     list: [
-      { id: "q1", question: "What is the admission criteria?", answer: "We look for a basic technical aptitude and a 12th pass certificate for our degree tracks.", category: "Admissions" }
+      { id: "q1", question: "What is the admission criteria?", answer: "We look for a basic technical aptitude and a 10th or 12th pass certificate depending on the track.", category: "Admissions" }
     ],
     pageMeta: { title: "Help Center", subtitle: "Common questions regarding our institute.", tagline: "ASSISTANCE" }
   },
