@@ -26,8 +26,8 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
     // 1. Extract every unique level present in the database
     const uniqueLevels = Array.from(new Set(activeList.map(c => c.academicLevel).filter(Boolean)));
     
-    // Sort levels in a logical sequence
-    const preferredOrder = ["Certificate", "UG Certificate", "UG Diploma", "UG Degree", "Master", "ITEP", "Short Term"];
+    // Institutional Ordering for Levels
+    const preferredOrder = ["Certificate", "UG Certificate", "UG Diploma", "B. Voc", "UG Degree", "Master", "ITEP", "Short Term"];
     const sortedLevels = uniqueLevels.sort((a, b) => {
       const idxA = preferredOrder.indexOf(a);
       const idxB = preferredOrder.indexOf(b);
@@ -43,8 +43,13 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
           .filter(Boolean)
       )).sort();
       
+      let label = level;
+      if (level === 'B. Voc') label = 'B. Voc Degree';
+      if (level === 'UG Certificate') label = 'UG Certificate Course';
+      if (level === 'UG Diploma') label = 'UG Diploma Course';
+
       return {
-        label: level,
+        label: label,
         level: level,
         sectors: sectorsForLevel
       };
@@ -148,19 +153,26 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
                                         <div className="px-5 py-3 border-b border-slate-100 mb-2 sticky top-0 bg-white z-10">
                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Select Vocational Sector</span>
                                         </div>
-                                        {tier.sectors.map((sector, idx) => (
-                                          <Link
-                                            key={idx}
-                                            to={`/academics?level=${encodeURIComponent(tier.level)}&industry=${encodeURIComponent(sector)}`}
-                                            className="block px-6 py-3 text-[10px] font-black text-slate-600 hover:text-emerald-600 hover:bg-emerald-50/50 transition-all uppercase tracking-widest border-b border-slate-50/50 last:border-0"
-                                            onClick={() => {
-                                              setIsAcademicsOpen(false);
-                                              setActiveLevel(null);
-                                            }}
-                                          >
-                                            {sector}
-                                          </Link>
-                                        ))}
+                                        {tier.sectors.map((sector, idx) => {
+                                          // USER SPECIAL REQUIREMENT: 
+                                          // Redirect "UG Certificate Course" and "UG Diploma Course" clicks to "B. Voc" degree level
+                                          const isRedirectLevel = tier.level === 'UG Certificate' || tier.level === 'UG Diploma';
+                                          const targetLevel = isRedirectLevel ? 'B. Voc' : tier.level;
+                                          
+                                          return (
+                                            <Link
+                                              key={idx}
+                                              to={`/academics?level=${encodeURIComponent(targetLevel)}&industry=${encodeURIComponent(sector)}`}
+                                              className="block px-6 py-3 text-[10px] font-black text-slate-600 hover:text-emerald-600 hover:bg-emerald-50/50 transition-all uppercase tracking-widest border-b border-slate-50/50 last:border-0"
+                                              onClick={() => {
+                                                setIsAcademicsOpen(false);
+                                                setActiveLevel(null);
+                                              }}
+                                            >
+                                              {sector}
+                                            </Link>
+                                          );
+                                        })}
                                      </div>
                                   </div>
                                 )}
@@ -227,16 +239,20 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
                              </button>
                              {activeLevel === tier.level && (
                                <div className="pl-4 space-y-1">
-                                 {tier.sectors.map((sector, idx) => (
-                                   <Link 
-                                      key={idx} 
-                                      to={`/academics?level=${encodeURIComponent(tier.level)}&industry=${encodeURIComponent(sector)}`}
-                                      className="block font-bold text-slate-400 text-[10px] uppercase py-2 px-4 hover:text-emerald-600"
-                                      onClick={() => setIsMenuOpen(false)}
-                                   >
-                                      {sector}
-                                   </Link>
-                                 ))}
+                                 {tier.sectors.map((sector, idx) => {
+                                   const isRedirectLevel = tier.level === 'UG Certificate' || tier.level === 'UG Diploma';
+                                   const targetLevel = isRedirectLevel ? 'B. Voc' : tier.level;
+                                   return (
+                                     <Link 
+                                        key={idx} 
+                                        to={`/academics?level=${encodeURIComponent(targetLevel)}&industry=${encodeURIComponent(sector)}`}
+                                        className="block font-bold text-slate-400 text-[10px] uppercase py-2 px-4 hover:text-emerald-600"
+                                        onClick={() => setIsMenuOpen(false)}
+                                     >
+                                        {sector}
+                                     </Link>
+                                   );
+                                 })}
                                </div>
                              )}
                            </div>

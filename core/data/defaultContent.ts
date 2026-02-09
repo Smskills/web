@@ -1,47 +1,87 @@
 
 import { AppState, Course } from '../types';
 
-const defaultIndustries = [
-  "Telecom",
-  "Tourism & Hospitality",
-  "Healthcare",
-  "IT & Software",
-  "Retail",
-  "Automotive"
-];
+const bVocMapping: Record<string, string[]> = {
+  "Agriculture": ["B. Voc in Agriculture"],
+  "Automotive": ["B. Voc. in Automobile Servicing", "B. Voc in Automobile Production (Welding)", "B. Voc. in Automobile Production (Machining)"],
+  "Apparel": ["B. Voc. in Fashion Designing"],
+  "Banking, Financial Services & Insurance": ["B. Voc. in Banking, financial Services & Insurance", "B. Voc in Account & Taxation"],
+  "Beauty & Wellness": ["B. Voc. in Therapeutic Yoga"],
+  "Capital Goods": ["B. Voc in Production", "B. Voc. in Manufacturing"],
+  "Construction": ["B. Voc. in Construction Technology"],
+  "Electronics and Hardware": ["B. Voc. in Refrigeration & Air Conditioning", "B. Voc. in Electronics Manufacturing Services", "B. Voc. in Computer Hardware & Networking", "B. Voc. in Electrical & Electronic Assembly"],
+  "Food Processing": ["B. Voc. in Food processing"],
+  "Furniture & Fitting": ["B. Voc. in Interior Designing"],
+  "Green Jobs": ["B. Voc. in Renewable Energy"],
+  "Healthcare": ["B. Voc. in Patient Care Management", "B. Voc in Medical Laboratory Technician", "B. Voc. in Radiology & Imaging Technology", "B. Voc in Operation Theatre Technology", "B. Voc in Nursing Care", "B. Voc in Central Sterile Supply Department", "B. Voc. in Dialysis Technology", "B. Voc. In Hospital Administration"],
+  "IT/ITES": ["B. Voc in Application Development", "B. Voc in Information Technology"],
+  "Life Science": ["B. Voc in Life Sciences"],
+  "Logistics": ["B. Voc in Logistic Operations Management"],
+  "Media & Entertainment": ["B Voc in Multimedia"],
+  "Mining": ["B. Voc. In Mining"],
+  "Plumbing": ["B. Voc in Plumbing Skills"],
+  "Retail": ["B. Voc in Retail Management"],
+  "Rubber, Chemical & Petrochemical": ["B. Voc in Plastic Technology", "B. Voc. In Polymer Technology"],
+  "Telecom": ["B.Voc. in Telecommunication"],
+  "Textile & Handloom": ["B. Voc in Textile Technology"],
+  "Tourism and Hospitality": ["B. Voc. In Hotel Management", "B. Voc in Travel & Tourism"]
+};
 
-const generatedCourses: Course[] = [
-  {
-    id: "c1",
-    name: "Call Center Executive",
-    academicLevel: "Certificate",
-    industry: "Telecom",
-    duration: "6 Months",
-    mode: "Offline",
-    status: "Active",
-    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800",
-    description: "Specialized training for telecommunications customer support roles.",
-    price: "Rs. 15,000",
-    certification: "Institutional Certificate",
-    eligibility: "12th Pass",
-    benefits: "Placement Support"
-  },
-  {
-    id: "c2",
-    name: "Tour Guide",
-    academicLevel: "Certificate",
-    industry: "Tourism & Hospitality",
-    duration: "1 Year",
-    mode: "Offline",
-    status: "Active",
-    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800",
-    description: "Learn professional tour management and hospitality standards.",
-    price: "Rs. 25,000",
-    certification: "National Board",
-    eligibility: "12th Pass",
-    benefits: "Field Internships"
-  }
-];
+const generateCourses = (): Course[] => {
+  const list: Course[] = [];
+  let idCounter = 1;
+
+  // Add all mapped B. Voc courses
+  Object.entries(bVocMapping).forEach(([industry, programs]) => {
+    programs.forEach(progName => {
+      list.push({
+        id: `c-${idCounter++}`,
+        name: progName,
+        academicLevel: 'B. Voc',
+        industry: industry,
+        duration: "3 Years",
+        mode: 'Offline',
+        status: 'Active',
+        image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800&industry=${industry.replace(/\s+/g, '')}`,
+        description: `National Board of Vocational Education compliant 3-year degree program in ${progName}. Focused on intensive industry training and skill proficiency.`,
+        price: "Rs. 35,000 / Sem",
+        certification: "University B. Voc Degree",
+        eligibility: "12th Pass in any stream",
+        benefits: "• 100% Industry Placement\n• Paid Internships\n• Professional Certification"
+      });
+    });
+
+    // Add placeholder UG Certificate course for each industry
+    list.push({
+      id: `cert-${idCounter++}`,
+      name: `Certificate in ${industry}`,
+      academicLevel: 'UG Certificate',
+      industry: industry,
+      duration: "1 Year",
+      mode: 'Offline',
+      status: 'Active',
+      image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800`,
+      description: `FOUNDATIONAL VOCATIONAL TRACK: Explore your career in ${industry}. Note: Clicking this sector under the menu will redirect you to our full B. Voc degree options.`,
+      price: "Rs. 20,000"
+    } as any);
+
+    // Add placeholder UG Diploma course for each industry
+    list.push({
+      id: `diploma-${idCounter++}`,
+      name: `Diploma in ${industry}`,
+      academicLevel: 'UG Diploma',
+      industry: industry,
+      duration: "2 Years",
+      mode: 'Offline',
+      status: 'Active',
+      image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800`,
+      description: `ADVANCED VOCATIONAL DIPLOMA: Deep dive into ${industry}. Note: Clicking this sector under the menu will redirect you to our full B. Voc degree options.`,
+      price: "Rs. 25,000"
+    } as any);
+  });
+
+  return list;
+};
 
 export const INITIAL_CONTENT: AppState = {
   site: {
@@ -52,7 +92,7 @@ export const INITIAL_CONTENT: AppState = {
     admissionAlert: {
       enabled: true,
       text: "2024 ADMISSIONS NOW OPEN:",
-      subtext: "SECURE YOUR FUTURE WITH OUR VOCATIONAL TRACKS.",
+      subtext: "SECURE YOUR FUTURE WITH OUR B. VOC TRACKS.",
       linkText: "APPLY TODAY",
       linkPath: "/enroll"
     },
@@ -98,9 +138,9 @@ export const INITIAL_CONTENT: AppState = {
   home: {
     hero: {
       title: "Master Skills for the Modern Industry",
-      subtitle: "Join S M Skills for specialized training programs. Build your career with veterans.",
-      ctaText: "Browse Academics",
-      ctaLink: "/academics",
+      subtitle: "Join S M Skills for specialized B. Voc degree programs. Build your career with veterans.",
+      ctaText: "Browse B. Voc Tracks",
+      ctaLink: "/academics?level=B. Voc",
       bgImage: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=1600",
       visible: true
     },
@@ -124,8 +164,8 @@ export const INITIAL_CONTENT: AppState = {
     sectionLabels: {
       noticesTitle: "Institute Feed",
       noticesSubtitle: "Recent announcements regarding batches, events, and scholarships.",
-      coursesTitle: "Technical Programs",
-      coursesSubtitle: "Explore our diverse range of UG, PG, and Specialized vocational tracks.",
+      coursesTitle: "B. Voc Degree Programs",
+      coursesSubtitle: "Explore our diverse range of 3-year vocational tracks.",
       galleryTitle: "Campus Life",
       gallerySubtitle: "Explore our facilities, classroom interactions, and achievement galleries.",
       placementsTitle: "Our Placement Record",
@@ -160,24 +200,23 @@ export const INITIAL_CONTENT: AppState = {
   customPages: [],
   enrollmentForm: {
     title: "SMS Official Enrollment",
-    description: "Please complete the comprehensive academic application form below. Our registrar team evaluates each candidate for program alignment.",
+    description: "Please complete the comprehensive academic application form below.",
     successTitle: "Application Received",
-    successMessage: "Your registration is being processed. An institutional registrar will review your application and contact you within 48 business hours for the next steps.",
+    successMessage: "Your registration is being processed. An institutional registrar will review your application soon.",
     roadmapTitle: "Enrollment Flow",
     roadmapSteps: [
-      { id: "s1", title: "Identity Submission", description: "Provide verifiable academic and personal records for initial screening." },
-      { id: "s2", title: "Technical Review", description: "Specialists evaluate your alignment with the chosen program track." },
-      { id: "s3", title: "Confirmation", description: "Official admission offer and joining protocols sent via advisor call." }
+      { id: "s1", title: "Identity Submission", description: "Provide verifiable academic and personal records." },
+      { id: "s2", title: "Technical Review", description: "Specialists evaluate your alignment with the chosen track." },
+      { id: "s3", title: "Confirmation", description: "Official admission offer sent via advisor call." }
     ],
     fields: [
       { id: "f1", label: "Student Full Name", type: "text", placeholder: "e.g. Michael Smith", required: true },
       { id: "f2", label: "Email Address", type: "email", placeholder: "mike@example.com", required: true },
       { id: "f3", label: "Father's / Guardian Name", type: "text", placeholder: "Enter Full Name", required: true },
       { id: "f4", label: "Date of Birth", type: "date", placeholder: "", required: true },
-      { id: "f5", label: "Primary Contact Number", type: "tel", placeholder: "+1 (555) 000-0000", required: true },
+      { id: "f5", label: "Primary Contact Number", type: "tel", placeholder: "+91", required: true },
       { id: "f8", label: "Highest Qualification", type: "select", placeholder: "Select Qualification", required: true, options: ["High School", "Secondary School (10th)", "Higher Secondary (12th)", "Diploma Holder", "Graduate / Bachelor's", "Post Graduate"] },
-      { id: "f9", label: "Course Interest", type: "course-select", placeholder: "Choose Program Track", required: true },
-      { id: "f11", label: "Current Education / Occupation", type: "text", placeholder: "e.g. Final year student / Freelancer", required: true }
+      { id: "f9", label: "Course Interest", type: "course-select", placeholder: "Choose Program Track", required: true }
     ]
   },
   contactForm: {
@@ -193,7 +232,7 @@ export const INITIAL_CONTENT: AppState = {
     beginning: {
       label: "CHAPTER 01 — OUR GENESIS",
       title: "Our Foundations",
-      story: "Founded in 2024, S M Skills was born out of a critical observation: the widening gap between traditional academic knowledge and the rapidly evolving demands of the modern workforce.",
+      story: "Founded in 2024, S M Skills was born out of a critical observation: the widening gap between traditional academic knowledge and modern workforce demands.",
       image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=1200"
     },
     learning: {
@@ -208,7 +247,7 @@ export const INITIAL_CONTENT: AppState = {
     faculty: {
       label: "CHAPTER 03 — THE GUARDIANS",
       title: "Taught by Practitioners",
-      description: "Our mentors aren't just academics; they are industry veterans.",
+      description: "Our mentors are industry veterans with decades of experience.",
       members: [
         { id: "m1", name: "Institutional Registrar", role: "Admissions Head", bio: "Leading institutional growth through vocational excellence.", image: "https://i.pravatar.cc/150?u=reg" }
       ]
@@ -226,37 +265,36 @@ export const INITIAL_CONTENT: AppState = {
       ctaLabel: "JOIN THE NEXT BATCH",
       image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1200",
       stats: [
-        { id: "a1", label: "Years of Heritage", value: "ESTD 2024" },
-        { id: "a2", label: "Success Rate", value: "94%" },
-        { id: "a3", label: "Global Partners", value: "200+" }
+        { id: "a1", label: "Placement Rate", value: "94%" },
+        { id: "a2", label: "Global Partners", value: "200+" }
       ]
     },
     extraChapters: []
   },
   courses: {
-    list: generatedCourses,
-    pageMeta: { title: "Technical Programs", subtitle: "Browse through our industry-verified technical tracks.", tagline: "PROFESSIONAL CURRICULA" }
+    list: generateCourses(),
+    pageMeta: { title: "Vocational Programs", subtitle: "Industry-verified technical tracks optimized for global employability.", tagline: "PROFESSIONAL CURRICULA" }
   },
   notices: {
     list: [
       {
         id: "n1",
         date: "2024-06-01",
-        title: "Summer 2024 Intake Open",
-        description: "Secure your place in our flagship engineering and design programs.",
+        title: "Fall 2024 Intake Open",
+        description: "Secure your place in our flagship B. Voc programs.",
         isImportant: true,
         category: 'New'
       }
     ],
-    pageMeta: { title: "Campus Announcements", subtitle: "Stay informed about batch timings.", tagline: "OFFICIAL FEED" }
+    pageMeta: { title: "Campus Announcements", subtitle: "Stay informed about batch timings and events.", tagline: "OFFICIAL FEED" }
   },
   gallery: {
     list: [],
-    pageMeta: { title: "Our Campus Life", subtitle: "Explore our facilities.", tagline: "VISUAL ARCHIVES" }
+    pageMeta: { title: "Our Campus Life", subtitle: "Explore our facilities and achievements.", tagline: "VISUAL ARCHIVES" }
   },
   faqs: {
     list: [
-      { id: "q1", question: "What is the admission criteria?", answer: "We look for a basic technical aptitude and a passion for learning.", category: "Admissions" }
+      { id: "q1", question: "What is the admission criteria for B. Voc?", answer: "We look for a basic technical aptitude and a 12th pass certificate.", category: "Admissions" }
     ],
     pageMeta: { title: "Help Center", subtitle: "Common questions regarding our institute.", tagline: "ASSISTANCE" }
   },
@@ -270,7 +308,7 @@ export const INITIAL_CONTENT: AppState = {
     ],
     reviews: [],
     partners: [
-      { id: "p1", name: "Partner Org", icon: "fa-building" }
+      { id: "p1", name: "Corporate Partner", icon: "fa-building" }
     ]
   },
   legal: {

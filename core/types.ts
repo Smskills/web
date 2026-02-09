@@ -50,7 +50,6 @@ export interface SiteConfig {
     reachUsLabel: string;
     bottomText: string;
   };
-  // Fix: Added notificationEmails property to SiteConfig to match its usage in SiteTab.tsx and leads.controller.ts
   notificationEmails?: string[];
 }
 
@@ -170,7 +169,7 @@ export interface Course {
   id: string;
   name: string;
   duration: string;
-  academicLevel: 'Certificate' | 'UG Certificate' | 'UG Diploma' | 'UG Degree' | 'Master' | 'ITEP' | 'Short Term';
+  academicLevel: 'Certificate' | 'UG Certificate' | 'UG Diploma' | 'B. Voc' | 'UG Degree' | 'Master' | 'ITEP' | 'Short Term';
   industry: string;
   certification?: string;
   mode: 'Online' | 'Offline' | 'Hybrid';
