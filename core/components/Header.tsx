@@ -95,10 +95,10 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
               <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" />
             </div>
             <div className="flex flex-col leading-tight">
-              <span className="font-black text-xl md:text-2xl text-[#059669] tracking-tighter uppercase whitespace-nowrap">
+              <span className="font-black text-2xl md:text-5xl text-[#059669] tracking-tighter uppercase whitespace-nowrap transition-all">
                 {config.name}
               </span>
-              <span className="text-[8px] md:text-[9px] text-[#059669] font-bold uppercase tracking-widest mt-0.5 opacity-80">
+              <span className="text-[10px] md:text-xs text-[#059669] font-black uppercase tracking-[0.2em] mt-1 opacity-90 transition-all">
                 {config.tagline}
               </span>
             </div>
@@ -190,7 +190,7 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
               </Link>
 
               <Link to={isAuthenticated ? "/admin" : "/login"} className="px-6 py-3.5 bg-[#1e1b4b] text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-md flex items-center gap-2 active:scale-95">
-                 <i className={`fa-solid ${isAuthenticated ? 'fa-gauge-high' : 'fa-lock'} text-xs`}></i>
+                 <i className="fa-solid fa-gauge-high text-xs"></i>
                  Dashboard
               </Link>
             </div>

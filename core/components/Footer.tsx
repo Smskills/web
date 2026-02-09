@@ -31,7 +31,9 @@ const Footer: React.FC<FooterProps> = ({ config }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-16 mb-16">
           {/* Brand Info */}
           <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
-            <h3 className="text-white text-2xl font-black mb-6 uppercase tracking-tighter">{config.name}</h3>
+            <h3 className="text-white text-3xl md:text-4xl font-black mb-8 uppercase tracking-tighter transition-all">
+              {config.name}
+            </h3>
             <p className="text-slate-400 text-sm md:text-base leading-relaxed mb-8 max-w-xs">
               {config.footer?.brandDescription || 'Empowering professional education for over a decade.'}
             </p>
