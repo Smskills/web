@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Course, PageMeta } from '../types.ts';
@@ -246,7 +245,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                    to={`/enroll?course=${encodeURIComponent(selectedCourse.name)}`}
                    className="px-10 py-5 bg-slate-900 text-white font-black rounded-2xl hover:bg-emerald-600 transition-all shadow-2xl active:scale-95 text-[11px] uppercase tracking-widest"
                  >
-                   Apply for Admission
+                   Submit Your inquery
                  </Link>
               </div>
            </div>

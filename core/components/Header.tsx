@@ -20,13 +20,9 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
 
   // Fully Dynamic Sector & Level Generator
   const academicsMenu = useMemo(() => {
-    // Ensure courses is an array and filter out inactive ones for the menu
     const activeList = (courses || []).filter(c => c && c.status === 'Active');
-    
-    // 1. Extract every unique level present in the database
     const uniqueLevels = Array.from(new Set(activeList.map(c => c.academicLevel).filter(Boolean)));
     
-    // Institutional Ordering for Levels (Removed B. Voc)
     const preferredOrder = ["Certificate", "UG Certificate", "UG Diploma", "UG Degree", "Master", "ITEP", "Short Term"];
     const sortedLevels = uniqueLevels.sort((a, b) => {
       const idxA = preferredOrder.indexOf(a);
@@ -35,7 +31,6 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
     });
 
     return sortedLevels.map(level => {
-      // 2. Extract every unique industry/sector for THIS specific level
       const sectorsForLevel = Array.from(new Set(
         activeList
           .filter(c => c.academicLevel === level)
@@ -48,6 +43,7 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
       if (level === 'UG Certificate') label = 'UG Certificate Course';
       if (level === 'UG Diploma') label = 'UG Diploma Course';
       if (level === 'UG Degree') label = 'UG Degree Course';
+      if (level === 'Master') label = 'Master Degree';
 
       return {
         label: label,

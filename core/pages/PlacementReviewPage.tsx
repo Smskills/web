@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { AppState } from '../types.ts';
@@ -106,7 +105,7 @@ const PlacementReviewPage: React.FC<PlacementReviewPageProps> = ({ placements, l
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl font-black text-slate-900 mb-8 tracking-tight">Ready to be our next success story?</h2>
           <Link to="/enroll" className="inline-block px-12 py-5 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-500 transition-all shadow-2xl active:scale-95 text-xs uppercase tracking-widest">
-            Apply For Admission
+            Submit Your inquery
           </Link>
         </div>
       </section>

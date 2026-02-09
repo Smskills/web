@@ -41,30 +41,55 @@ const generateCourses = (): Course[] => {
 
   academicLevels.forEach(level => {
     Object.entries(sectorSpecialties).forEach(([industry, specialties]) => {
-      // Master Level Sector Filter: Only specific industries allowed for Master's programs
+      
+      // Specialized Logic for Master level overrides
       if (level === 'Master') {
-        const allowedMasterSectors = [
-          "Automotive", 
-          "Banking, Financial Services & Insurance", 
-          "Electronics and Hardware", 
-          "IT/ITES", 
-          "Retail", 
-          "Tourism and Hospitality"
-        ];
-        if (!allowedMasterSectors.includes(industry)) return;
+        let masterName = '';
+        switch(industry) {
+            case "Automotive": 
+                masterName = "M. Voc in Automobile Production"; break;
+            case "Banking, Financial Services & Insurance": 
+                masterName = "M. Voc in Banking, Financial Services and Insurance"; break;
+            case "Electronics and Hardware": 
+                masterName = "M. Voc in Electronics Manufacturing"; break;
+            case "IT/ITES": 
+                masterName = "M. Voc in Application of Computer"; break;
+            case "Retail": 
+                masterName = "M. Voc in Retail Management"; break;
+            case "Tourism and Hospitality": 
+                masterName = "M. Voc in Travel and Tourism"; break;
+            default:
+                return; // Only allowed Master sectors as per institutional requirement
+        }
+
+        list.push({
+          id: `c-${idCounter++}`,
+          name: masterName,
+          academicLevel: level,
+          industry: industry,
+          duration: "2 Years",
+          mode: 'Offline',
+          status: 'Active',
+          image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800&industry=${industry.replace(/\s+/g, '')}`,
+          description: `High-level technical proficiency program. This ${masterName} program is designed for advanced strategic roles within the ${industry} sector.`,
+          price: "Rs. 50,000 / year",
+          certification: `${level} Certification`,
+          eligibility: "12th Pass",
+          benefits: "• Industry Internship\n• Hands-on Lab Training\n• Placement Assistance\n• Stipends Opportunities"
+        });
+        return; // Skip the general specialties loop for Master entries
       }
 
+      // Default logic for other levels
       specialties.forEach(specName => {
-        // Institutional Business Rules for Course Details
         let duration = "1 Year";
         let price = "Rs. 50,000 / year";
         let eligibility = "12th Pass";
         let benefits = "• Industry Internship\n• Hands-on Lab Training\n• Placement Assistance\n• Stipend Opportunities";
 
-        // Level-specific overrides
         if (level === 'Certificate') {
-            duration = "6 Months";
-            price = "Rs. 15,000";
+            duration = "3 Months";
+            price = "Rs. 50,000";
             eligibility = "10th Pass";
             benefits = "• Industry Internship\n• Hands-on Lab Training\n• Placement Assistance";
         } else if (level === 'UG Certificate') {
@@ -73,10 +98,6 @@ const generateCourses = (): Course[] => {
             duration = "3 Years";
         } else if (level === 'UG Degree') {
             duration = "3 Years";
-        } else if (level === 'Master') {
-            duration = "2 Years";
-            price = "Rs. 60,000 / year";
-            eligibility = "Graduate / Bachelor's";
         }
 
         list.push({
@@ -88,7 +109,7 @@ const generateCourses = (): Course[] => {
           mode: 'Offline',
           status: 'Active',
           image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800&industry=${industry.replace(/\s+/g, '')}`,
-          description: `Advanced institutional track in ${specName}. This ${level} program provides high-level technical proficiency and strategic industry-aligned skills.`,
+          description: `Institutional academic track in ${specName}. This ${level} program provides specialized technical proficiency and industry-aligned skills.`,
           price: price,
           certification: `${level} Certification`,
           eligibility: eligibility,
