@@ -27,15 +27,41 @@ const bVocMapping: Record<string, string[]> = {
   "Tourism and Hospitality": ["B. Voc. In Hotel Management", "B. Voc in Travel & Tourism"]
 };
 
+const ugDegreeMapping: Record<string, string[]> = {
+  "Agriculture": ["UG Degree in Agriculture"],
+  "Automotive": ["UG Degree. in Automobile Servicing", "UG Degree in Automobile Production (Welding)", "UG Degree. in Automobile Production (Machining)"],
+  "Apparel": ["UG Degree. in Fashion Designing"],
+  "Banking, Financial Services & Insurance": ["UG Degree. in Banking, financial Services & Insurance", "UG Degree in Account & Taxation"],
+  "Beauty & Wellness": ["UG Degree. in Therapeutic Yoga"],
+  "Capital Goods": ["UG Degree in Production", "UG Degree. in Manufacturing"],
+  "Construction": ["UG Degree. in Construction Technology"],
+  "Electronics and Hardware": ["UG Degree. in Refrigeration & Air Conditioning", "UG Degree. in Electronics Manufacturing Services", "UG Degree. in Computer Hardware & Networking", "UG Degree. in Electrical & Electronic Assembly"],
+  "Food Processing": ["UG Degree. in Food processing"],
+  "Furniture & Fitting": ["UG Degree. in Interior Designing"],
+  "Green Jobs": ["UG Degree. in Renewable Energy"],
+  "Healthcare": ["UG Degree. in Patient Care Management", "UG Degree in Medical Laboratory Technician", "UG Degree. in Radiology & Imaging Technology", "UG Degree in Operation Theatre Technology", "UG Degree in Nursing Care", "UG Degree in Central Sterile Supply Department", "UG Degree. in Dialysis Technology", "UG Degree. In Hospital Administration"],
+  "IT/ITES": ["UG Degree in Application Development", "UG Degree in Information Technology"],
+  "Life Science": ["UG Degree in Life Sciences"],
+  "Logistics": ["UG Degree in Logistic Operations Management"],
+  "Media & Entertainment": ["UG Degree in Multimedia"],
+  "Mining": ["UG Degree. In Mining"],
+  "Plumbing": ["UG Degree in Plumbing Skills"],
+  "Retail": ["UG Degree in Retail Management"],
+  "Rubber, Chemical & Petrochemical": ["UG Degree in Plastic Technology", "UG Degree. In Polymer Technology"],
+  "Telecom": ["UG Degree in Telecommunication"],
+  "Textile & Handloom": ["UG Degree in Textile Technology"],
+  "Tourism and Hospitality": ["UG Degree. In Hotel Management", "UG Degree in Travel & Tourism"]
+};
+
 const generateCourses = (): Course[] => {
   const list: Course[] = [];
   let idCounter = 1;
 
-  // Add all mapped B. Voc courses
+  // Add B. Voc tracks
   Object.entries(bVocMapping).forEach(([industry, programs]) => {
     programs.forEach(progName => {
       list.push({
-        id: `c-${idCounter++}`,
+        id: `bvoc-${idCounter++}`,
         name: progName,
         academicLevel: 'B. Voc',
         industry: industry,
@@ -43,15 +69,15 @@ const generateCourses = (): Course[] => {
         mode: 'Offline',
         status: 'Active',
         image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800&industry=${industry.replace(/\s+/g, '')}`,
-        description: `National Board of Vocational Education compliant 3-year degree program in ${progName}. Focused on intensive industry training and skill proficiency.`,
+        description: `Professional academic track in ${progName}. This 3-year program provides extensive technical mastery and workplace experience.`,
         price: "Rs. 35,000 / Sem",
         certification: "University B. Voc Degree",
-        eligibility: "12th Pass in any stream",
-        benefits: "• 100% Industry Placement\n• Paid Internships\n• Professional Certification"
+        eligibility: "12th Pass",
+        benefits: "• 100% Internship Coverage\n• Industry Certified Curriculum"
       });
     });
 
-    // Add placeholder UG Certificate course for each industry
+    // Placeholders for menu redirection entry points
     list.push({
       id: `cert-${idCounter++}`,
       name: `Certificate in ${industry}`,
@@ -60,24 +86,44 @@ const generateCourses = (): Course[] => {
       duration: "1 Year",
       mode: 'Offline',
       status: 'Active',
-      image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800`,
-      description: `FOUNDATIONAL VOCATIONAL TRACK: Explore your career in ${industry}. Note: Clicking this sector under the menu will redirect you to our full B. Voc degree options.`,
+      image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800',
+      description: `Foundation Course in ${industry}. Note: Clicks from the menu redirect to higher degree tracks.`,
       price: "Rs. 20,000"
     } as any);
 
-    // Add placeholder UG Diploma course for each industry
     list.push({
-      id: `diploma-${idCounter++}`,
+      id: `dip-${idCounter++}`,
       name: `Diploma in ${industry}`,
       academicLevel: 'UG Diploma',
       industry: industry,
       duration: "2 Years",
       mode: 'Offline',
       status: 'Active',
-      image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800`,
-      description: `ADVANCED VOCATIONAL DIPLOMA: Deep dive into ${industry}. Note: Clicking this sector under the menu will redirect you to our full B. Voc degree options.`,
+      image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800',
+      description: `Diploma program in ${industry}. Note: Clicks from the menu redirect to higher degree tracks.`,
       price: "Rs. 25,000"
     } as any);
+  });
+
+  // Add UG Degree tracks
+  Object.entries(ugDegreeMapping).forEach(([industry, programs]) => {
+    programs.forEach(progName => {
+      list.push({
+        id: `ugdeg-${idCounter++}`,
+        name: progName,
+        academicLevel: 'UG Degree',
+        industry: industry,
+        duration: "3-4 Years",
+        mode: 'Offline',
+        status: 'Active',
+        image: `https://images.unsplash.com/photo-1523050853063-bd8012fec046?auto=format&fit=crop&q=80&w=800&industry=${industry.replace(/\s+/g, '')}`,
+        description: `Full academic UG Degree program in ${progName}. Focused on theoretical foundations and practical application in the field.`,
+        price: "Rs. 45,000 / Sem",
+        certification: "Bachelor's Degree",
+        eligibility: "12th Pass",
+        benefits: "• Comprehensive Career Coaching\n• Global Recognition"
+      });
+    });
   });
 
   return list;
@@ -164,7 +210,7 @@ export const INITIAL_CONTENT: AppState = {
     sectionLabels: {
       noticesTitle: "Institute Feed",
       noticesSubtitle: "Recent announcements regarding batches, events, and scholarships.",
-      coursesTitle: "B. Voc Degree Programs",
+      coursesTitle: "Vocational Degree Tracks",
       coursesSubtitle: "Explore our diverse range of 3-year vocational tracks.",
       galleryTitle: "Campus Life",
       gallerySubtitle: "Explore our facilities, classroom interactions, and achievement galleries.",
@@ -281,7 +327,7 @@ export const INITIAL_CONTENT: AppState = {
         id: "n1",
         date: "2024-06-01",
         title: "Fall 2024 Intake Open",
-        description: "Secure your place in our flagship B. Voc programs.",
+        description: "Secure your place in our flagship degree programs.",
         isImportant: true,
         category: 'New'
       }
@@ -294,7 +340,7 @@ export const INITIAL_CONTENT: AppState = {
   },
   faqs: {
     list: [
-      { id: "q1", question: "What is the admission criteria for B. Voc?", answer: "We look for a basic technical aptitude and a 12th pass certificate.", category: "Admissions" }
+      { id: "q1", question: "What is the admission criteria?", answer: "We look for a basic technical aptitude and a 12th pass certificate for our degree tracks.", category: "Admissions" }
     ],
     pageMeta: { title: "Help Center", subtitle: "Common questions regarding our institute.", tagline: "ASSISTANCE" }
   },

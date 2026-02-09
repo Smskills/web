@@ -47,6 +47,7 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
       if (level === 'B. Voc') label = 'B. Voc Degree';
       if (level === 'UG Certificate') label = 'UG Certificate Course';
       if (level === 'UG Diploma') label = 'UG Diploma Course';
+      if (level === 'UG Degree') label = 'UG Degree Course';
 
       return {
         label: label,
@@ -155,9 +156,14 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
                                         </div>
                                         {tier.sectors.map((sector, idx) => {
                                           // USER SPECIAL REQUIREMENT: 
-                                          // Redirect "UG Certificate Course" and "UG Diploma Course" clicks to "B. Voc" degree level
-                                          const isRedirectLevel = tier.level === 'UG Certificate' || tier.level === 'UG Diploma';
-                                          const targetLevel = isRedirectLevel ? 'B. Voc' : tier.level;
+                                          // Redirect "UG Certificate Course" and "UG Diploma Course" to "B. Voc"
+                                          // Redirect "UG Degree Course" to "UG Degree"
+                                          let targetLevel = tier.level;
+                                          if (tier.level === 'UG Certificate' || tier.level === 'UG Diploma') {
+                                            targetLevel = 'B. Voc';
+                                          } else if (tier.level === 'UG Degree') {
+                                            targetLevel = 'UG Degree'; // In this app, level is 'UG Degree' but label is 'UG Degree Course'
+                                          }
                                           
                                           return (
                                             <Link
@@ -240,8 +246,12 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
                              {activeLevel === tier.level && (
                                <div className="pl-4 space-y-1">
                                  {tier.sectors.map((sector, idx) => {
-                                   const isRedirectLevel = tier.level === 'UG Certificate' || tier.level === 'UG Diploma';
-                                   const targetLevel = isRedirectLevel ? 'B. Voc' : tier.level;
+                                   let targetLevel = tier.level;
+                                   if (tier.level === 'UG Certificate' || tier.level === 'UG Diploma') {
+                                     targetLevel = 'B. Voc';
+                                   } else if (tier.level === 'UG Degree') {
+                                     targetLevel = 'UG Degree';
+                                   }
                                    return (
                                      <Link 
                                         key={idx} 
