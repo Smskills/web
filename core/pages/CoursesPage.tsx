@@ -62,7 +62,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
       {/* Header Section */}
       <section className="bg-[#1e1b4b] pt-32 pb-24 text-white relative overflow-hidden text-center">
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#059669]/10 rounded-full blur-3xl opacity-30 pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-2xl opacity-20 pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-50/5 rounded-full blur-2xl opacity-20 pointer-events-none"></div>
         
         <div className="container mx-auto px-4 relative z-10 max-w-4xl">
           <span className="text-emerald-400 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block animate-fade-in">
@@ -149,13 +149,6 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                       {course.academicLevel}
                     </span>
                   </div>
-                  {course.price && (
-                    <div className="absolute bottom-4 right-4">
-                      <span className="px-4 py-1.5 bg-emerald-600 text-white font-black text-[9px] uppercase tracking-widest rounded-full shadow-lg">
-                        {course.price}
-                      </span>
-                    </div>
-                  )}
                 </div>
                 
                 <div className="p-10 flex flex-col flex-grow">
@@ -168,26 +161,22 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                     </span>
                   </div>
 
-                  <h3 className="text-2xl font-black text-slate-900 mb-8 leading-tight tracking-tight group-hover:text-emerald-600 transition-colors">
+                  <h3 className="text-2xl font-black text-slate-900 mb-6 leading-tight tracking-tight group-hover:text-emerald-600 transition-colors">
                     {course.name}
                   </h3>
                   
-                  <div className="flex items-center justify-between mb-8 pt-6 border-t border-slate-50">
-                    <div className="flex items-center gap-2 text-slate-500">
-                      <i className="fa-regular fa-clock text-emerald-500"></i>
-                      <span className="text-[10px] font-black uppercase tracking-widest">{course.duration}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-slate-500">
-                      <i className="fa-solid fa-wifi text-emerald-500"></i>
-                      <span className="text-[10px] font-black uppercase tracking-widest">{course.mode}</span>
-                    </div>
+                  <div className="flex-grow">
+                    <FormattedText 
+                      text={course.description} 
+                      className="text-slate-500 text-sm leading-relaxed mb-8 line-clamp-3 font-medium"
+                    />
                   </div>
 
                   <button 
                     onClick={() => setSelectedCourse(course)}
                     className="w-full py-4 bg-[#1e1b4b] text-white font-black rounded-xl hover:bg-emerald-600 transition-all active:scale-95 text-center flex items-center justify-center gap-3 shadow-xl text-[11px] uppercase tracking-[0.2em] mt-auto"
                   >
-                    View Curriculum <i className="fa-solid fa-arrow-right-long text-[9px]"></i>
+                    View Details <i className="fa-solid fa-arrow-right-long text-[9px]"></i>
                   </button>
                 </div>
               </div>
@@ -197,115 +186,79 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
         
         {!isLoading && filteredCourses.length === 0 && (
           <div className="text-center py-40 bg-white rounded-[4rem] border-4 border-dashed border-slate-100 max-w-4xl mx-auto shadow-inner">
-             <div className="w-24 h-24 bg-slate-50 text-slate-200 rounded-full flex items-center justify-center text-5xl mx-auto mb-8">
-               <i className="fa-solid fa-magnifying-glass"></i>
+             <div className="w-24 h-24 bg-slate-50 text-slate-200 rounded-full flex items-center justify-center text-5xl mx-auto mb-6">
+                <i className="fa-solid fa-folder-open"></i>
              </div>
-             <h3 className="text-2xl font-black text-slate-400 uppercase tracking-widest mb-4">No Matching Programs</h3>
-             <p className="text-slate-400 text-sm max-w-xs mx-auto mb-10">Try adjusting your Sector or Academic Level filters to find more vocational tracks.</p>
-             <button 
-               onClick={() => setSearchParams({ level: 'All', industry: 'All' })}
-               className="px-10 py-4 bg-[#059669] text-white font-black rounded-2xl uppercase text-[10px] tracking-widest shadow-2xl active:scale-95 transition-all"
-             >
-               Reset All Filters
-             </button>
+             <h3 className="text-xl font-black text-slate-400 uppercase tracking-widest">No active programs found</h3>
+             <p className="text-slate-500 mt-2">Try adjusting your filters to find suitable programs.</p>
           </div>
         )}
       </div>
 
-      {/* Program Detail Modal */}
+      {/* Course Detail Modal */}
       {selectedCourse && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-sm animate-fade-in" onClick={() => setSelectedCourse(null)}></div>
-          <div className="bg-white w-full max-w-5xl rounded-[3rem] shadow-4xl relative z-10 overflow-hidden animate-fade-in-up flex flex-col md:flex-row max-h-[90vh]">
-            <button 
-              onClick={() => setSelectedCourse(null)} 
-              className="absolute top-6 right-6 w-12 h-12 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center text-slate-400 hover:text-red-500 z-20 transition-all shadow-xl border border-slate-100"
-            >
-               <i className="fa-solid fa-xmark text-xl"></i>
-            </button>
-
-            <div className="md:w-2/5 shrink-0 h-[300px] md:h-auto relative">
-               <img src={selectedCourse.image || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800'} className="w-full h-full object-cover" alt="" />
-               <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
-               <div className="absolute bottom-8 left-8">
-                  <span className="px-4 py-2 bg-emerald-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-xl">
-                    {selectedCourse.industry}
-                  </span>
-               </div>
-            </div>
-
-            <div className="md:w-3/5 p-10 md:p-16 overflow-y-auto custom-scrollbar flex-grow bg-white">
-               <div className="flex items-center gap-3 mb-8">
-                 <span className="px-3 py-1 bg-slate-100 text-slate-500 rounded font-black text-[9px] uppercase tracking-widest border border-slate-200">{selectedCourse.academicLevel}</span>
-                 <span className="px-3 py-1 bg-emerald-50 text-emerald-600 rounded font-black text-[9px] uppercase tracking-widest border border-emerald-100">{selectedCourse.mode}</span>
-               </div>
-               
-               <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter leading-[1.1] mb-10">{selectedCourse.name}</h2>
-               
-               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-12 border-y border-slate-100 py-10">
-                  <div className="space-y-2">
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em]">Program Timeline</p>
-                    <p className="text-xl font-black text-slate-900 flex items-center gap-3">
-                       <i className="fa-regular fa-clock text-emerald-500"></i> {selectedCourse.duration}
-                    </p>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em]">Institutional Fees</p>
-                    <p className="text-xl font-black text-emerald-600 flex items-center gap-3">
-                       <i className="fa-solid fa-credit-card"></i> {selectedCourse.price}
-                    </p>
-                  </div>
-               </div>
-
-               <div className="space-y-10">
-                 <div className="prose prose-slate max-w-none">
-                   <h4 className="text-[10px] font-black text-slate-900 uppercase tracking-widest mb-4 flex items-center gap-3">
-                     <i className="fa-solid fa-file-lines text-emerald-500"></i>
-                     Curriculum Overview
-                   </h4>
-                   <FormattedText text={selectedCourse.description} className="text-slate-600 font-medium leading-relaxed text-lg" />
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-md animate-fade-in">
+           <div className="bg-white w-full max-w-4xl rounded-[3rem] overflow-hidden shadow-4xl max-h-[90vh] flex flex-col scale-in-center">
+              <div className="relative h-64 md:h-80 shrink-0">
+                <img src={selectedCourse.image} className="w-full h-full object-cover" alt={selectedCourse.name} />
+                <button 
+                  onClick={() => setSelectedCourse(null)}
+                  className="absolute top-6 right-6 w-12 h-12 bg-white/90 backdrop-blur-md rounded-2xl flex items-center justify-center text-slate-900 shadow-2xl hover:bg-emerald-600 hover:text-white transition-all active:scale-90"
+                >
+                  <i className="fa-solid fa-xmark text-xl"></i>
+                </button>
+              </div>
+              <div className="p-8 md:p-12 overflow-y-auto custom-scrollbar flex-grow">
+                 <div className="flex flex-wrap gap-4 mb-8">
+                    <span className="px-4 py-1.5 bg-emerald-100 text-emerald-700 text-[10px] font-black rounded-full uppercase tracking-widest">{selectedCourse.academicLevel}</span>
+                    <span className="px-4 py-1.5 bg-slate-100 text-slate-700 text-[10px] font-black rounded-full uppercase tracking-widest">{selectedCourse.duration}</span>
+                    <span className="px-4 py-1.5 bg-blue-100 text-blue-700 text-[10px] font-black rounded-full uppercase tracking-widest">{selectedCourse.mode}</span>
                  </div>
-
-                 {selectedCourse.eligibility && (
-                   <div className="p-8 bg-slate-50 rounded-[2rem] border border-slate-100">
-                      <h4 className="text-[10px] font-black text-slate-900 uppercase tracking-widest mb-4">Prerequisites & Eligibility</h4>
-                      <p className="text-[14px] text-slate-600 font-medium leading-relaxed">{selectedCourse.eligibility}</p>
-                   </div>
-                 )}
-
-                 {selectedCourse.benefits && (
-                   <div className="p-8 bg-emerald-50/30 rounded-[2rem] border border-emerald-100/50">
-                      <h4 className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-4">Program Advantages</h4>
-                      <div className="text-[14px] text-slate-700 font-medium whitespace-pre-line leading-relaxed">
-                         {selectedCourse.benefits}
-                      </div>
-                   </div>
-                 )}
-               </div>
-
-               <Link 
-                to={`/enroll?course=${encodeURIComponent(selectedCourse.name)}`} 
-                className="w-full py-6 mt-12 bg-[#059669] text-white font-black rounded-2xl hover:bg-[#047857] transition-all text-center flex items-center justify-center gap-4 uppercase tracking-[0.2em] text-[12px] shadow-2xl shadow-emerald-600/30"
-               >
-                 START APPLICATION <i className="fa-solid fa-paper-plane text-sm"></i>
-               </Link>
-            </div>
-          </div>
+                 <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-8 tracking-tighter leading-none">{selectedCourse.name}</h2>
+                 
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
+                    <div className="space-y-6">
+                       <h4 className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.3em]">Program Overview</h4>
+                       <FormattedText text={selectedCourse.description} className="text-slate-600 leading-relaxed text-lg" />
+                    </div>
+                    <div className="space-y-8">
+                       {selectedCourse.eligibility && (
+                         <div>
+                            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4">Entry Requirements</h4>
+                            <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 text-slate-700 font-medium whitespace-pre-line">{selectedCourse.eligibility}</div>
+                         </div>
+                       )}
+                       {selectedCourse.benefits && (
+                         <div>
+                            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4">Key Benefits</h4>
+                            <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 text-slate-700 font-medium whitespace-pre-line">{selectedCourse.benefits}</div>
+                         </div>
+                       )}
+                    </div>
+                 </div>
+              </div>
+              <div className="p-8 md:p-10 border-t border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
+                 <div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Fee Structure</p>
+                    <p className="text-2xl font-black text-[#059669]">{selectedCourse.price || 'Scholarship'}</p>
+                 </div>
+                 <Link 
+                   to={`/enroll?course=${encodeURIComponent(selectedCourse.name)}`}
+                   className="px-10 py-5 bg-slate-900 text-white font-black rounded-2xl hover:bg-emerald-600 transition-all shadow-2xl active:scale-95 text-[11px] uppercase tracking-widest"
+                 >
+                   Apply for Admission
+                 </Link>
+              </div>
+           </div>
         </div>
       )}
       
       <style>{`
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
+        .scale-in-center { animation: scale-in-center 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940) both; }
+        @keyframes scale-in-center { 
+          0% { transform: scale(0.9); opacity: 0; } 
+          100% { transform: scale(1); opacity: 1; } 
         }
-        .animate-fade-in-up {
-          animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
       `}</style>
     </div>
   );

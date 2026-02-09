@@ -241,13 +241,12 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
                 <article key={course.id} className="flex flex-col rounded-[2.5rem] overflow-hidden border border-slate-100 bg-white hover:shadow-3xl transition-all group">
                   <div className="relative h-64 md:h-72 overflow-hidden">
                     <img src={course.image} alt={course.name} className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110" />
-                    <div className="absolute top-6 right-6 bg-white/90 backdrop-blur-xl px-6 py-2 rounded-full font-black text-emerald-600 text-xs shadow-2xl tracking-widest">{course.price || 'FREE'}</div>
                   </div>
                   <div className="p-8 md:p-12 flex flex-col flex-grow">
                     <h3 className="text-2xl md:text-3xl font-black mb-6 text-slate-900 tracking-tight group-hover:text-emerald-600 transition-colors">{course.name}</h3>
                     <p className="text-base md:text-lg text-slate-500 line-clamp-2 mb-12 leading-relaxed flex-grow font-medium">{course.description}</p>
-                    <Link to={`/enroll?course=${encodeURIComponent(course.name)}`} className={btnSecondary + " w-full flex justify-center gap-3"}>
-                      <i className="fa-solid fa-graduation-cap" aria-hidden="true"></i> Begin Application
+                    <Link to="/academics" className={btnSecondary + " w-full flex justify-center gap-3"}>
+                      View Details <i className="fa-solid fa-arrow-right-long text-[9px]"></i>
                     </Link>
                   </div>
                 </article>

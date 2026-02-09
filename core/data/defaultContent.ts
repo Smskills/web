@@ -1,106 +1,98 @@
 
 import { AppState, Course } from '../types';
 
-// Specific job roles for Certificate level as requested
-const certificateSectors: Record<string, string[]> = {
-  "Apparel": ["Fashion Designer", "Self Employed Tailor"],
-  "Automotive": [
-    "Showroom Host", "Automotive Telecaller", "Four Wheel Service Assistant", 
-    "Two Wheel Service Assistant", "Commercial Vehicle Driver", 
-    "Automotive Welding Machine Operator (Manual & Robotics)", 
-    "Automotive Sales Lead", "Automotive Sales Consultant", 
-    "Automotive Accessory Fitter", "Sales Consultant (Pre-Owned Vehicles)"
-  ],
-  "Beauty & Wellness": ["Therapeutic Yoga", "Beauty Therapist"],
-  "Banking, Financial Services & Insurance": [
-    "Debt Recovery Agent", "Account Executive", 
-    "Business Correspondence & Business Facilitator (CFBCBF)"
-  ],
-  "Electronics": [
-    "Customer Care Executive", "Field Technician Computing & Peripherals", 
-    "Field Technician Networking & Storage", "Solar Panel Installation Technician", 
-    "Field Technician Other Home Appliances", "DTH Set Top Box Installation & Service Technician"
-  ],
-  "Food Processing": [
-    "Multi Skills Technician (Food Processing)", "Pickle Making Technician", 
-    "Assistant Baking Technician", "Baking Assistant", "Certification in Food Production"
-  ],
-  "IT-ITeS": [
-    "Junior Software Development", "IT Helpdesk Attendant", "Digital Mitra", 
-    "Domestic Biometric Data Operator", "Domestic Data Entry Operator"
-  ],
-  "Logistics": ["Courier Delivery Executive", "Consignment Booking Assistant"],
-  "Retail": [
-    "Retail Sales Assistant", "Salesperson (Distribution)", "Retail Cashier", 
-    "Retail Sales Associate", "Retail Trainee Associate"
-  ],
-  "Telecom": ["Call Center Executive"],
-  "Tourism & Hospitality": [
-    "Customer Service Representative (Meet & Greet)", "Guest Service Executive (Housekeeping)", 
-    "Guest Service Assistant (Housekeeping)", "Pantry Assistant", 
-    "Guest Service Associate (Front Office)", "Guest Service Associate-Food & Beverage Service", 
-    "Food & Beverage Service Assistant", "Travel Consultant", "Tour Guide", 
-    "Counter Sales Executive (Tourism & Hospitality)", "Food Delivery Associate", 
-    "Front Office Assistant", "Front Office Executive", 
-    "Transport Coordinator-Tourism & Hospitality", "Tour Escort"
-  ]
-};
-
-// Standard specialties for higher academic tiers
-const standardSectors: Record<string, string[]> = {
+const sectorSpecialties: Record<string, string[]> = {
   "Agriculture": ["Agriculture"],
-  "Automotive": ["Automobile Servicing", "Automobile Production"],
+  "Automotive": ["Automobile Servicing", "Automobile Production (Welding)", "Automobile Production (Machining)"],
   "Apparel": ["Fashion Designing"],
-  "Banking, Financial Services & Insurance": ["Banking & Insurance", "Account & Taxation"],
-  "Beauty & Wellness": ["Yoga Science"],
+  "Banking, Financial Services & Insurance": ["Banking, financial Services & Insurance", "Account & Taxation"],
+  "Beauty & Wellness": ["Therapeutic Yoga"],
+  "Capital Goods": ["Production", "Manufacturing"],
   "Construction": ["Construction Technology"],
-  "Electronics and Hardware": ["Electronics Manufacturing", "Hardware & Networking"],
-  "Food Processing": ["Food Technology"],
-  "Healthcare": ["Medical Lab Tech", "Radiology", "Nursing Care", "Dialysis Tech", "Hospital Admin"],
+  "Electronics and Hardware": ["Refrigeration & Air Conditioning", "Electronics Manufacturing Services", "Computer Hardware & Networking", "Electrical & Electronic Assembly"],
+  "Food Processing": ["Food processing"],
+  "Furniture & Fitting": ["Interior Designing"],
+  "Green Jobs": ["Renewable Energy"],
+  "Healthcare": ["Patient Care Management", "Medical Laboratory Technician", "Radiology & Imaging Technology", "Operation Theatre Technology", "Nursing Care", "Central Sterile Supply Department", "Dialysis Technology", "Hospital Administration"],
   "IT/ITES": ["Application Development", "Information Technology"],
-  "Logistics": ["Logistic Operations"],
+  "Life Science": ["Life Sciences"],
+  "Logistics": ["Logistic Operations Management"],
+  "Media & Entertainment": ["Multimedia"],
+  "Mining": ["Mining"],
+  "Plumbing": ["Plumbing Skills"],
   "Retail": ["Retail Management"],
+  "Rubber, Chemical & Petrochemical": ["Plastic Technology", "Polymer Technology"],
   "Telecom": ["Telecommunication"],
-  "Tourism & Hospitality": ["Hotel Management", "Travel & Tourism"]
+  "Textile & Handloom": ["Textile Technology"],
+  "Tourism and Hospitality": ["Hotel Management", "Travel & Tourism"]
 };
 
 const generateCourses = (): Course[] => {
   const list: Course[] = [];
   let idCounter = 1;
 
-  const academicLevels: Array<'Certificate' | 'UG Certificate' | 'UG Diploma' | 'UG Degree'> = [
+  const academicLevels: Array<'Certificate' | 'UG Certificate' | 'UG Diploma' | 'UG Degree' | 'Master'> = [
     'Certificate', 
     'UG Certificate', 
     'UG Diploma', 
-    'UG Degree'
+    'UG Degree',
+    'Master'
   ];
 
   academicLevels.forEach(level => {
-    // Use specific mapping for Certificate, standard mapping for others
-    const mapping = level === 'Certificate' ? certificateSectors : standardSectors;
-    
-    Object.entries(mapping).forEach(([industry, specialties]) => {
+    Object.entries(sectorSpecialties).forEach(([industry, specialties]) => {
+      // Master Level Sector Filter: Only specific industries allowed for Master's programs
+      if (level === 'Master') {
+        const allowedMasterSectors = [
+          "Automotive", 
+          "Banking, Financial Services & Insurance", 
+          "Electronics and Hardware", 
+          "IT/ITES", 
+          "Retail", 
+          "Tourism and Hospitality"
+        ];
+        if (!allowedMasterSectors.includes(industry)) return;
+      }
+
       specialties.forEach(specName => {
-        let courseName = `${level} in ${specName}`;
-        if (level === 'Certificate' && industry === 'Automotive') {
-            // Special naming for Automotive Certificates to match requested style
-            courseName = `${specName} (Certificate)`;
+        // Institutional Business Rules for Course Details
+        let duration = "1 Year";
+        let price = "Rs. 50,000 / year";
+        let eligibility = "12th Pass";
+        let benefits = "• Industry Internship\n• Hands-on Lab Training\n• Placement Assistance\n• Stipend Opportunities";
+
+        // Level-specific overrides
+        if (level === 'Certificate') {
+            duration = "6 Months";
+            price = "Rs. 15,000";
+            eligibility = "10th Pass";
+            benefits = "• Industry Internship\n• Hands-on Lab Training\n• Placement Assistance";
+        } else if (level === 'UG Certificate') {
+            duration = "1 Year";
+        } else if (level === 'UG Diploma') {
+            duration = "3 Years";
+        } else if (level === 'UG Degree') {
+            duration = "3 Years";
+        } else if (level === 'Master') {
+            duration = "2 Years";
+            price = "Rs. 60,000 / year";
+            eligibility = "Graduate / Bachelor's";
         }
-        
+
         list.push({
           id: `c-${idCounter++}`,
-          name: courseName,
+          name: `${level} in ${specName}`,
           academicLevel: level,
           industry: industry,
-          duration: level === 'Certificate' ? "6 Months" : (level.includes('UG') && !level.includes('Degree') ? "1-2 Years" : "3 Years"),
+          duration: duration,
           mode: 'Offline',
           status: 'Active',
           image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800&industry=${industry.replace(/\s+/g, '')}`,
-          description: `Professional technical program in ${specName}. This ${level} track is designed for direct alignment with modern workforce requirements in the ${industry} sector.`,
-          price: level === 'Certificate' ? "Rs. 15,000" : "Rs. 35,000 / Sem",
+          description: `Advanced institutional track in ${specName}. This ${level} program provides high-level technical proficiency and strategic industry-aligned skills.`,
+          price: price,
           certification: `${level} Certification`,
-          eligibility: level === 'UG Degree' ? "12th Pass" : "10th/12th Pass",
-          benefits: "• Industry Internship\n• Hands-on Lab Training\n• Placement Assistance"
+          eligibility: eligibility,
+          benefits: benefits
         });
       });
     });
@@ -118,7 +110,7 @@ export const INITIAL_CONTENT: AppState = {
     admissionAlert: {
       enabled: true,
       text: "2024 ADMISSIONS NOW OPEN:",
-      subtext: "SECURE YOUR FUTURE WITH OUR NEW CERTIFICATE TRACKS.",
+      subtext: "SECURE YOUR FUTURE WITH OUR CERTIFICATE & DEGREE TRACKS.",
       linkText: "APPLY TODAY",
       linkPath: "/enroll"
     },
