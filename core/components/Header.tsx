@@ -91,7 +91,7 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
       <div className="bg-white border-b border-slate-100 h-20 md:h-24 flex items-center">
         <div className="container mx-auto px-4 h-full flex items-center justify-between">
           <Link to="/" className="flex items-center gap-4 group">
-            <div className="w-12 h-12 md:w-16 md:h-16 flex items-center justify-center transition-transform group-hover:scale-105">
+            <div className="w-16 h-16 md:w-40 md:h-24 flex items-center justify-center transition-transform group-hover:scale-105">
               <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" />
             </div>
             <div className="flex flex-col leading-tight">
