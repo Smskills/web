@@ -111,7 +111,7 @@ const CourseModal: React.FC<CourseModalProps> = ({ course, onClose }) => {
                   </div>
                   <Link 
                     to={`/enroll?course=${encodeURIComponent(course.name)}`}
-                    className="px-8 py-4 bg-[#1e1b4b] text-white font-black rounded-xl hover:bg-emerald-600 transition-all shadow-xl text-[11px] uppercase tracking-[0.2em] active:scale-95 text-center"
+                    className="px-8 py-4 bg-slate-900 text-white font-black rounded-xl hover:bg-emerald-600 transition-all shadow-xl text-[11px] uppercase tracking-[0.2em] active:scale-95 text-center"
                   >
                     Submit Inquery
                   </Link>

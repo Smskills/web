@@ -31,7 +31,6 @@ export const generateCourses = (): Course[] => {
   const list: Course[] = [];
   let idCounter = 1;
 
-  // Refined levels to include NSDC as per user requirement
   const academicLevels: Array<'Certificate (NSDC)' | 'UG Certificate (NSDC)' | 'UG Diploma (NSDC)' | 'UG Degree' | 'Master'> = [
     'Certificate (NSDC)', 
     'UG Certificate (NSDC)', 
@@ -57,7 +56,7 @@ export const generateCourses = (): Course[] => {
 
         list.push({
           id: `c-${idCounter++}`,
-          name: masterName,
+          name: `${masterName} (NSDC)`,
           academicLevel: level as any,
           industry: industry,
           duration: "2 Years",
@@ -66,7 +65,7 @@ export const generateCourses = (): Course[] => {
           image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800&industry=${industry.replace(/\s+/g, '')}`,
           description: `High-level technical proficiency program. This ${masterName} program is designed for advanced strategic roles within the ${industry} sector.`,
           price: "Rs. 50,000 / year",
-          certification: `${level} Certification`,
+          certification: `Master (NSDC)`,
           eligibility: "Graduate",
           benefits: "• Industry Internship\n• Hands-on Lab Training\n• Placement Assistance\n• Stipend Opportunities"
         });
@@ -91,17 +90,23 @@ export const generateCourses = (): Course[] => {
             eligibility = "12th Pass";
             mode = 'Hybrid';
         } else if (level === 'UG Diploma (NSDC)') {
-            duration = "2 Years"; // 2 Years duration for UG Diploma as requested
+            duration = "2 Years";
             price = "Rs. 50,000 / year";
         } else if (level === 'UG Degree') {
             duration = "3 Years";
         }
 
         let courseNameLevel: string = level;
-        // Strip (NSDC) from the name display inside the card if redundant, 
-        // or keep for official branding. User said "end UG Diploma add (NSDC)".
         if (level === 'UG Certificate (NSDC)') courseNameLevel = 'UG Certificate';
         if (level === 'Certificate (NSDC)') courseNameLevel = 'Certificate';
+
+        // Set certification specifically to include (NSDC) as per level
+        /**
+         * Fix: Explicitly type certificationValue as string to prevent narrow union type inference.
+         * Removed redundant check for 'Master' level since it is handled by early return above.
+         */
+        let certificationValue: string = level;
+        if (level === 'UG Degree') certificationValue = 'UG Degree (NSDC)';
 
         list.push({
           id: `c-${idCounter++}`,
@@ -114,7 +119,7 @@ export const generateCourses = (): Course[] => {
           image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800&industry=${industry.replace(/\s+/g, '')}`,
           description: `Institutional academic track in ${specName}. This ${level} program provides specialized technical proficiency and industry-aligned skills.`,
           price: price,
-          certification: `${level}`,
+          certification: certificationValue,
           eligibility: eligibility,
           benefits: benefits
         });

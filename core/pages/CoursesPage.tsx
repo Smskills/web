@@ -56,8 +56,8 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans pb-24">
-      {/* Page Header */}
-      <section className="bg-[#1e1b4b] pt-32 pb-16 text-white relative overflow-hidden text-center">
+      {/* Page Header - Using bg-slate-900 which maps to brand secondary */}
+      <section className="bg-slate-900 pt-32 pb-16 text-white relative overflow-hidden text-center">
         <div className="container mx-auto px-4 relative z-10 max-w-4xl">
           <span className="text-emerald-400 font-black uppercase tracking-[0.4em] text-[10px] mb-3 block animate-fade-in">
             {pageMeta.tagline || 'PROFESSIONAL CURRICULA'}

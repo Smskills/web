@@ -8,7 +8,7 @@ export const INITIAL_CONTENT: AppState = {
   site: siteDefaults,
   theme: {
     primary: "#059669",
-    secondary: "#1e1b4b",
+    secondary: "#0f172a", // Updated from #1e1b4b to #0f172a for better harmony
     accent: "#10b981",
     radius: "large"
   },

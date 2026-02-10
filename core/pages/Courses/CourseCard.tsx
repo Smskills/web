@@ -21,7 +21,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, onSelect }) => {
         </div>
         <button 
           onClick={() => onSelect(course)}
-          className="w-full py-3 bg-[#1e1b4b] text-white font-black rounded-lg hover:bg-emerald-600 transition-all text-center flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest"
+          className="w-full py-3 bg-slate-900 text-white font-black rounded-lg hover:bg-emerald-600 transition-all text-center flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest shadow-lg shadow-slate-900/10"
         >
           Details <i className="fa-solid fa-arrow-right text-[8px]"></i>
         </button>

@@ -71,7 +71,7 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
   return (
     <header className="fixed top-0 left-0 right-0 z-[100] transition-all duration-300 font-sans shadow-sm">
       {alert.enabled && (
-        <div className="bg-[#0f172a] text-white py-2 px-4 border-b border-white/5 h-10 flex items-center">
+        <div className="bg-slate-900 text-white py-2 px-4 border-b border-white/5 h-10 flex items-center">
           <div className="container mx-auto flex justify-between items-center text-[9px] font-black uppercase tracking-widest">
             <div className="flex items-center gap-3">
                <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
@@ -180,11 +180,11 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
             })}
             
             <div className="flex items-center gap-4 ml-4">
-              <Link to="/enroll" className="px-5 py-2.5 bg-[#059669] text-white rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-[#047857] transition-all shadow-md active:scale-95">
+              <Link to="/enroll" className="px-5 py-2.5 bg-emerald-600 text-white rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-md active:scale-95">
                 Enroll Now
               </Link>
 
-              <Link to={isAuthenticated ? "/admin" : "/login"} className="px-5 py-2.5 bg-[#1e1b4b] text-white rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-md flex items-center gap-2 active:scale-95">
+              <Link to={isAuthenticated ? "/admin" : "/login"} className="px-5 py-2.5 bg-slate-900 text-white rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-md flex items-center gap-2 active:scale-95">
                  <i className="fa-solid fa-gauge-high text-[10px]"></i>
                  Admin
               </Link>
@@ -253,8 +253,8 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
               );
             })}
             <div className="grid grid-cols-2 gap-3 pt-4">
-              <Link to="/enroll" className="bg-[#059669] text-white font-black py-4 rounded-xl text-center uppercase tracking-widest text-[10px]" onClick={() => setIsMenuOpen(false)}>Enroll</Link>
-              <Link to={isAuthenticated ? "/admin" : "/login"} className="bg-[#1e1b4b] text-white font-black py-4 rounded-xl text-center uppercase tracking-widest text-[10px]" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
+              <Link to="/enroll" className="bg-emerald-600 text-white font-black py-4 rounded-xl text-center uppercase tracking-widest text-[10px]" onClick={() => setIsMenuOpen(false)}>Enroll</Link>
+              <Link to={isAuthenticated ? "/admin" : "/login"} className="bg-slate-900 text-white font-black py-4 rounded-xl text-center uppercase tracking-widest text-[10px]" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
             </div>
           </div>
         </div>
