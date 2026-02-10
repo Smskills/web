@@ -169,7 +169,7 @@ export interface Course {
   id: string;
   name: string;
   duration: string;
-  academicLevel: 'Certificate' | 'UG Certificate' | 'UG Diploma' | 'B. Voc' | 'UG Degree' | 'Master' | 'ITEP' | 'Short Term';
+  academicLevel: 'Certificate' | 'UG Certificate (NSDC)' | 'UG Diploma' | 'B. Voc' | 'UG Degree' | 'Master' | 'ITEP' | 'Short Term';
   industry: string;
   certification?: string;
   mode: 'Online' | 'Offline' | 'Hybrid';

@@ -18,12 +18,11 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
   const logoUrl = config.logo || "https://lwfiles.mycourse.app/62a6cd5-public/6efdd5e.png";
   const alert = config.admissionAlert || { enabled: false, text: '', subtext: '', linkText: '', linkPath: '/enroll' };
 
-  // Fully Dynamic Sector & Level Generator
   const academicsMenu = useMemo(() => {
     const activeList = (courses || []).filter(c => c && c.status === 'Active');
     const uniqueLevels = Array.from(new Set(activeList.map(c => c.academicLevel).filter(Boolean)));
     
-    const preferredOrder = ["Certificate", "UG Certificate", "UG Diploma", "UG Degree", "Master", "ITEP", "Short Term"];
+    const preferredOrder = ["Certificate", "UG Certificate (NSDC)", "UG Diploma", "UG Degree", "Master", "ITEP", "Short Term"];
     const sortedLevels = uniqueLevels.sort((a, b) => {
       const idxA = preferredOrder.indexOf(a);
       const idxB = preferredOrder.indexOf(b);
@@ -40,7 +39,7 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
       
       let label = level;
       if (level === 'Certificate') label = 'Certificate Course';
-      if (level === 'UG Certificate') label = 'UG Certificate Course';
+      if (level === 'UG Certificate (NSDC)') label = 'UG Certificate (NSDC)';
       if (level === 'UG Diploma') label = 'UG Diploma Course';
       if (level === 'UG Degree') label = 'UG Degree Course';
       if (level === 'Master') label = 'Master Degree';
@@ -71,7 +70,6 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
 
   return (
     <header className="fixed top-0 left-0 right-0 z-[100] transition-all duration-300 font-sans shadow-sm">
-      {/* Top Admission Bar */}
       {alert.enabled && (
         <div className="bg-[#0f172a] text-white py-2 px-4 border-b border-white/5 h-10 flex items-center">
           <div className="container mx-auto flex justify-between items-center text-[9px] font-black uppercase tracking-widest">
@@ -87,18 +85,17 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
         </div>
       )}
 
-      {/* Main Navigation Bar */}
-      <div className="bg-white border-b border-slate-100 h-20 md:h-24 flex items-center">
+      <div className="bg-white border-b border-slate-100 h-16 md:h-20 flex items-center">
         <div className="container mx-auto px-4 h-full flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-4 group">
-            <div className="w-16 h-16 md:w-40 md:h-24 flex items-center justify-center transition-transform group-hover:scale-105">
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="w-12 h-12 md:w-20 md:h-14 flex items-center justify-center transition-transform group-hover:scale-105">
               <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" />
             </div>
             <div className="flex flex-col leading-tight">
-              <span className="font-black text-2xl md:text-5xl text-[#059669] tracking-tighter uppercase whitespace-nowrap transition-all">
+              <span className="font-black text-xl md:text-2xl text-[#059669] tracking-tighter uppercase whitespace-nowrap transition-all">
                 {config.name}
               </span>
-              <span className="text-[10px] md:text-xs text-[#059669] font-black uppercase tracking-[0.2em] mt-1 opacity-90 transition-all">
+              <span className="text-[8px] md:text-[10px] text-[#059669] font-black uppercase tracking-[0.2em] mt-0.5 opacity-90 transition-all">
                 {config.tagline}
               </span>
             </div>
@@ -125,7 +122,6 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
                       <i className={`fa-solid fa-chevron-down text-[9px] transition-transform ${isAcademicsOpen ? 'rotate-180' : ''}`}></i>
                     </NavLink>
                     
-                    {/* LEVEL 1 DROP DOWN (Academic Tiers) */}
                     {isAcademicsOpen && (
                       <div className="absolute top-full left-[-20px] pt-2 animate-fade-in-down z-[120] min-w-[240px]">
                         <div className="bg-white shadow-2xl border-t-4 border-emerald-600 flex flex-col overflow-visible rounded-b-xl">
@@ -143,7 +139,6 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
                                   <i className={`fa-solid fa-chevron-right text-[8px] opacity-40 transition-transform ${activeLevel === tier.level ? 'translate-x-1' : ''}`}></i>
                                 </Link>
 
-                                {/* LEVEL 2 DROP DOWN (Sectors/Industries) */}
                                 {activeLevel === tier.level && tier.sectors.length > 0 && (
                                   <div className="absolute top-0 left-full ml-0.5 min-w-[300px] animate-fade-in-left">
                                      <div className="bg-white shadow-2xl border-l-4 border-emerald-500 rounded-r-xl overflow-hidden py-2 max-h-[70vh] overflow-y-auto custom-scrollbar">
@@ -178,20 +173,20 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
               }
 
               return (
-                <NavLink key={item.label} to={cleanPath} className={navLinkClasses} end={cleanPath === '/'}>
+                <NavLink key={item.label} to={getCleanPath(item.path)} className={navLinkClasses} end={getCleanPath(item.path) === '/'}>
                   {item.label}
                 </NavLink>
               );
             })}
             
             <div className="flex items-center gap-4 ml-4">
-              <Link to="/enroll" className="px-6 py-3.5 bg-[#059669] text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#047857] transition-all shadow-md active:scale-95">
+              <Link to="/enroll" className="px-5 py-2.5 bg-[#059669] text-white rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-[#047857] transition-all shadow-md active:scale-95">
                 Enroll Now
               </Link>
 
-              <Link to={isAuthenticated ? "/admin" : "/login"} className="px-6 py-3.5 bg-[#1e1b4b] text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-md flex items-center gap-2 active:scale-95">
-                 <i className="fa-solid fa-gauge-high text-xs"></i>
-                 Dashboard
+              <Link to={isAuthenticated ? "/admin" : "/login"} className="px-5 py-2.5 bg-[#1e1b4b] text-white rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-md flex items-center gap-2 active:scale-95">
+                 <i className="fa-solid fa-gauge-high text-[10px]"></i>
+                 Admin
               </Link>
             </div>
           </nav>
@@ -202,9 +197,8 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
         </div>
       </div>
 
-      {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="lg:hidden fixed inset-x-0 top-20 md:top-24 bg-white shadow-2xl z-[90] overflow-y-auto max-h-[calc(100vh-6rem)] border-t border-slate-100">
+        <div className="lg:hidden fixed inset-x-0 top-16 md:top-20 bg-white shadow-2xl z-[90] overflow-y-auto max-h-[calc(100vh-6rem)] border-t border-slate-100">
           <div className="flex flex-col p-6 space-y-2">
             {config.navigation.map((item) => {
               const isAcademics = item.label.toUpperCase() === 'ACADEMICS';

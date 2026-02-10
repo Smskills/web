@@ -31,9 +31,9 @@ const generateCourses = (): Course[] => {
   const list: Course[] = [];
   let idCounter = 1;
 
-  const academicLevels: Array<'Certificate' | 'UG Certificate' | 'UG Diploma' | 'UG Degree' | 'Master'> = [
+  const academicLevels: Array<'Certificate' | 'UG Certificate (NSDC)' | 'UG Diploma' | 'UG Degree' | 'Master'> = [
     'Certificate', 
-    'UG Certificate', 
+    'UG Certificate (NSDC)', 
     'UG Diploma', 
     'UG Degree',
     'Master'
@@ -42,7 +42,6 @@ const generateCourses = (): Course[] => {
   academicLevels.forEach(level => {
     Object.entries(sectorSpecialties).forEach(([industry, specialties]) => {
       
-      // Specialized Logic for Master level overrides
       if (level === 'Master') {
         let masterName = '';
         switch(industry) {
@@ -59,7 +58,7 @@ const generateCourses = (): Course[] => {
             case "Tourism and Hospitality": 
                 masterName = "M. Voc in Travel and Tourism"; break;
             default:
-                return; // Only allowed Master sectors as per institutional requirement
+                return;
         }
 
         list.push({
@@ -74,26 +73,25 @@ const generateCourses = (): Course[] => {
           description: `High-level technical proficiency program. This ${masterName} program is designed for advanced strategic roles within the ${industry} sector.`,
           price: "Rs. 50,000 / year",
           certification: `${level} Certification`,
-          eligibility: "12th Pass",
-          benefits: "• Industry Internship\n• Hands-on Lab Training\n• Placement Assistance\n• Stipends Opportunities"
+          eligibility: "Graduate",
+          benefits: "• Industry Internship\n• Hands-on Lab Training\n• Placement Assistance\n• Stipend Opportunities"
         });
-        return; // Skip the general specialties loop for Master entries
+        return;
       }
 
-      // Default logic for other levels
       specialties.forEach(specName => {
         let duration = "1 Year";
         let price = "Rs. 50,000 / year";
         let eligibility = "12th Pass";
+        let mode: 'Online' | 'Offline' | 'Hybrid' = 'Offline';
         let benefits = "• Industry Internship\n• Hands-on Lab Training\n• Placement Assistance\n• Stipend Opportunities";
 
-        if (level === 'Certificate') {
-            duration = "3 Months";
+        if (level === 'Certificate' || level === 'UG Certificate (NSDC)') {
+            duration = level === 'Certificate' ? "3 Months" : "1 Year";
             price = "Rs. 12,000";
             eligibility = "12th Pass";
-            benefits = "• Industry Internship\n• Hands-on Lab Training\n• Placement Assistance";
-        } else if (level === 'UG Certificate') {
-            duration = "1 Year";
+            mode = 'Hybrid';
+            benefits = "• Industry Internship\n• Hands-on Lab Training\n• Placement Assistance\n• Stipend Opportunities";
         } else if (level === 'UG Diploma') {
             duration = "3 Years";
         } else if (level === 'UG Degree') {
@@ -102,11 +100,11 @@ const generateCourses = (): Course[] => {
 
         list.push({
           id: `c-${idCounter++}`,
-          name: `${level} in ${specName}`,
+          name: `${level === 'UG Certificate (NSDC)' ? 'UG Certificate' : level} in ${specName}`,
           academicLevel: level,
           industry: industry,
           duration: duration,
-          mode: 'Offline',
+          mode: mode,
           status: 'Active',
           image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800&industry=${industry.replace(/\s+/g, '')}`,
           description: `Institutional academic track in ${specName}. This ${level} program provides specialized technical proficiency and industry-aligned skills.`,

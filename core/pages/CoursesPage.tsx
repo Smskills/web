@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Course, PageMeta } from '../types.ts';
@@ -19,7 +20,6 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
   const currentLevel = searchParams.get('level') || 'All';
   const currentIndustry = searchParams.get('industry') || 'All';
   
-  // Robust Data Access
   const state = useMemo(() => {
     if (!coursesState) return { list: [], pageMeta: { title: 'Technical Programs', subtitle: '', tagline: 'PROFESSIONAL CURRICULA' } };
     return {
@@ -30,9 +30,8 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
 
   const { list, pageMeta } = state;
   
-  const academicLevels = ["All", "Certificate", "UG Certificate", "UG Diploma", "UG Degree", "Master"];
+  const academicLevels = ["All", "Certificate", "UG Certificate (NSDC)", "UG Diploma", "UG Degree", "Master"];
   
-  // Memoized sectors list for performance
   const sectors = useMemo<string[]>(() => {
     const baseSet = new Set<string>();
     list.forEach(c => {
@@ -51,49 +50,44 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
     });
   }, [list, currentLevel, currentIndustry]);
 
-  // Sync scroll position when filters change
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentLevel, currentIndustry]);
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans pb-24">
-      {/* Header Section */}
-      <section className="bg-[#1e1b4b] pt-32 pb-24 text-white relative overflow-hidden text-center">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#059669]/10 rounded-full blur-3xl opacity-30 pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-50/5 rounded-full blur-2xl opacity-20 pointer-events-none"></div>
-        
+      {/* Page Header */}
+      <section className="bg-[#1e1b4b] pt-32 pb-16 text-white relative overflow-hidden text-center">
         <div className="container mx-auto px-4 relative z-10 max-w-4xl">
-          <span className="text-emerald-400 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block animate-fade-in">
+          <span className="text-emerald-400 font-black uppercase tracking-[0.4em] text-[10px] mb-3 block animate-fade-in">
             {pageMeta.tagline || 'PROFESSIONAL CURRICULA'}
           </span>
-          <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tighter leading-none animate-fade-in-up">
+          <h1 className="text-4xl md:text-5xl font-black mb-6 tracking-tighter leading-none animate-fade-in-up">
             {pageMeta.title || 'Technical Programs'}
           </h1>
-          <p className="text-slate-400 text-xl font-medium max-w-3xl mx-auto leading-relaxed animate-fade-in-up delay-100">
-            {pageMeta.subtitle || 'Browse through our industry-verified technical tracks optimized for global employability.'}
+          <p className="text-slate-400 text-lg font-medium max-w-2xl mx-auto leading-relaxed animate-fade-in-up delay-100">
+            {pageMeta.subtitle || 'Browse industry-verified technical tracks optimized for global employability.'}
           </p>
         </div>
       </section>
 
-      {/* Modern Dual-Filter System */}
-      <div className="bg-white border-b border-slate-200 py-8 sticky top-20 md:top-24 z-40 shadow-sm">
+      {/* Filter Bar */}
+      <div className="bg-white border-b border-slate-200 py-6 sticky top-20 md:top-24 z-40 shadow-sm">
         <div className="container mx-auto px-4">
-          <div className="space-y-8">
-            {/* 1. Academic Levels */}
-            <div className="flex flex-col gap-4">
-               <div className="flex items-center gap-3 ml-1">
-                 <span className="w-1.5 h-4 bg-emerald-500 rounded-full"></span>
-                 <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Select Academic Level</label>
+          <div className="space-y-6">
+            <div className="flex flex-col gap-3">
+               <div className="flex items-center gap-2 ml-1">
+                 <span className="w-1 h-3 bg-emerald-500 rounded-full"></span>
+                 <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Academic Tier</label>
                </div>
                <div className="flex flex-wrap gap-2">
                  {academicLevels.map(lvl => (
                    <button 
                      key={lvl} 
                      onClick={() => setSearchParams({ level: lvl, industry: currentIndustry })}
-                     className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
+                     className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all border ${
                        currentLevel === lvl 
-                         ? 'bg-[#059669] text-white border-emerald-600 shadow-lg shadow-emerald-600/20' 
+                         ? 'bg-[#059669] text-white border-emerald-600 shadow-md' 
                          : 'bg-slate-50 text-slate-500 hover:bg-slate-100 border-slate-200'
                      }`}
                    >
@@ -103,21 +97,20 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                </div>
             </div>
 
-            {/* 2. Industry Sectors - Now as visible scrollable pills */}
-            <div className="flex flex-col gap-4">
-               <div className="flex items-center gap-3 ml-1">
-                 <span className="w-1.5 h-4 bg-emerald-500 rounded-full"></span>
-                 <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Browse by Sector</label>
+            <div className="flex flex-col gap-3">
+               <div className="flex items-center gap-2 ml-1">
+                 <span className="w-1 h-3 bg-emerald-500 rounded-full"></span>
+                 <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Vocational Sector</label>
                </div>
-               <div className="flex flex-wrap gap-3 overflow-x-auto pb-2 custom-scrollbar">
+               <div className="flex flex-wrap gap-2 overflow-x-auto pb-1 custom-scrollbar">
                   {sectors.map(ind => (
                     <button
                       key={ind}
                       onClick={() => setSearchParams({ level: currentLevel, industry: ind })}
-                      className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all border ${
+                      className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest whitespace-nowrap transition-all border ${
                         currentIndustry === ind
-                          ? 'bg-[#1e1b4b] text-white border-slate-900 shadow-lg'
-                          : 'bg-white text-slate-600 hover:border-emerald-500 hover:text-emerald-600 border-slate-200'
+                          ? 'bg-[#1e1b4b] text-white border-slate-900'
+                          : 'bg-white text-slate-600 hover:border-emerald-500 border-slate-200'
                       }`}
                     >
                       {ind}
@@ -129,124 +122,156 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
         </div>
       </div>
 
-      {/* Course Grid */}
-      <div className="container mx-auto px-4 py-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+      {/* Grid */}
+      <div className="container mx-auto px-4 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {isLoading ? (
             <CardSkeleton count={6} />
           ) : (
             filteredCourses.map(course => (
-              <div key={course.id} className="bg-white rounded-[2rem] border border-slate-100 overflow-hidden shadow-sm hover:shadow-3xl transition-all duration-500 flex flex-col group">
-                <div className="h-64 relative overflow-hidden">
-                  <img 
-                    src={course.image || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800'} 
-                    alt={course.name} 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2s]" 
-                  />
+              <div key={course.id} className="bg-white rounded-[2rem] border border-slate-100 overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 flex flex-col group">
+                <div className="h-52 relative overflow-hidden">
+                  <img src={course.image} alt={course.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1.5s]" />
                   <div className="absolute top-4 left-4">
-                    <span className="px-4 py-1.5 bg-white/95 backdrop-blur-md text-emerald-600 font-black text-[9px] uppercase tracking-widest rounded-full shadow-2xl">
+                    <span className="px-3 py-1 bg-white/95 text-emerald-600 font-black text-[8px] uppercase tracking-widest rounded-full shadow-lg">
                       {course.academicLevel}
                     </span>
                   </div>
                 </div>
-                
-                <div className="p-10 flex flex-col flex-grow">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs">
-                      <i className="fa-solid fa-industry"></i>
-                    </div>
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
-                      Sector: <span className="text-slate-900">{course.industry}</span>
-                    </span>
-                  </div>
-
-                  <h3 className="text-2xl font-black text-slate-900 mb-6 leading-tight tracking-tight group-hover:text-emerald-600 transition-colors">
-                    {course.name}
-                  </h3>
-                  
+                <div className="p-7 flex flex-col flex-grow">
+                  <h3 className="text-xl font-black text-slate-900 mb-3 leading-tight group-hover:text-emerald-600 transition-colors">{course.name}</h3>
                   <div className="flex-grow">
-                    <FormattedText 
-                      text={course.description} 
-                      className="text-slate-500 text-sm leading-relaxed mb-8 line-clamp-3 font-medium"
-                    />
+                    <FormattedText text={course.description} className="text-slate-500 text-xs leading-relaxed mb-5 line-clamp-2 font-medium" />
                   </div>
-
                   <button 
                     onClick={() => setSelectedCourse(course)}
-                    className="w-full py-4 bg-[#1e1b4b] text-white font-black rounded-xl hover:bg-emerald-600 transition-all active:scale-95 text-center flex items-center justify-center gap-3 shadow-xl text-[11px] uppercase tracking-[0.2em] mt-auto"
+                    className="w-full py-3 bg-[#1e1b4b] text-white font-black rounded-lg hover:bg-emerald-600 transition-all text-center flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest"
                   >
-                    View Details <i className="fa-solid fa-arrow-right-long text-[9px]"></i>
+                    Details <i className="fa-solid fa-arrow-right text-[8px]"></i>
                   </button>
                 </div>
               </div>
             ))
           )}
         </div>
-        
-        {!isLoading && filteredCourses.length === 0 && (
-          <div className="text-center py-40 bg-white rounded-[4rem] border-4 border-dashed border-slate-100 max-w-4xl mx-auto shadow-inner">
-             <div className="w-24 h-24 bg-slate-50 text-slate-200 rounded-full flex items-center justify-center text-5xl mx-auto mb-6">
-                <i className="fa-solid fa-folder-open"></i>
-             </div>
-             <h3 className="text-xl font-black text-slate-400 uppercase tracking-widest">No active programs found</h3>
-             <p className="text-slate-500 mt-2">Try adjusting your filters to find suitable programs.</p>
-          </div>
-        )}
       </div>
 
-      {/* Course Detail Modal */}
+      {/* BIGGER NO-SCROLL MODAL (6XL WIDTH) */}
       {selectedCourse && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-md animate-fade-in">
-           <div className="bg-white w-full max-w-4xl rounded-[3rem] overflow-hidden shadow-4xl max-h-[90vh] flex flex-col scale-in-center">
-              <div className="relative h-64 md:h-80 shrink-0">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-fade-in">
+           <div className="bg-white w-full max-w-6xl rounded-[3rem] overflow-hidden shadow-4xl h-fit max-h-[92vh] md:max-h-[820px] flex flex-col md:flex-row scale-in-center relative border border-white/20">
+              
+              <button 
+                onClick={() => setSelectedCourse(null)}
+                className="absolute top-6 right-6 z-[210] w-12 h-12 bg-white/90 backdrop-blur-md shadow-2xl rounded-2xl flex items-center justify-center text-slate-900 hover:bg-red-500 hover:text-white transition-all active:scale-90 border border-slate-100"
+              >
+                <i className="fa-solid fa-xmark text-lg"></i>
+              </button>
+
+              {/* Column 1: Media (40% width) */}
+              <div className="w-full md:w-[40%] h-48 md:h-auto shrink-0 relative bg-slate-100">
                 <img src={selectedCourse.image} className="w-full h-full object-cover" alt={selectedCourse.name} />
-                <button 
-                  onClick={() => setSelectedCourse(null)}
-                  className="absolute top-6 right-6 w-12 h-12 bg-white/90 backdrop-blur-md rounded-2xl flex items-center justify-center text-slate-900 shadow-2xl hover:bg-emerald-600 hover:text-white transition-all active:scale-90"
-                >
-                  <i className="fa-solid fa-xmark text-xl"></i>
-                </button>
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent"></div>
+                <div className="absolute bottom-8 left-8">
+                   <span className="px-5 py-2.5 bg-emerald-600 text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-xl shadow-3xl">
+                     {selectedCourse.academicLevel}
+                   </span>
+                </div>
               </div>
-              <div className="p-8 md:p-12 overflow-y-auto custom-scrollbar flex-grow">
-                 <div className="flex flex-wrap gap-4 mb-8">
-                    <span className="px-4 py-1.5 bg-emerald-100 text-emerald-700 text-[10px] font-black rounded-full uppercase tracking-widest">{selectedCourse.academicLevel}</span>
-                    <span className="px-4 py-1.5 bg-slate-100 text-slate-700 text-[10px] font-black rounded-full uppercase tracking-widest">{selectedCourse.duration}</span>
-                    <span className="px-4 py-1.5 bg-blue-100 text-blue-700 text-[10px] font-black rounded-full uppercase tracking-widest">{selectedCourse.mode}</span>
-                 </div>
-                 <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-8 tracking-tighter leading-none">{selectedCourse.name}</h2>
-                 
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
-                    <div className="space-y-6">
-                       <h4 className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.3em]">Program Overview</h4>
-                       <FormattedText text={selectedCourse.description} className="text-slate-600 leading-relaxed text-lg" />
-                    </div>
-                    <div className="space-y-8">
-                       {selectedCourse.eligibility && (
-                         <div>
-                            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4">Entry Requirements</h4>
-                            <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 text-slate-700 font-medium whitespace-pre-line">{selectedCourse.eligibility}</div>
+
+              {/* Column 2: Content (60% width) */}
+              <div className="w-full md:w-[60%] flex flex-col bg-white overflow-hidden">
+                <div className="p-8 md:p-14 flex flex-col h-full">
+                   {/* Large Typography Header */}
+                   <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-8 tracking-tighter leading-[1.1]">
+                     {selectedCourse.name}
+                   </h2>
+
+                   {/* Modern Info Grid (Larger Cards) */}
+                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+                      <div className="flex items-center gap-4 p-4 bg-slate-50/80 rounded-2xl border border-slate-100/50">
+                         <div className="w-10 h-10 bg-white text-emerald-600 rounded-xl flex items-center justify-center shrink-0 shadow-sm border border-slate-100"><i className="fa-solid fa-graduation-cap text-sm"></i></div>
+                         <div className="flex flex-col">
+                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Academic Level</span>
+                            <span className="text-xs font-black text-slate-800">{selectedCourse.academicLevel}</span>
                          </div>
-                       )}
-                       {selectedCourse.benefits && (
-                         <div>
-                            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4">Key Benefits</h4>
-                            <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 text-slate-700 font-medium whitespace-pre-line">{selectedCourse.benefits}</div>
+                      </div>
+                      <div className="flex items-center gap-4 p-4 bg-slate-50/80 rounded-2xl border border-slate-100/50">
+                         <div className="w-10 h-10 bg-white text-blue-600 rounded-xl flex items-center justify-center shrink-0 shadow-sm border border-slate-100"><i className="fa-solid fa-chalkboard-user text-sm"></i></div>
+                         <div className="flex flex-col">
+                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Mode of Class</span>
+                            <span className="text-xs font-black text-slate-800">Hybrid (Online + Offline)</span>
                          </div>
-                       )}
-                    </div>
-                 </div>
-              </div>
-              <div className="p-8 md:p-10 border-t border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
-                 <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Fee Structure</p>
-                    <p className="text-2xl font-black text-[#059669]">{selectedCourse.price || 'Scholarship'}</p>
-                 </div>
-                 <Link 
-                   to={`/enroll?course=${encodeURIComponent(selectedCourse.name)}`}
-                   className="px-10 py-5 bg-slate-900 text-white font-black rounded-2xl hover:bg-emerald-600 transition-all shadow-2xl active:scale-95 text-[11px] uppercase tracking-widest"
-                 >
-                   Submit Your inquery
-                 </Link>
+                      </div>
+                      <div className="flex items-center gap-4 p-4 bg-slate-50/80 rounded-2xl border border-slate-100/50">
+                         <div className="w-10 h-10 bg-white text-slate-600 rounded-xl flex items-center justify-center shrink-0 shadow-sm border border-slate-100"><i className="fa-regular fa-clock text-sm"></i></div>
+                         <div className="flex flex-col">
+                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Duration</span>
+                            <span className="text-xs font-black text-slate-800">{selectedCourse.duration}</span>
+                         </div>
+                      </div>
+                      <div className="flex items-center gap-4 p-4 bg-slate-50/80 rounded-2xl border border-slate-100/50">
+                         <div className="w-10 h-10 bg-white text-purple-600 rounded-xl flex items-center justify-center shrink-0 shadow-sm border border-slate-100"><i className="fa-solid fa-id-card-clip text-sm"></i></div>
+                         <div className="flex flex-col">
+                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Eligibility</span>
+                            <span className="text-xs font-black text-slate-800">12th Pass</span>
+                         </div>
+                      </div>
+                   </div>
+                   
+                   {/* Description Strip */}
+                   <div className="mb-10">
+                      <span className="text-[9px] font-black text-emerald-600 uppercase tracking-[0.4em] mb-3 block">Program Narrative</span>
+                      <p className="text-slate-600 text-sm md:text-base leading-relaxed font-medium line-clamp-3">
+                        {selectedCourse.description}
+                      </p>
+                   </div>
+
+                   {/* Key Benefits Grid */}
+                   <div className="border-t border-slate-100 pt-8 mb-6">
+                      <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.4em] mb-4 block">Institutional Benefits</span>
+                      <div className="grid grid-cols-2 gap-y-4 gap-x-10">
+                         <div className="flex items-center gap-4 group">
+                            <div className="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center group-hover:bg-emerald-500 transition-colors">
+                              <i className="fa-solid fa-building-columns text-emerald-600 group-hover:text-white text-xs"></i>
+                            </div>
+                            <span className="text-xs font-bold text-slate-700 tracking-tight">Industry Internship</span>
+                         </div>
+                         <div className="flex items-center gap-4 group">
+                            <div className="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center group-hover:bg-emerald-500 transition-colors">
+                              <i className="fa-solid fa-flask text-emerald-600 group-hover:text-white text-xs"></i>
+                            </div>
+                            <span className="text-xs font-bold text-slate-700 tracking-tight">Hands-on Lab Training</span>
+                         </div>
+                         <div className="flex items-center gap-4 group">
+                            <div className="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center group-hover:bg-emerald-500 transition-colors">
+                              <i className="fa-solid fa-briefcase text-emerald-600 group-hover:text-white text-xs"></i>
+                            </div>
+                            <span className="text-xs font-bold text-slate-700 tracking-tight">Placement Assistance</span>
+                         </div>
+                         <div className="flex items-center gap-4 group">
+                            <div className="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center group-hover:bg-emerald-500 transition-colors">
+                              <i className="fa-solid fa-coins text-emerald-600 group-hover:text-white text-xs"></i>
+                            </div>
+                            <span className="text-xs font-bold text-slate-700 tracking-tight">Stipend Opportunities</span>
+                         </div>
+                      </div>
+                   </div>
+
+                   {/* Static Footer (No scrolling needed) */}
+                   <div className="mt-auto pt-8 flex items-center justify-between gap-6 border-t border-slate-50">
+                      <div>
+                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Standard Fee Structure</p>
+                         <p className="text-2xl md:text-4xl font-black text-[#059669] tracking-tighter">{selectedCourse.price || 'Rs. 12,000'}</p>
+                      </div>
+                      <Link 
+                        to={`/enroll?course=${encodeURIComponent(selectedCourse.name)}`}
+                        className="px-14 py-5 bg-[#1e1b4b] text-white font-black rounded-2xl hover:bg-emerald-600 transition-all shadow-4xl text-[11px] uppercase tracking-[0.3em] active:scale-95 text-center"
+                      >
+                        Submit Your inquery
+                      </Link>
+                   </div>
+                </div>
               </div>
            </div>
         </div>
@@ -255,9 +280,12 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
       <style>{`
         .scale-in-center { animation: scale-in-center 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940) both; }
         @keyframes scale-in-center { 
-          0% { transform: scale(0.9); opacity: 0; } 
+          0% { transform: scale(0.96); opacity: 0; } 
           100% { transform: scale(1); opacity: 1; } 
         }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
       `}</style>
     </div>
   );
