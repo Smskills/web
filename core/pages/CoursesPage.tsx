@@ -132,11 +132,6 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
               <div key={course.id} className="bg-white rounded-[2rem] border border-slate-100 overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 flex flex-col group">
                 <div className="h-52 relative overflow-hidden">
                   <img src={course.image} alt={course.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1.5s]" />
-                  <div className="absolute top-4 left-4">
-                    <span className="px-3 py-1 bg-white/95 text-emerald-600 font-black text-[8px] uppercase tracking-widest rounded-full shadow-lg">
-                      {course.academicLevel}
-                    </span>
-                  </div>
                 </div>
                 <div className="p-7 flex flex-col flex-grow">
                   <h3 className="text-xl font-black text-slate-900 mb-3 leading-tight group-hover:text-emerald-600 transition-colors">{course.name}</h3>
@@ -172,11 +167,6 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
               <div className="w-full md:w-[36%] h-40 md:h-auto shrink-0 relative bg-slate-100">
                 <img src={selectedCourse.image} className="w-full h-full object-cover" alt={selectedCourse.name} />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
-                <div className="absolute bottom-5 left-5">
-                   <span className="px-4 py-2 bg-emerald-600 text-white font-black text-[9px] uppercase tracking-[0.2em] rounded-lg shadow-2xl">
-                     {selectedCourse.academicLevel}
-                   </span>
-                </div>
               </div>
 
               {/* Column 2: Content (64% width) */}
@@ -192,15 +182,15 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                       <div className="flex items-center gap-3 p-3 bg-slate-50/80 rounded-xl border border-slate-100/50">
                          <div className="w-8 h-8 bg-white text-emerald-600 rounded-lg flex items-center justify-center shrink-0 shadow-sm border border-slate-50"><i className="fa-solid fa-graduation-cap text-xs"></i></div>
                          <div className="flex flex-col">
-                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Tier</span>
-                            <span className="text-xs font-black text-slate-800">{selectedCourse.academicLevel}</span>
+                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Certificate</span>
+                            <span className="text-xs font-black text-slate-800">{selectedCourse.certification || selectedCourse.academicLevel}</span>
                          </div>
                       </div>
                       <div className="flex items-center gap-3 p-3 bg-slate-50/80 rounded-xl border border-slate-100/50">
                          <div className="w-8 h-8 bg-white text-blue-600 rounded-lg flex items-center justify-center shrink-0 shadow-sm border border-slate-50"><i className="fa-solid fa-chalkboard-user text-xs"></i></div>
                          <div className="flex flex-col">
                             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Mode</span>
-                            <span className="text-xs font-black text-slate-800">Hybrid Track</span>
+                            <span className="text-xs font-black text-slate-800">Hybrid Track (Online + Offline)</span>
                          </div>
                       </div>
                       <div className="flex items-center gap-3 p-3 bg-slate-50/80 rounded-xl border border-slate-100/50">
@@ -213,15 +203,15 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                       <div className="flex items-center gap-3 p-3 bg-slate-50/80 rounded-xl border border-slate-100/50">
                          <div className="w-8 h-8 bg-white text-purple-600 rounded-lg flex items-center justify-center shrink-0 shadow-sm border border-slate-50"><i className="fa-solid fa-id-card-clip text-xs"></i></div>
                          <div className="flex flex-col">
-                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Criteria</span>
-                            <span className="text-xs font-black text-slate-800">12th Pass</span>
+                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Eligibility</span>
+                            <span className="text-xs font-black text-slate-800">{selectedCourse.eligibility || '12th Pass'}</span>
                          </div>
                       </div>
                    </div>
                    
                    {/* Narrative Section */}
                    <div className="mb-6">
-                      <span className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.3em] mb-2 block">Program Narrative</span>
+                      <span className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.3em] mb-2 block">Program Summary</span>
                       <p className="text-slate-600 text-sm leading-relaxed font-medium line-clamp-3">
                         {selectedCourse.description}
                       </p>
@@ -261,7 +251,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                    {/* Footer - Final Call to Action */}
                    <div className="mt-auto pt-5 flex items-center justify-between gap-4 border-t border-slate-50">
                       <div>
-                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Institutional Fee</p>
+                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Fee Structure</p>
                          <p className="text-2xl font-black text-[#059669] tracking-tight">{selectedCourse.price || 'Rs. 12,000'}</p>
                       </div>
                       <Link 
