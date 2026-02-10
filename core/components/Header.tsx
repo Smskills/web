@@ -22,7 +22,7 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
     const activeList = (courses || []).filter(c => c && c.status === 'Active');
     const uniqueLevels = Array.from(new Set(activeList.map(c => c.academicLevel).filter(Boolean)));
     
-    const preferredOrder = ["Certificate", "UG Certificate (NSDC)", "UG Diploma", "UG Degree", "Master", "ITEP", "Short Term"];
+    const preferredOrder = ["Certificate (NSDC)", "UG Certificate (NSDC)", "UG Diploma (NSDC)", "UG Degree", "Master", "ITEP", "Short Term"];
     const sortedLevels = uniqueLevels.sort((a, b) => {
       const idxA = preferredOrder.indexOf(a);
       const idxB = preferredOrder.indexOf(b);
@@ -37,11 +37,10 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
           .filter(Boolean)
       )).sort();
       
-      // Fix: Explicitly type label as string to avoid type mismatch with the literal AcademicLevel union when using display-friendly overrides.
       let label: string = level;
-      if (level === 'Certificate') label = 'Certificate Course';
+      if (level === 'Certificate (NSDC)') label = 'Certificate (NSDC)';
       if (level === 'UG Certificate (NSDC)') label = 'UG Certificate (NSDC)';
-      if (level === 'UG Diploma') label = 'UG Diploma Course';
+      if (level === 'UG Diploma (NSDC)') label = 'UG Diploma (NSDC)';
       if (level === 'UG Degree') label = 'UG Degree Course';
       if (level === 'Master') label = 'Master Degree';
 

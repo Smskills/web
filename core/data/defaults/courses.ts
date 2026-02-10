@@ -31,8 +31,9 @@ export const generateCourses = (): Course[] => {
   const list: Course[] = [];
   let idCounter = 1;
 
-  const academicLevels: Array<'Certificate' | 'UG Certificate (NSDC)' | 'UG Diploma' | 'UG Diploma (NSDC)' | 'UG Degree' | 'Master'> = [
-    'Certificate', 
+  // Refined levels to include NSDC as per user requirement
+  const academicLevels: Array<'Certificate (NSDC)' | 'UG Certificate (NSDC)' | 'UG Diploma (NSDC)' | 'UG Degree' | 'Master'> = [
+    'Certificate (NSDC)', 
     'UG Certificate (NSDC)', 
     'UG Diploma (NSDC)', 
     'UG Degree',
@@ -57,7 +58,7 @@ export const generateCourses = (): Course[] => {
         list.push({
           id: `c-${idCounter++}`,
           name: masterName,
-          academicLevel: level,
+          academicLevel: level as any,
           industry: industry,
           duration: "2 Years",
           mode: 'Offline',
@@ -79,26 +80,33 @@ export const generateCourses = (): Course[] => {
         let mode: 'Online' | 'Offline' | 'Hybrid' = 'Offline';
         let benefits = "• Industry Internship\n• Hands-on Lab Training\n• Placement Assistance\n• Stipend Opportunities";
 
-        if (level === 'Certificate' || level === 'UG Certificate (NSDC)') {
-            duration = level === 'Certificate' ? "3 Months" : "1 Year";
-            price = level === 'Certificate' ? "Rs. 12,000" : "Rs. 50,000";
+        if (level === 'Certificate (NSDC)') {
+            duration = "3 Months";
+            price = "Rs. 12,000";
+            eligibility = "10th Pass";
+            mode = 'Hybrid';
+        } else if (level === 'UG Certificate (NSDC)') {
+            duration = "1 Year";
+            price = "Rs. 50,000";
             eligibility = "12th Pass";
             mode = 'Hybrid';
         } else if (level === 'UG Diploma (NSDC)') {
-            duration = "2 Years";
+            duration = "2 Years"; // 2 Years duration for UG Diploma as requested
             price = "Rs. 50,000 / year";
         } else if (level === 'UG Degree') {
             duration = "3 Years";
         }
 
         let courseNameLevel: string = level;
+        // Strip (NSDC) from the name display inside the card if redundant, 
+        // or keep for official branding. User said "end UG Diploma add (NSDC)".
         if (level === 'UG Certificate (NSDC)') courseNameLevel = 'UG Certificate';
-        if (level === 'UG Diploma (NSDC)') courseNameLevel = 'UG Diploma (NSDC)';
+        if (level === 'Certificate (NSDC)') courseNameLevel = 'Certificate';
 
         list.push({
           id: `c-${idCounter++}`,
-          name: `${courseNameLevel} in ${specName}`,
-          academicLevel: level,
+          name: `${courseNameLevel} in ${specName} (NSDC)`,
+          academicLevel: level as any,
           industry: industry,
           duration: duration,
           mode: mode,

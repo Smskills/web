@@ -30,7 +30,8 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
     };
   }, [coursesState]);
 
-  const academicLevels = ["All", "Certificate", "UG Certificate (NSDC)", "UG Diploma (NSDC)", "UG Degree", "Master"];
+  // Updated button labels to exactly match the academicLevel data values
+  const academicLevels = ["All", "Certificate (NSDC)", "UG Certificate (NSDC)", "UG Diploma (NSDC)", "UG Degree", "Master"];
   
   const sectors = useMemo<string[]>(() => {
     const baseSet = new Set<string>();
