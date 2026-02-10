@@ -37,7 +37,8 @@ const Header: React.FC<HeaderProps> = ({ config, isAuthenticated = false, course
           .filter(Boolean)
       )).sort();
       
-      let label = level;
+      // Fix: Explicitly type label as string to avoid type mismatch with the literal AcademicLevel union when using display-friendly overrides.
+      let label: string = level;
       if (level === 'Certificate') label = 'Certificate Course';
       if (level === 'UG Certificate (NSDC)') label = 'UG Certificate (NSDC)';
       if (level === 'UG Diploma') label = 'UG Diploma Course';

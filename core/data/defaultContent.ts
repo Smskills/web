@@ -1,239 +1,18 @@
 
-import { AppState, Course } from '../types';
-
-const sectorSpecialties: Record<string, string[]> = {
-  "Agriculture": ["Agriculture"],
-  "Automotive": ["Automobile Servicing", "Automobile Production (Welding)", "Automobile Production (Machining)"],
-  "Apparel": ["Fashion Designing"],
-  "Banking, Financial Services & Insurance": ["Banking, financial Services & Insurance", "Account & Taxation"],
-  "Beauty & Wellness": ["Therapeutic Yoga"],
-  "Capital Goods": ["Production", "Manufacturing"],
-  "Construction": ["Construction Technology"],
-  "Electronics and Hardware": ["Refrigeration & Air Conditioning", "Electronics Manufacturing Services", "Computer Hardware & Networking", "Electrical & Electronic Assembly"],
-  "Food Processing": ["Food processing"],
-  "Furniture & Fitting": ["Interior Designing"],
-  "Green Jobs": ["Renewable Energy"],
-  "Healthcare": ["Patient Care Management", "Medical Laboratory Technician", "Radiology & Imaging Technology", "Operation Theatre Technology", "Nursing Care", "Central Sterile Supply Department", "Dialysis Technology", "Hospital Administration"],
-  "IT/ITES": ["Application Development", "Information Technology"],
-  "Life Science": ["Life Sciences"],
-  "Logistics": ["Logistic Operations Management"],
-  "Media & Entertainment": ["Multimedia"],
-  "Mining": ["Mining"],
-  "Plumbing": ["Plumbing Skills"],
-  "Retail": ["Retail Management"],
-  "Rubber, Chemical & Petrochemical": ["Plastic Technology", "Polymer Technology"],
-  "Telecom": ["Telecommunication"],
-  "Textile & Handloom": ["Textile Technology"],
-  "Tourism and Hospitality": ["Hotel Management", "Travel & Tourism"]
-};
-
-const generateCourses = (): Course[] => {
-  const list: Course[] = [];
-  let idCounter = 1;
-
-  const academicLevels: Array<'Certificate' | 'UG Certificate (NSDC)' | 'UG Diploma' | 'UG Degree' | 'Master'> = [
-    'Certificate', 
-    'UG Certificate (NSDC)', 
-    'UG Diploma', 
-    'UG Degree',
-    'Master'
-  ];
-
-  academicLevels.forEach(level => {
-    Object.entries(sectorSpecialties).forEach(([industry, specialties]) => {
-      
-      if (level === 'Master') {
-        let masterName = '';
-        switch(industry) {
-            case "Automotive": 
-                masterName = "M. Voc in Automobile Production"; break;
-            case "Banking, Financial Services & Insurance": 
-                masterName = "M. Voc in Banking, Financial Services and Insurance"; break;
-            case "Electronics and Hardware": 
-                masterName = "M. Voc in Electronics Manufacturing"; break;
-            case "IT/ITES": 
-                masterName = "M. Voc in Application of Computer"; break;
-            case "Retail": 
-                masterName = "M. Voc in Retail Management"; break;
-            case "Tourism and Hospitality": 
-                masterName = "M. Voc in Travel and Tourism"; break;
-            default:
-                return;
-        }
-
-        list.push({
-          id: `c-${idCounter++}`,
-          name: masterName,
-          academicLevel: level,
-          industry: industry,
-          duration: "2 Years",
-          mode: 'Offline',
-          status: 'Active',
-          image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800&industry=${industry.replace(/\s+/g, '')}`,
-          description: `High-level technical proficiency program. This ${masterName} program is designed for advanced strategic roles within the ${industry} sector.`,
-          price: "Rs. 50,000 / year",
-          certification: `${level} Certification`,
-          eligibility: "Graduate",
-          benefits: "• Industry Internship\n• Hands-on Lab Training\n• Placement Assistance\n• Stipend Opportunities"
-        });
-        return;
-      }
-
-      specialties.forEach(specName => {
-        let duration = "1 Year";
-        let price = "Rs. 50,000 / year";
-        let eligibility = "12th Pass";
-        let mode: 'Online' | 'Offline' | 'Hybrid' = 'Offline';
-        let benefits = "• Industry Internship\n• Hands-on Lab Training\n• Placement Assistance\n• Stipend Opportunities";
-
-        if (level === 'Certificate' || level === 'UG Certificate (NSDC)') {
-            duration = level === 'Certificate' ? "3 Months" : "1 Year";
-            price = "Rs. 12,000";
-            eligibility = "12th Pass";
-            mode = 'Hybrid';
-            benefits = "• Industry Internship\n• Hands-on Lab Training\n• Placement Assistance\n• Stipend Opportunities";
-        } else if (level === 'UG Diploma') {
-            duration = "3 Years";
-        } else if (level === 'UG Degree') {
-            duration = "3 Years";
-        }
-
-        list.push({
-          id: `c-${idCounter++}`,
-          name: `${level === 'UG Certificate (NSDC)' ? 'UG Certificate' : level} in ${specName}`,
-          academicLevel: level,
-          industry: industry,
-          duration: duration,
-          mode: mode,
-          status: 'Active',
-          image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800&industry=${industry.replace(/\s+/g, '')}`,
-          description: `Institutional academic track in ${specName}. This ${level} program provides specialized technical proficiency and industry-aligned skills.`,
-          price: price,
-          certification: `${level} Certification`,
-          eligibility: eligibility,
-          benefits: benefits
-        });
-      });
-    });
-  });
-
-  return list;
-};
+import { AppState } from '../types';
+import { siteDefaults } from './defaults/site';
+import { homeDefaults } from './defaults/home';
+import { generateCourses, coursesPageMeta } from './defaults/courses';
 
 export const INITIAL_CONTENT: AppState = {
-  site: {
-    name: "S M Skills",
-    tagline: "TRAINING INSTITUTE • ESTD 2024",
-    logo: "https://lwfiles.mycourse.app/62a6cd5-public/6efdd5e.png", 
-    loginLabel: "DASHBOARD",
-    admissionAlert: {
-      enabled: true,
-      text: "2024 ADMISSIONS NOW OPEN:",
-      subtext: "SECURE YOUR FUTURE WITH OUR CERTIFICATE & DEGREE TRACKS.",
-      linkText: "APPLY TODAY",
-      linkPath: "/enroll"
-    },
-    contact: {
-      email: "info@smskills.in",
-      phones: ["+91 6002313158"],
-      address: "J M Road, Christianpatty, Nagaon",
-      mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3579.544793616803!2d92.68652037525492!3d26.341258676993183!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x37452d3a33333333%3A0x3333333333333333!2sNagaon%2C%20Assam!5e0!3m2!1sen!2sin!4v1700000000000"
-    },
-    social: [
-      { id: 's1', platform: 'Facebook', url: 'https://facebook.com', icon: 'fa-facebook-f' },
-      { id: 's2', platform: 'YouTube', url: 'https://youtube.com', icon: 'fa-youtube' },
-      { id: 's3', platform: 'Instagram', url: 'https://instagram.com', icon: 'fa-instagram' }
-    ],
-    navigation: [
-      { label: "Home", path: "/" },
-      { label: "About", path: "/about" },
-      { label: "Academics", path: "/academics" },
-      { label: "Notices", path: "/notices" },
-      { label: "Gallery", path: "/gallery" },
-      { label: "FAQ", path: "/faq" },
-      { label: "Contact", path: "/contact" }
-    ],
-    footer: {
-      brandDescription: "S M Skills is a premier center for technical education, providing industry-aligned training designed for immediate employability.",
-      quickLinksLabel: "NAVIGATION",
-      supportLinksLabel: "RESOURCES",
-      reachUsLabel: "CONNECT",
-      bottomText: "S M Skills • ESTD 2024",
-      supportLinks: [
-        { label: "Privacy Policy", path: "/privacy-policy" },
-        { label: "Terms of Service", path: "/terms-of-service" },
-        { label: "Placement Wall", path: "/placement-review" }
-      ]
-    }
-  },
+  site: siteDefaults,
   theme: {
     primary: "#059669",
     secondary: "#1e1b4b",
     accent: "#10b981",
     radius: "large"
   },
-  home: {
-    hero: {
-      title: "Master Skills for the Modern Industry",
-      subtitle: "Join S M Skills for specialized vocational tracks. Build your career with veterans.",
-      ctaText: "Browse Programs",
-      ctaLink: "/academics",
-      bgImage: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=1600",
-      visible: true
-    },
-    highlights: [
-      {
-        icon: "fa-graduation-cap",
-        title: "Hands-on Mastery",
-        description: "Practice in real-world scenarios with projects mentored by industry leads."
-      },
-      {
-        icon: "fa-rocket",
-        title: "Career-First Approach",
-        description: "Our programs are optimized for placement success and high-growth trajectories."
-      },
-      {
-        icon: "fa-briefcase",
-        title: "94% Placement Rate",
-        description: "Join a network of alumni currently working at top global technology firms."
-      }
-    ],
-    sectionLabels: {
-      noticesTitle: "Institute Feed",
-      noticesSubtitle: "Recent announcements regarding batches, events, and scholarships.",
-      coursesTitle: "Vocational Tracks",
-      coursesSubtitle: "Explore our diverse range of technical programs.",
-      galleryTitle: "Campus Life",
-      gallerySubtitle: "Explore our facilities, classroom interactions, and achievement galleries.",
-      placementsTitle: "Our Placement Record",
-      placementsSubtitle: "Celebrating S M Skills graduates who have joined industry-leading organizations.",
-      placementMainLabel: "Success Stories"
-    },
-    ctaBlock: {
-      title: "Secure Your Future with S M Skills",
-      subtitle: "Admissions for the 2024 academic cycle are now open. Consult with an advisor today.",
-      buttonText: "Begin Application",
-      buttonLink: "/enroll",
-      visible: true
-    },
-    bigShowcase: {
-      visible: true,
-      image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=1600",
-      title: "Leading with Excellence",
-      subtitle: "Our faculty and senior mentors bring decades of combined technical expertise to the classroom."
-    },
-    sections: {
-      notices: true,
-      featuredCourses: true,
-      gallery: true,
-      contact: true,
-      industryTieups: true,
-      placementReviews: true,
-      highlights: true,
-      bigShowcase: true
-    },
-    sectionOrder: ["highlights", "industryTieups", "placementReviews", "notices", "featuredCourses", "bigShowcase"]
-  },
+  home: homeDefaults,
   customPages: [],
   enrollmentForm: {
     title: "SMS Official Enrollment",
@@ -310,7 +89,7 @@ export const INITIAL_CONTENT: AppState = {
   },
   courses: {
     list: generateCourses(),
-    pageMeta: { title: "Vocational Programs", subtitle: "Industry-verified technical tracks optimized for global employability.", tagline: "PROFESSIONAL CURRICULA" }
+    pageMeta: coursesPageMeta
   },
   notices: {
     list: [
