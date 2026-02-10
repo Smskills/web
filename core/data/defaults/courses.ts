@@ -1,4 +1,3 @@
-
 import { Course, PageMeta } from '../../types';
 
 const sectorSpecialties: Record<string, string[]> = {
@@ -82,7 +81,7 @@ export const generateCourses = (): Course[] => {
         if (level === 'Certificate (NSDC)') {
             duration = "3 Months";
             price = "Rs. 12,000";
-            eligibility = "10th Pass";
+            eligibility = "12th Pass"; // Updated eligibility to 12th Pass as requested
             mode = 'Hybrid';
         } else if (level === 'UG Certificate (NSDC)') {
             duration = "1 Year";
@@ -101,10 +100,6 @@ export const generateCourses = (): Course[] => {
         if (level === 'Certificate (NSDC)') courseNameLevel = 'Certificate';
 
         // Set certification specifically to include (NSDC) as per level
-        /**
-         * Fix: Explicitly type certificationValue as string to prevent narrow union type inference.
-         * Removed redundant check for 'Master' level since it is handled by early return above.
-         */
         let certificationValue: string = level;
         if (level === 'UG Degree') certificationValue = 'UG Degree (NSDC)';
 
