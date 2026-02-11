@@ -143,14 +143,14 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
                     const isWide = field.type === 'textarea' || (field.label && field.label.toLowerCase().includes('name'));
                     return (
                       <div key={field.id} className={`space-y-3 ${isWide ? 'md:col-span-2' : ''}`}>
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1 block">
-                          {field.label} {field.required && <span className="text-emerald-600">*</span>}
+                        <label htmlFor={`field-${field.id}`} className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1 block">
+                          {field.label} {field.required && <span className="text-red-600 font-black">*</span>}
                         </label>
                         {field.type === 'textarea' ? (
-                          <textarea required={field.required} value={formData[field.id] || ''} onChange={(e) => handleChange(field.id, e.target.value)} rows={5} className="w-full px-8 py-5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-medium text-slate-900 resize-none placeholder-slate-300" placeholder={field.placeholder} />
+                          <textarea id={`field-${field.id}`} required={field.required} value={formData[field.id] || ''} onChange={(e) => handleChange(field.id, e.target.value)} rows={5} className="w-full px-8 py-5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-medium text-slate-900 resize-none placeholder-slate-300" placeholder={field.placeholder} />
                         ) : field.type === 'course-select' ? (
                           <div className="relative">
-                            <select required={field.required} value={formData[field.id] || ''} onChange={(e) => handleChange(field.id, e.target.value)} className="w-full px-8 py-5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-black text-[11px] text-slate-900 uppercase tracking-widest appearance-none pr-12 shadow-sm cursor-pointer">
+                            <select id={`field-${field.id}`} required={field.required} value={formData[field.id] || ''} onChange={(e) => handleChange(field.id, e.target.value)} className="w-full px-8 py-5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-black text-[11px] text-slate-900 uppercase tracking-widest appearance-none pr-12 shadow-sm cursor-pointer">
                               <option value="">{field.placeholder || 'Select Track'}</option>
                               {coursesList.filter(c => c.status === 'Active').map(course => (
                                 <option key={course.id} value={course.name}>{course.name}</option>
@@ -160,7 +160,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
                           </div>
                         ) : field.type === 'select' ? (
                           <div className="relative">
-                            <select required={field.required} value={formData[field.id] || ''} onChange={(e) => handleChange(field.id, e.target.value)} className="w-full px-8 py-5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-black text-[11px] text-slate-900 uppercase tracking-widest appearance-none pr-12 shadow-sm cursor-pointer">
+                            <select id={`field-${field.id}`} required={field.required} value={formData[field.id] || ''} onChange={(e) => handleChange(field.id, e.target.value)} className="w-full px-8 py-5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-black text-[11px] text-slate-900 uppercase tracking-widest appearance-none pr-12 shadow-sm cursor-pointer">
                               <option value="">{field.placeholder || 'Choose Option'}</option>
                               {field.options?.map(opt => (
                                 <option key={opt} value={opt}>{opt}</option>
@@ -169,7 +169,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
                             <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400"><i className="fa-solid fa-chevron-down text-xs"></i></div>
                           </div>
                         ) : (
-                          <input required={field.required} type={field.type} value={formData[field.id] || ''} onChange={(e) => handleChange(field.id, e.target.value)} className="w-full px-8 py-5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-medium text-slate-900 placeholder-slate-300 shadow-sm" placeholder={field.placeholder} />
+                          <input id={`field-${field.id}`} required={field.required} type={field.type} value={formData[field.id] || ''} onChange={(e) => handleChange(field.id, e.target.value)} className="w-full px-8 py-5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-medium text-slate-900 placeholder-slate-300 shadow-sm" placeholder={field.placeholder} />
                         )}
                       </div>
                     );

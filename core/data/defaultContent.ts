@@ -8,14 +8,14 @@ export const INITIAL_CONTENT: AppState = {
   site: siteDefaults,
   theme: {
     primary: "#059669",
-    secondary: "#0f172a", // Updated from #1e1b4b to #0f172a for better harmony
+    secondary: "#0f172a", // Reverted from burgundy to deep slate
     accent: "#10b981",
     radius: "large"
   },
   home: homeDefaults,
   customPages: [],
   enrollmentForm: {
-    title: "SMS Official Enrollment",
+    title: "S M Skills Official Enrollment",
     description: "Please complete the comprehensive academic application form below.",
     successTitle: "Application Received",
     successMessage: "Your registration is being processed. An institutional registrar will review your application soon.",
@@ -27,12 +27,20 @@ export const INITIAL_CONTENT: AppState = {
     ],
     fields: [
       { id: "f1", label: "Student Full Name", type: "text", placeholder: "e.g. Michael Smith", required: true },
-      { id: "f2", label: "Email Address", type: "email", placeholder: "mike@example.com", required: true },
-      { id: "f3", label: "Father's / Guardian Name", type: "text", placeholder: "Enter Full Name", required: true },
+      { id: "f2", label: "Email address", type: "email", placeholder: "mike@example.com", required: true },
+      { id: "f3", label: "Father's / Guardian's name", type: "text", placeholder: "Enter Father's Name", required: true },
+      { id: "f3_mother", label: "Mother's / Guardian's name", type: "text", placeholder: "Enter Mother's Name", required: true },
       { id: "f4", label: "Date of Birth", type: "date", placeholder: "", required: true },
-      { id: "f5", label: "Primary Contact Number", type: "tel", placeholder: "+91", required: true },
-      { id: "f8", label: "Highest Qualification", type: "select", placeholder: "Select Qualification", required: true, options: ["High School", "Secondary School (10th)", "Higher Secondary (12th)", "Diploma Holder", "Graduate / Bachelor's", "Post Graduate"] },
-      { id: "f9", label: "Course Interest", type: "course-select", placeholder: "Choose Program Track", required: true }
+      { id: "f5", label: "Primary contact number", type: "tel", placeholder: "+91", required: true },
+      { id: "f6", label: "Alternative contact number", type: "tel", placeholder: "+91", required: false },
+      { id: "f7_addr", label: "Permanent residential address", type: "textarea", placeholder: "House No, Street, Village/Town", required: true },
+      { id: "f7_district", label: "District", type: "text", placeholder: "e.g. Nagaon", required: true },
+      { id: "f7_state", label: "State", type: "text", placeholder: "e.g. Assam", required: true },
+      { id: "f7_pin", label: "Pin code", type: "text", placeholder: "6-digit PIN", required: true },
+      { id: "f9", label: "Course interest", type: "course-select", placeholder: "Choose Program Track", required: true },
+      { id: "f11", label: "Current education", type: "select", placeholder: "Select Highest Qualification", required: true, options: ["Secondary School (10th)", "Higher Secondary (12th)", "Diploma Holder", "Graduate / Bachelor's", "Post Graduate", "Other (Specify in Additional Question)"] },
+      { id: "f10", label: "Source of information", type: "select", placeholder: "How did you hear about us?", required: true, options: ["Social Media", "Friend / Student Referral", "Newspaper / Print", "Web Search", "Educational Seminar"] },
+      { id: "f12", label: "Additional question", type: "textarea", placeholder: "Any specific queries for the registrar?", required: false }
     ]
   },
   contactForm: {

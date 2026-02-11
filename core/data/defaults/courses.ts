@@ -1,4 +1,31 @@
+
 import { Course, PageMeta } from '../../types';
+
+const sectorImages: Record<string, string> = {
+  "Agriculture": "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2",
+  "Automotive": "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3",
+  "Apparel": "https://images.unsplash.com/photo-1558769132-cb1aea458c5e",
+  "Banking, Financial Services & Insurance": "https://images.unsplash.com/photo-1450101499163-c8848c66ca85",
+  "Beauty & Wellness": "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b",
+  "Capital Goods": "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122",
+  "Construction": "https://images.unsplash.com/photo-1503387762-592dea58ef23",
+  "Electronics and Hardware": "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0",
+  "Food Processing": "https://images.unsplash.com/photo-1556761175-b413da4baf72",
+  "Furniture & Fitting": "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6",
+  "Green Jobs": "https://images.unsplash.com/photo-1466611653911-95282fc3656b",
+  "Healthcare": "https://images.unsplash.com/photo-1516549655169-df83a0774514",
+  "IT/ITES": "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
+  "Life Science": "https://images.unsplash.com/photo-1532187878403-1947057767a7",
+  "Logistics": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d",
+  "Media & Entertainment": "https://images.unsplash.com/photo-1492724441997-5dc865305da7",
+  "Mining": "https://images.unsplash.com/photo-1533106497176-45ae19e68ba2",
+  "Plumbing": "https://images.unsplash.com/photo-1504148455328-c376907d081c",
+  "Retail": "https://images.unsplash.com/photo-1441986300917-64674bd600d8",
+  "Rubber, Chemical & Petrochemical": "https://images.unsplash.com/photo-1518152006812-edab29b069ac",
+  "Telecom": "https://images.unsplash.com/photo-1520869562399-e772f042f422",
+  "Textile & Handloom": "https://images.unsplash.com/photo-1528476513691-07e6f563d97f",
+  "Tourism and Hospitality": "https://images.unsplash.com/photo-1566073771259-6a8506099945"
+};
 
 const sectorSpecialties: Record<string, string[]> = {
   "Agriculture": ["Agriculture"],
@@ -41,6 +68,8 @@ export const generateCourses = (): Course[] => {
   academicLevels.forEach(level => {
     Object.entries(sectorSpecialties).forEach(([industry, specialties]) => {
       
+      const industryImageUrl = sectorImages[industry] ? `${sectorImages[industry]}?auto=format&fit=crop&q=80&w=800` : "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800";
+
       if (level === 'Master') {
         let masterName = '';
         switch(industry) {
@@ -61,7 +90,7 @@ export const generateCourses = (): Course[] => {
           duration: "2 Years",
           mode: 'Offline',
           status: 'Active',
-          image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800&industry=${industry.replace(/\s+/g, '')}`,
+          image: industryImageUrl,
           description: `High-level technical proficiency program. This ${masterName} program is designed for advanced strategic roles within the ${industry} sector.`,
           price: "Rs. 50,000 / year",
           certification: `Master (NSDC)`,
@@ -81,7 +110,7 @@ export const generateCourses = (): Course[] => {
         if (level === 'Certificate (NSDC)') {
             duration = "3 Months";
             price = "Rs. 12,000";
-            eligibility = "12th Pass"; // Updated eligibility to 12th Pass as requested
+            eligibility = "12th Pass";
             mode = 'Hybrid';
         } else if (level === 'UG Certificate (NSDC)') {
             duration = "1 Year";
@@ -99,7 +128,6 @@ export const generateCourses = (): Course[] => {
         if (level === 'UG Certificate (NSDC)') courseNameLevel = 'UG Certificate';
         if (level === 'Certificate (NSDC)') courseNameLevel = 'Certificate';
 
-        // Set certification specifically to include (NSDC) as per level
         let certificationValue: string = level;
         if (level === 'UG Degree') certificationValue = 'UG Degree (NSDC)';
 
@@ -111,7 +139,7 @@ export const generateCourses = (): Course[] => {
           duration: duration,
           mode: mode,
           status: 'Active',
-          image: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800&industry=${industry.replace(/\s+/g, '')}`,
+          image: industryImageUrl,
           description: `Institutional academic track in ${specName}. This ${level} program provides specialized technical proficiency and industry-aligned skills.`,
           price: price,
           certification: certificationValue,
