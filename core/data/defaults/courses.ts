@@ -27,6 +27,26 @@ const sectorImages: Record<string, string> = {
   "Tourism and Hospitality": "https://images.unsplash.com/photo-1566073771259-6a8506099945"
 };
 
+/**
+ * Restricted list for the base 'Certificate (NSDC)' academic level as per requirement.
+ */
+const certificateSpecialties: Record<string, string[]> = {
+  "Apparel": ["Fashion Designer", "Self Employed Tailor"],
+  "Automotive": ["Automotive Showroom Host", "Automotive Telecaller", "Four Wheeler Service Assistant", "Two Wheeler Service Technician", "Commercial Vehicle Driver", "Automotive Welding Machine Operator (Manual and Robotics)", "Automotive Sales Lead", "Automotive Sales Consultant", "Automotive Accessory Fitter", "Sales Consultant (Pre-owned Vehicles)"],
+  "Beauty & Wellness": ["Assistant Beauty Therapist", "Beauty Therapist", "Hair Dresser & Stylist", "Assistant Spa Therapist", "Pedicurist and Manicurist", "Bridal Makeup Artist", "Professional Makeup Artist"],
+  "Banking, Financial Services & Insurance": ["Debt Recovery Agent", "Accounts Executive", "Business Correspondence and Business Facilitator (CFBCBF)"],
+  "Electronics and Hardware": ["Customer Care Executive", "Field Technician Computing And Peripherals", "Field Technician Networking And Storage", "Solar Panel Installation Technician", "Field Technician Other Home Appliances", "DTH Set Top Box Installation & Service Technician"],
+  "Food Processing": ["Multi Skill Technician (Food Processing)", "Pickle Making Technician", "Assistant Baking Technician", "Baking Assistant", "Certification in Food Production"],
+  "IT/ITES": ["Junior Software Developer", "IT Helpdesk Attendant", "Digital Mitra", "Domestic Biometric Data Operator", "Domestic Data Entry Operator"],
+  "Logistics": ["Courier Delivery Executive", "Consignment Booking Assistant"],
+  "Retail": ["Retail Sales Assistant", "Salesperson (Distribution)", "Retail Cashier", "Retail Sales Associate", "Retail Trainee Associate"],
+  "Telecom": ["Call Center Executive"],
+  "Tourism and Hospitality": ["Customer Service Representative (Meet and Greet)", "Guest Service Executive (Housekeeping)", "Guest Service Associate (Housekeeping)", "Pantry Assistant", "Guest Service Associate (Front Office)", "Guest Service Associate - Food & Beverage Service", "Food and Beverage Service Assistant", "Travel Consultant", "Tour Guide", "Counter Sales Executive (Tourism and Hospitality)", "Food Delivery Associate", "Front Office Assistant", "Front Office Executive", "Transport Coordinator - Tourism and Hospitality", "Tour Escort"]
+};
+
+/**
+ * Generic list for other academic tiers (UG Certificate, UG Diploma, UG Degree, Master)
+ */
 const sectorSpecialties: Record<string, string[]> = {
   "Agriculture": ["Agriculture"],
   "Automotive": ["Automobile Servicing", "Automobile Production (Welding)", "Automobile Production (Machining)"],
@@ -66,7 +86,11 @@ export const generateCourses = (): Course[] => {
   ];
 
   academicLevels.forEach(level => {
-    Object.entries(sectorSpecialties).forEach(([industry, specialties]) => {
+    // If it's a Certificate (NSDC) course, use the restricted list provided by user.
+    // Otherwise, use the generic logic.
+    const activeMap = level === 'Certificate (NSDC)' ? certificateSpecialties : sectorSpecialties;
+
+    Object.entries(activeMap).forEach(([industry, specialties]) => {
       
       const industryImageUrl = sectorImages[industry] ? `${sectorImages[industry]}?auto=format&fit=crop&q=80&w=800` : "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800";
 
@@ -79,7 +103,7 @@ export const generateCourses = (): Course[] => {
             case "IT/ITES": masterName = "M. Voc in Application of Computer"; break;
             case "Retail": masterName = "M. Voc in Retail Management"; break;
             case "Tourism and Hospitality": masterName = "M. Voc in Travel and Tourism"; break;
-            default: return;
+            default: return; // Skip industries that don't traditionally have M.Voc paths defined here
         }
 
         list.push({
@@ -92,7 +116,7 @@ export const generateCourses = (): Course[] => {
           status: 'Active',
           image: industryImageUrl,
           description: `High-level technical proficiency program. This ${masterName} program is designed for advanced strategic roles within the ${industry} sector.`,
-          price: "Rs. 50,000 / year",
+          price: "Rs. 60,000 / year",
           certification: `Master (NSDC)`,
           eligibility: "Graduate",
           benefits: "• Industry Internship\n• Hands-on Lab Training\n• Placement Assistance\n• Stipend Opportunities"
@@ -108,13 +132,13 @@ export const generateCourses = (): Course[] => {
         let benefits = "• Industry Internship\n• Hands-on Lab Training\n• Placement Assistance\n• Stipend Opportunities";
 
         if (level === 'Certificate (NSDC)') {
-            duration = "3 Months";
-            price = "Rs. 12,000";
-            eligibility = "12th Pass";
+            duration = "3-6 Months";
+            price = "Rs. 15,000";
+            eligibility = "10th Pass";
             mode = 'Hybrid';
         } else if (level === 'UG Certificate (NSDC)') {
             duration = "1 Year";
-            price = "Rs. 50,000";
+            price = "Rs. 45,000";
             eligibility = "12th Pass";
             mode = 'Hybrid';
         } else if (level === 'UG Diploma (NSDC)') {
@@ -124,16 +148,11 @@ export const generateCourses = (): Course[] => {
             duration = "3 Years";
         }
 
-        let courseNameLevel: string = level;
-        if (level === 'UG Certificate (NSDC)') courseNameLevel = 'UG Certificate';
-        if (level === 'Certificate (NSDC)') courseNameLevel = 'Certificate';
-
-        let certificationValue: string = level;
-        if (level === 'UG Degree') certificationValue = 'UG Degree (NSDC)';
+        let label = level.replace(" (NSDC)", "");
 
         list.push({
           id: `c-${idCounter++}`,
-          name: `${courseNameLevel} in ${specName} (NSDC)`,
+          name: `${label} in ${specName} (NSDC)`,
           academicLevel: level as any,
           industry: industry,
           duration: duration,
@@ -142,7 +161,7 @@ export const generateCourses = (): Course[] => {
           image: industryImageUrl,
           description: `Institutional academic track in ${specName}. This ${level} program provides specialized technical proficiency and industry-aligned skills.`,
           price: price,
-          certification: certificationValue,
+          certification: `${level} (Govt. Verified)`,
           eligibility: eligibility,
           benefits: benefits
         });
