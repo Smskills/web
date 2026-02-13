@@ -172,22 +172,22 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
     : "top-24 md:top-32";
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 pb-20 font-sans">
+    <div className="min-h-screen bg-slate-50 text-slate-900 pb-20 font-sans">
       <input type="file" ref={genericUploadRef} className="hidden" accept="image/*" onChange={handleGenericUpload} />
 
-      <div className={`bg-slate-800 border-b border-slate-700 p-6 sticky ${stickyTopClass} z-[80] shadow-2xl transition-all duration-300`}>
+      <div className={`bg-white border-b border-slate-200 p-6 sticky ${stickyTopClass} z-[80] shadow-sm transition-all duration-300`}>
         <div className="container mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-black uppercase tracking-tight">
-              <i className="fa-solid fa-gauge-high text-emerald-500 mr-3"></i> Institute Admin
+            <h1 className="text-2xl font-black uppercase tracking-tight text-slate-900">
+              <i className="fa-solid fa-gauge-high text-emerald-600 mr-3"></i> Institute Admin
             </h1>
-            {statusMsg && <span className="text-emerald-400 text-[10px] font-black bg-emerald-500/10 px-3 py-1 rounded-full uppercase tracking-widest">{statusMsg}</span>}
+            {statusMsg && <span className="text-emerald-600 text-[10px] font-black bg-emerald-50 px-3 py-1 rounded-full uppercase tracking-widest border border-emerald-100">{statusMsg}</span>}
           </div>
           <div className="flex items-center gap-2">
-              <button onClick={handleDiscard} className="px-5 py-2 text-slate-400 hover:text-white text-xs font-black transition-all border border-slate-700 rounded-lg uppercase tracking-widest">Discard</button>
-              <button onClick={handleSave} className={`px-8 py-2 rounded-lg text-xs font-black transition-all active:scale-95 shadow-lg uppercase tracking-widest ${hasUnsavedChanges ? 'bg-emerald-600 hover:bg-emerald-500 text-white animate-pulse shadow-emerald-500/20' : 'bg-slate-700 text-slate-300 cursor-default'}`}>Save Database</button>
-              <div className="w-px h-8 bg-slate-700 mx-2"></div>
-              <button onClick={handleLogout} className="px-4 py-2 text-slate-400 hover:text-red-500 text-xs font-black transition-all flex items-center gap-2 group uppercase tracking-widest">
+              <button onClick={handleDiscard} className="px-5 py-2 text-slate-500 hover:text-slate-900 text-xs font-black transition-all border border-slate-200 rounded-lg uppercase tracking-widest bg-white">Discard</button>
+              <button onClick={handleSave} className={`px-8 py-2 rounded-lg text-xs font-black transition-all active:scale-95 shadow-lg uppercase tracking-widest ${hasUnsavedChanges ? 'bg-emerald-600 hover:bg-emerald-500 text-white animate-pulse shadow-emerald-500/20' : 'bg-slate-100 text-slate-400 cursor-default'}`}>Save Database</button>
+              <div className="w-px h-8 bg-slate-200 mx-2"></div>
+              <button onClick={handleLogout} className="px-4 py-2 text-slate-500 hover:text-red-600 text-xs font-black transition-all flex items-center gap-2 group uppercase tracking-widest">
                 <i className="fa-solid fa-power-off group-hover:scale-110 transition-transform"></i> Logout
               </button>
           </div>
@@ -198,21 +198,21 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
         <div className={`w-full md:w-64 space-y-2 shrink-0 md:sticky ${stickyTopClass} md:pt-6 h-fit z-50`}>
           <button
               onClick={() => setActiveTab('leads')}
-              className={`w-full text-left px-5 py-4 rounded-2xl font-black transition-all capitalize flex items-center gap-3 border shadow-2xl ${activeTab === 'leads' ? 'bg-emerald-600 border-emerald-500 text-white translate-x-1' : 'text-emerald-500 bg-emerald-500/5 border-emerald-500/10 hover:bg-emerald-500/10'}`}
+              className={`w-full text-left px-5 py-4 rounded-2xl font-black transition-all capitalize flex items-center gap-3 border shadow-sm ${activeTab === 'leads' ? 'bg-emerald-600 border-emerald-500 text-white translate-x-1' : 'text-emerald-600 bg-emerald-50 border-emerald-100 hover:bg-emerald-100'}`}
             >
               <i className="fa-solid fa-user-graduate"></i>
               Student Leads
               <span className="ml-auto w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
           </button>
           
-          <div className="h-px bg-slate-700/50 my-4"></div>
+          <div className="h-px bg-slate-200 my-4"></div>
 
           <div className="space-y-1.5 overflow-y-auto max-h-[60vh] custom-scrollbar pr-1">
             {(['site', 'home', 'pages', 'about', 'academics', 'notices', 'gallery', 'faq', 'form', 'contact', 'footer', 'placements', 'legal', 'career'] as const).map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`w-full text-left px-5 py-3.5 rounded-2xl font-black transition-all capitalize flex items-center gap-3 border text-[13px] ${activeTab === tab ? 'bg-emerald-600 border-emerald-500 text-white shadow-xl translate-x-1' : 'text-slate-500 border-transparent hover:bg-slate-800'}`}
+                className={`w-full text-left px-5 py-3.5 rounded-2xl font-black transition-all capitalize flex items-center gap-3 border text-[13px] ${activeTab === tab ? 'bg-emerald-600 border-emerald-500 text-white shadow-md translate-x-1' : 'text-slate-500 border-transparent hover:bg-white hover:border-slate-200 hover:text-slate-900'}`}
               >
                 <i className={`fa-solid fa-${tab === 'site' ? 'globe' : tab === 'home' ? 'house' : tab === 'pages' ? 'file-lines' : tab === 'about' ? 'circle-info' : tab === 'academics' ? 'graduation-cap' : tab === 'notices' ? 'bullhorn' : tab === 'gallery' ? 'images' : tab === 'faq' ? 'circle-question' : tab === 'contact' ? 'address-book' : tab === 'footer' ? 'shoe-prints' : tab === 'placements' ? 'briefcase' : tab === 'career' ? 'user-graduate' : tab === 'legal' ? 'scale-balanced' : 'wpforms'}`}></i>
                 {tab === 'form' ? 'Enroll Page' : (tab === 'academics' ? 'Academic Section' : tab)}
@@ -221,7 +221,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
           </div>
         </div>
 
-        <div className="flex-grow bg-slate-800 rounded-[2.5rem] p-8 md:p-12 border border-slate-700 shadow-4xl min-h-[75vh]">
+        <div className="flex-grow bg-white rounded-[2.5rem] p-8 md:p-12 border border-slate-200 shadow-sm min-h-[75vh]">
           {activeTab === 'leads' && <LeadsTab leads={localContent.leads || []} onUpdateLeads={(updated) => { setLocalContent(prev => ({ ...prev, leads: updated })); trackChange(); }} />}
           
           {activeTab === 'site' && <SiteTab 

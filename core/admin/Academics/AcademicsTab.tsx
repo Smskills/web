@@ -27,12 +27,12 @@ const AcademicsTab: React.FC<AcademicsTabProps> = ({
     <div className="space-y-16 animate-fade-in pb-20">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h2 className="text-3xl font-black text-white uppercase tracking-tight leading-none">Academic Catalog</h2>
-          <p className="text-slate-500 font-black text-[10px] uppercase tracking-[0.3em] mt-2">Global Vocational Standards Management</p>
+          <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tight leading-none">Academic Catalog</h2>
+          <p className="text-slate-400 font-black text-[10px] uppercase tracking-[0.3em] mt-2">Global Vocational Standards Management</p>
         </div>
         <button 
           onClick={addItem} 
-          className="bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-4 rounded-2xl text-[11px] font-black shadow-2xl flex items-center gap-3 transition-all active:scale-95 uppercase tracking-widest"
+          className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-2xl text-[11px] font-black shadow-lg flex items-center gap-3 transition-all active:scale-95 uppercase tracking-widest"
         >
           <i className="fa-solid fa-plus text-sm"></i> Create New Program
         </button>
@@ -43,7 +43,7 @@ const AcademicsTab: React.FC<AcademicsTabProps> = ({
         updatePageMeta={updatePageMeta} 
       />
 
-      <div className="h-px bg-slate-700/50"></div>
+      <div className="h-px bg-slate-200"></div>
 
       <ProgramsList 
         list={list} 
