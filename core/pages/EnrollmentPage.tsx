@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { AppState, FormField } from '../types.ts';
 
@@ -14,8 +14,8 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [formData, setFormData] = useState<Record<string, string>>({});
 
-  const { 
-    enrollmentForm = { 
+  const enrollmentForm = useMemo(() => {
+    return content?.enrollmentForm || { 
       title: 'Enrollment Form', 
       description: '', 
       successTitle: 'Application Received', 
@@ -23,10 +23,8 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
       roadmapTitle: 'Enrollment Flow', 
       roadmapSteps: [], 
       fields: [] 
-    }, 
-    courses, 
-    site = { contact: { phones: [] } } 
-  } = content || {};
+    };
+  }, [content]);
 
   useEffect(() => {
     if (!enrollmentForm?.fields) return;
@@ -59,29 +57,24 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
 
     // --- HEURISTIC FIELD DISCOVERY ---
     let emailField = fields.find(f => f.type === 'email') || 
-                     fields.find(f => (f.label || '').toLowerCase().includes('email')) ||
-                     fields.find(f => (formData[f.id] || '').includes('@'));
-    const email = emailField ? formData[emailField.id] : (formData[fields[1]?.id] || '');
+                     fields.find(f => (f.label || '').toLowerCase().includes('email'));
+    const email = emailField ? formData[emailField.id] : 'not-provided@example.com';
 
     let phoneField = fields.find(f => f.type === 'tel') || 
                      fields.find(f => {
                        const l = (f.label || '').toLowerCase();
-                       return l.includes('phone') || l.includes('contact') || l.includes('mobile') || l.includes('number') || l.includes('whatsapp');
+                       return l.includes('phone') || l.includes('contact') || l.includes('mobile');
                      });
-    const phone = phoneField ? formData[phoneField.id] : (formData[fields[4]?.id] || formData[fields[2]?.id] || '');
+    const phone = phoneField ? formData[phoneField.id] : '0000000000';
 
     let nameField = fields.find(f => {
                       const l = (f.label || '').toLowerCase();
-                      return l.includes('name') || l.includes('student') || l.includes('applicant');
+                      return l.includes('name') || l.includes('student');
                     }) || fields[0];
     const fullName = nameField ? formData[nameField.id] : 'Applicant';
 
-    let courseField = fields.find(f => f.type === 'course-select') || 
-                      fields.find(f => (f.label || '').toLowerCase().includes('course'));
+    let courseField = fields.find(f => f.type === 'course-select');
     const course = courseField ? formData[courseField.id] : 'N/A';
-
-    let messageField = fields.find(f => f.type === 'textarea');
-    const message = messageField ? formData[messageField.id] : 'Application via Enrollment Form';
 
     try {
       const response = await fetch('http://localhost:5000/api/leads', {
@@ -92,7 +85,7 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
           email: email || 'not-provided@example.com',
           phone: phone || '0000000000',
           course: course || 'General',
-          message,
+          message: 'Website Application',
           source: 'enrollment',
           details: { ...formData }
         })
@@ -103,7 +96,7 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
         setSubmitted(true);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
-        setErrorMessage(result.message || 'Submission failed. Please check that Name, Email and Phone are correctly filled.');
+        setErrorMessage(result.message || 'Submission failed. Ensure Name, Email and Phone are correctly filled.');
       }
     } catch (err) {
       setErrorMessage('Connection Error: The institutional server is currently unreachable.');
@@ -123,8 +116,8 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
           <div className="w-24 h-24 md:w-28 md:h-28 bg-emerald-100 text-emerald-600 rounded-[2.5rem] flex items-center justify-center text-4xl md:text-5xl mx-auto mb-10 shadow-2xl animate-bounce">
             <i className="fa-solid fa-check"></i>
           </div>
-          <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tighter">Application Received</h2>
-          <p className="text-slate-600 mb-12 text-lg md:text-xl font-medium leading-relaxed">Thank you. An admissions advisor will contact you within 48 business hours.</p>
+          <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tighter">{enrollmentForm.successTitle}</h2>
+          <p className="text-slate-600 mb-12 text-lg md:text-xl font-medium leading-relaxed">{enrollmentForm.successMessage || 'Thank you. An admissions advisor will contact you within 48 business hours.'}</p>
           <Link to="/courses" className="inline-block px-12 py-5 bg-slate-900 text-white font-black rounded-2xl hover:bg-emerald-600 transition-all shadow-3xl active:scale-95 uppercase tracking-widest text-[11px]">Return to Courses</Link>
         </div>
       </div>
@@ -134,7 +127,6 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
   return (
     <div className="min-h-screen bg-slate-50 font-sans">
       <section className="bg-slate-900 pt-32 pb-24 text-white text-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-emerald-500/5 blur-[100px] opacity-30"></div>
         <div className="container mx-auto px-4 max-w-4xl relative z-10">
           <span className="text-emerald-500 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">Official Intake 2024</span>
           <h1 className="text-4xl md:text-7xl font-black mb-8 tracking-tighter leading-none">{enrollmentForm.title}</h1>
@@ -147,7 +139,7 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
           
           <div className="bg-slate-900 lg:w-96 p-10 md:p-14 text-white shrink-0">
              <h3 className="text-xl md:text-2xl font-black mb-12 text-white uppercase tracking-tighter border-b border-white/5 pb-6">
-                Admission Flow
+                {enrollmentForm.roadmapTitle}
               </h3>
               <div className="space-y-12">
                 {(enrollmentForm.roadmapSteps || []).map((step, idx) => (
@@ -161,14 +153,6 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
                     </div>
                   </div>
                 ))}
-              </div>
-
-              <div className="mt-20 p-8 bg-white/[0.03] backdrop-blur-sm rounded-[2rem] border border-white/5 text-center group hover:bg-white/[0.05] transition-all">
-                <div className="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center mx-auto mb-4 text-emerald-500 border border-white/5 shadow-lg">
-                  <i className="fa-solid fa-headset"></i>
-                </div>
-                <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-500 mb-2">Help Desk</p>
-                <p className="text-lg font-black text-white group-hover:text-emerald-400 transition-colors tracking-tight">{site?.contact?.phones?.[0] || 'N/A'}</p>
               </div>
           </div>
 
@@ -195,7 +179,7 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
                         <div className="relative">
                           <select id={`field-${field.id}`} required={field.required} value={formData[field.id] || ''} onChange={(e) => handleChange(field.id, e.target.value)} className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-black text-[11px] text-slate-900 uppercase tracking-widest appearance-none pr-12 shadow-sm cursor-pointer">
                             <option value="">{field.placeholder || 'Select Track'}</option>
-                            {(courses?.list || []).filter(c => c.status === 'Active').map(course => (
+                            {(content?.courses?.list || []).filter(c => c.status === 'Active').map(course => (
                               <option key={course.id} value={course.name}>
                                 {course.name}
                               </option>
@@ -222,13 +206,9 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
               </div>
 
               <div className="space-y-8 pt-4">
-                <button disabled={isSubmitting} type="submit" className="w-full py-7 bg-emerald-600 text-white font-black rounded-3xl hover:bg-emerald-700 transition-all uppercase tracking-[0.2em] shadow-2xl flex items-center justify-center gap-4 active:scale-[0.98] focus:ring-4 focus:ring-emerald-500/30">
-                  {isSubmitting ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Processing Application...</> : <>Submit Official Request <i className="fa-solid fa-paper-plane text-sm"></i></>}
+                <button disabled={isSubmitting} type="submit" className="w-full py-7 bg-emerald-600 text-white font-black rounded-3xl hover:bg-emerald-700 transition-all uppercase tracking-[0.2em] shadow-2xl flex items-center justify-center gap-4 active:scale-[0.98]">
+                  {isSubmitting ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Processing...</> : <>Submit Application <i className="fa-solid fa-paper-plane text-sm"></i></>}
                 </button>
-                
-                <p className="text-[11px] text-slate-500 font-medium text-center leading-relaxed max-w-lg mx-auto">
-                  By submitting this application, you acknowledge that you have read and agree to our <Link to="/privacy-policy" className="text-emerald-600 font-black hover:underline transition-all">Privacy Policy</Link> and <Link to="/terms-of-service" className="text-emerald-600 font-black hover:underline transition-all">Terms of Service</Link>.
-                </p>
               </div>
             </form>
           </div>

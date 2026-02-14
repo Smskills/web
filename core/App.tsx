@@ -47,77 +47,66 @@ const App: React.FC = () => {
     const bootstrapConfig = async () => {
       try {
         const saved = localStorage.getItem('edu_insta_content');
-        let localData = INITIAL_CONTENT;
+        let localData = {};
         
         if (saved) {
            try {
-             const parsed = JSON.parse(saved);
-             localData = { ...INITIAL_CONTENT, ...parsed };
+             localData = JSON.parse(saved);
            } catch (e) {
-             console.error("Local storage parse failed");
+             console.error("Local storage corruption detected.");
            }
         }
 
         const response = await fetch('http://localhost:5000/api/config');
         const result = await response.json();
-        
         const apiData = (result.success && result.data) ? result.data : {};
         
+        // Deep merge logic: Priority is Database (apiData) > Local (localData) > Hardcoded (INITIAL_CONTENT)
         const finalContent: AppState = {
           ...INITIAL_CONTENT,
           ...localData,
           ...apiData,
           site: { 
             ...INITIAL_CONTENT.site, 
-            ...(localData.site || {}), 
-            ...(apiData.site || {}),
-            contact: { ...INITIAL_CONTENT.site.contact, ...(localData.site?.contact || {}), ...(apiData.site?.contact || {}) },
-            footer: { ...INITIAL_CONTENT.site.footer, ...(localData.site?.footer || {}), ...(apiData.site?.footer || {}) }
+            ...(localData as any).site, 
+            ...(apiData as any).site,
+            contact: { ...INITIAL_CONTENT.site.contact, ...(localData as any).site?.contact, ...(apiData as any).site?.contact },
+            footer: { ...INITIAL_CONTENT.site.footer, ...(localData as any).site?.footer, ...(apiData as any).site?.footer }
           },
           home: { 
             ...INITIAL_CONTENT.home, 
-            ...(localData.home || {}), 
-            ...(apiData.home || {}),
-            sectionLabels: { ...INITIAL_CONTENT.home.sectionLabels, ...(localData.home?.sectionLabels || {}), ...(apiData.home?.sectionLabels || {}) },
-            ctaBlock: { ...INITIAL_CONTENT.home.ctaBlock, ...(localData.home?.ctaBlock || {}), ...(apiData.home?.ctaBlock || {}) },
-            sections: { ...INITIAL_CONTENT.home.sections, ...(localData.home?.sections || {}), ...(apiData.home?.sections || {}) },
-            bigShowcase: { ...INITIAL_CONTENT.home.bigShowcase, ...(localData.home?.bigShowcase || {}), ...(apiData.home?.bigShowcase || {}) }
+            ...(localData as any).home, 
+            ...(apiData as any).home,
+            sectionLabels: { ...INITIAL_CONTENT.home.sectionLabels, ...(localData as any).home?.sectionLabels, ...(apiData as any).home?.sectionLabels },
+            ctaBlock: { ...INITIAL_CONTENT.home.ctaBlock, ...(localData as any).home?.ctaBlock, ...(apiData as any).home?.ctaBlock },
+            sections: { ...INITIAL_CONTENT.home.sections, ...(localData as any).home?.sections, ...(apiData as any).home?.sections },
+            bigShowcase: { ...INITIAL_CONTENT.home.bigShowcase, ...(localData as any).home?.bigShowcase, ...(apiData as any).home?.bigShowcase }
           },
           enrollmentForm: {
             ...INITIAL_CONTENT.enrollmentForm,
-            ...(localData.enrollmentForm || {}),
-            ...(apiData.enrollmentForm || {})
+            ...(localData as any).enrollmentForm,
+            ...(apiData as any).enrollmentForm
           },
           contactForm: {
             ...INITIAL_CONTENT.contactForm,
-            ...(localData.contactForm || {}),
-            ...(apiData.contactForm || {})
+            ...(localData as any).contactForm,
+            ...(apiData as any).contactForm
           },
           courses: {
             ...INITIAL_CONTENT.courses,
-            ...(localData.courses && !Array.isArray(localData.courses) ? localData.courses : {}),
-            ...(apiData.courses && !Array.isArray(apiData.courses) ? apiData.courses : {})
+            ...((localData as any).courses && !Array.isArray((localData as any).courses) ? (localData as any).courses : {}),
+            ...((apiData as any).courses && !Array.isArray((apiData as any).courses) ? (apiData as any).courses : {})
           },
           notices: {
             ...INITIAL_CONTENT.notices,
-            ...(localData.notices && !Array.isArray(localData.notices) ? localData.notices : {}),
-            ...(apiData.notices && !Array.isArray(apiData.notices) ? apiData.notices : {})
-          },
-          gallery: {
-            ...INITIAL_CONTENT.gallery,
-            ...(localData.gallery && !Array.isArray(localData.gallery) ? localData.gallery : {}),
-            ...(apiData.gallery && !Array.isArray(apiData.gallery) ? apiData.gallery : {})
-          },
-          faqs: {
-            ...INITIAL_CONTENT.faqs,
-            ...(localData.faqs && !Array.isArray(localData.faqs) ? localData.faqs : {}),
-            ...(apiData.faqs && !Array.isArray(apiData.faqs) ? apiData.faqs : {})
+            ...((localData as any).notices && !Array.isArray((localData as any).notices) ? (localData as any).notices : {}),
+            ...((apiData as any).notices && !Array.isArray((apiData as any).notices) ? (apiData as any).notices : {})
           }
         };
 
         setContent(finalContent);
       } catch (err) {
-        console.warn("Bootstrap: Data sync issues. Using fallback content.");
+        console.warn("Bootstrap: Could not reach backend. Using local cache.");
       } finally {
         setIsInitializing(false);
       }
@@ -150,9 +139,6 @@ const App: React.FC = () => {
       .bg-slate-900 { background-color: var(--brand-secondary) !important; }
       .bg-emerald-500 { background-color: var(--brand-accent) !important; }
       .text-emerald-500 { color: var(--brand-accent) !important; }
-      .rounded-\\[2\\.5rem\\], .rounded-\\[3\\.5rem\\], .rounded-\\[3rem\\], .rounded-3xl, .rounded-2xl {
-         border-radius: var(--brand-radius) !important;
-      }
     `;
   }, [content.theme]);
 
@@ -163,7 +149,7 @@ const App: React.FC = () => {
     if (isAuthenticated) {
       try {
         const token = localStorage.getItem('sms_auth_token');
-        await fetch('http://localhost:5000/api/config', {
+        const res = await fetch('http://localhost:5000/api/config', {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
@@ -171,10 +157,18 @@ const App: React.FC = () => {
           },
           body: JSON.stringify(newContent)
         });
-      } catch (e) {
-        console.error("Central Sync Error: Backend unreachable.");
+        
+        const data = await res.json();
+        if (!data.success) {
+           throw new Error(data.message || "Database sync failed");
+        }
+        return true;
+      } catch (e: any) {
+        console.error("Central Sync Error:", e.message);
+        throw e;
       }
     }
+    return true;
   };
 
   if (isInitializing) {
