@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { FormField, RoadmapStep } from '../types.ts';
 
 interface FormTabProps {
@@ -15,9 +16,12 @@ interface FormTabProps {
   updateField: (id: string, updates: Partial<FormField>) => void;
   deleteField: (id: string) => void;
   updatePageInfo: (field: string, value: any) => void;
+  reorderFields: (startIndex: number, endIndex: number) => void;
 }
 
-const FormTab: React.FC<FormTabProps> = ({ formData, addField, updateField, deleteField, updatePageInfo }) => {
+const FormTab: React.FC<FormTabProps> = ({ formData, addField, updateField, deleteField, updatePageInfo, reorderFields }) => {
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+
   if (!formData) return <div className="p-10 text-slate-500 font-black uppercase text-center border-2 border-dashed border-slate-700 rounded-[3rem]">Initializing Form Engine...</div>;
 
   const handleDelete = (id: string, label: string) => {
@@ -38,6 +42,21 @@ const FormTab: React.FC<FormTabProps> = ({ formData, addField, updateField, dele
 
   const fields = formData.fields || [];
   const steps = formData.roadmapSteps || [];
+
+  // Drag and Drop handlers
+  const handleDragStart = (idx: number) => {
+    setDraggedIndex(idx);
+  };
+
+  const handleDragOver = (e: React.DragEvent, idx: number) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (idx: number) => {
+    if (draggedIndex === null || draggedIndex === idx) return;
+    reorderFields(draggedIndex, idx);
+    setDraggedIndex(null);
+  };
 
   return (
     <div className="space-y-12 animate-fade-in">
@@ -136,9 +155,27 @@ const FormTab: React.FC<FormTabProps> = ({ formData, addField, updateField, dele
         
         <div className="space-y-4">
           {fields.map((field, idx) => (
-            <div key={field.id} className="bg-slate-900/50 p-6 rounded-[1.5rem] border border-slate-700 flex flex-col gap-4 group hover:border-emerald-500/30 transition-all">
+            <div 
+              key={field.id} 
+              draggable 
+              onDragStart={() => handleDragStart(idx)}
+              onDragOver={(e) => handleDragOver(e, idx)}
+              onDrop={() => handleDrop(idx)}
+              onDragEnd={() => setDraggedIndex(null)}
+              className={`bg-slate-900/50 p-6 rounded-[1.5rem] border flex flex-col gap-4 group hover:border-emerald-500/30 transition-all cursor-default ${
+                draggedIndex === idx ? 'opacity-40 border-dashed border-emerald-500' : 'border-slate-700'
+              }`}
+            >
               <div className="flex gap-4 items-center">
-                <span className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-xs font-black text-emerald-500 border border-slate-700">{idx + 1}</span>
+                {/* Drag Handle */}
+                <div className="cursor-grab active:cursor-grabbing text-slate-600 hover:text-emerald-500 transition-colors px-1">
+                  <i className="fa-solid fa-grip-vertical text-lg"></i>
+                </div>
+
+                <span className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-xs font-black text-emerald-500 border border-slate-700 shadow-inner">
+                  {idx + 1}
+                </span>
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 flex-grow">
                   <div className="space-y-1">
                     <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Label</label>
