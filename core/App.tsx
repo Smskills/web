@@ -83,6 +83,16 @@ const App: React.FC = () => {
             sections: { ...INITIAL_CONTENT.home.sections, ...(localData.home?.sections || {}), ...(apiData.home?.sections || {}) },
             bigShowcase: { ...INITIAL_CONTENT.home.bigShowcase, ...(localData.home?.bigShowcase || {}), ...(apiData.home?.bigShowcase || {}) }
           },
+          enrollmentForm: {
+            ...INITIAL_CONTENT.enrollmentForm,
+            ...(localData.enrollmentForm || {}),
+            ...(apiData.enrollmentForm || {})
+          },
+          contactForm: {
+            ...INITIAL_CONTENT.contactForm,
+            ...(localData.contactForm || {}),
+            ...(apiData.contactForm || {})
+          },
           courses: {
             ...INITIAL_CONTENT.courses,
             ...(localData.courses && !Array.isArray(localData.courses) ? localData.courses : {}),
