@@ -38,7 +38,13 @@ const GalleryTab: React.FC<GalleryTabProps> = ({
   return (
     <div className="space-y-12 animate-fade-in">
       <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-        <h2 className="text-2xl font-black text-white uppercase tracking-tight shrink-0">Media Albums</h2>
+        <div>
+          <h2 className="text-2xl font-black text-white uppercase tracking-tight shrink-0">Media Albums</h2>
+          <div className="flex items-center gap-2 mt-1">
+             <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+             <p className="text-[10px] text-emerald-500/80 font-black uppercase tracking-widest">Bulk Upload Supported (Select Multiple Files)</p>
+          </div>
+        </div>
         <div className="flex gap-2">
           <input 
             placeholder="New Album Name..." 
@@ -90,7 +96,10 @@ const GalleryTab: React.FC<GalleryTabProps> = ({
                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{items.length} Images</p>
                 </div>
               </div>
-              <button onClick={() => triggerUpload(category)} className="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg active:scale-95">Add Photo</button>
+              <div className="flex items-center gap-4">
+                 <span className="hidden md:inline text-[9px] text-slate-600 font-black uppercase tracking-widest">Select multiple in dialog</span>
+                 <button onClick={() => triggerUpload(category)} className="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg active:scale-95">Add Photos</button>
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
               {items.map(item => (

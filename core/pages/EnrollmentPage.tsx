@@ -205,10 +205,18 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
                 })}
               </div>
 
-              <div className="space-y-8 pt-4">
+              <div className="space-y-6 pt-4">
                 <button disabled={isSubmitting} type="submit" className="w-full py-7 bg-emerald-600 text-white font-black rounded-3xl hover:bg-emerald-700 transition-all uppercase tracking-[0.2em] shadow-2xl flex items-center justify-center gap-4 active:scale-[0.98]">
                   {isSubmitting ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Processing...</> : <>Submit Application <i className="fa-solid fa-paper-plane text-sm"></i></>}
                 </button>
+                <div className="text-center px-4">
+                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-loose max-w-md mx-auto">
+                    By submitting this form, you acknowledge and agree to our 
+                    <Link to="/privacy-policy" className="text-emerald-600 hover:underline mx-1">Privacy Policy</Link> 
+                    and 
+                    <Link to="/terms-of-service" className="text-emerald-600 hover:underline mx-1">Terms of Service</Link>.
+                  </p>
+                </div>
               </div>
             </form>
           </div>

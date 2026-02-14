@@ -100,48 +100,73 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
   };
 
   const handleGenericUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !activeUploadPath.current || isProcessing) return;
+    const files = e.target.files;
+    if (!files || files.length === 0 || !activeUploadPath.current || isProcessing) return;
     
     const inputElement = e.target;
     setIsProcessing(true);
+    setStatusMsg(files.length > 1 ? `Optimizing ${files.length} images...` : 'Optimizing image...');
     
-    optimizeImage(file).then(url => {
-      setLocalContent(prev => {
-        const next = { ...prev };
-        const pathParts = activeUploadPath.current!.split('.');
-        
-        if (pathParts[0] === 'courses' && activeCourseId.current) {
-          next.courses = { ...next.courses, list: next.courses.list.map((c: any) => c.id === activeCourseId.current ? { ...c, image: url } : c) };
+    // Fix: Explicitly cast the Array-like FileList to a File array to resolve 'unknown' type assignment issues
+    const fileArray = Array.from(files) as File[];
+
+    Promise.all(fileArray.map(file => optimizeImage(file)))
+      .then(urls => {
+        setLocalContent(prev => {
+          const next = { ...prev };
+          const pathParts = activeUploadPath.current!.split('.');
+          
+          // Specialized handler for multiple gallery images
+          if (pathParts[0] === 'gallery' && pathParts[1] !== 'thumbnails') {
+            const newItems = urls.map((url, idx) => ({
+              id: `img_${Date.now()}_${idx}`,
+              url,
+              category: activeUploadCategory.current,
+              title: ''
+            }));
+            next.gallery = { 
+              ...next.gallery, 
+              list: [...newItems, ...next.gallery.list] 
+            };
+            return next;
+          }
+          
+          // Singular handlers for other fields (taking the first URL)
+          const url = urls[0];
+          
+          if (pathParts[0] === 'courses' && activeCourseId.current) {
+            next.courses = { ...next.courses, list: next.courses.list.map((c: any) => c.id === activeCourseId.current ? { ...c, image: url } : c) };
+            return next;
+          }
+          
+          if (pathParts[0] === 'gallery' && pathParts[1] === 'thumbnails') {
+            next.galleryMetadata = { ...(next.galleryMetadata || {}), [activeThumbnailCategory.current!]: url };
+            return next;
+          }
+          
+          // Fallback generic deep update
+          let current: any = next;
+          for (let i = 0; i < pathParts.length - 1; i++) {
+            const key = pathParts[i];
+            current[key] = Array.isArray(current[key]) ? [...current[key]] : { ...current[key] };
+            current = current[key];
+          }
+          current[pathParts[pathParts.length - 1]] = url;
           return next;
-        }
-        
-        if (pathParts[0] === 'gallery') {
-           if (pathParts[1] === 'thumbnails') {
-              next.galleryMetadata = { ...(next.galleryMetadata || {}), [activeThumbnailCategory.current!]: url };
-           } else {
-              next.gallery = { ...next.gallery, list: [{ id: `img_${Date.now()}`, url, category: activeUploadCategory.current, title: '' }, ...next.gallery.list] };
-           }
-           return next;
-        }
-        
-        let current: any = next;
-        for (let i = 0; i < pathParts.length - 1; i++) {
-          const key = pathParts[i];
-          current[key] = Array.isArray(current[key]) ? [...current[key]] : { ...current[key] };
-          current = current[key];
-        }
-        current[pathParts[pathParts.length - 1]] = url;
-        return next;
+        });
+        setHasUnsavedChanges(true);
+        setIsProcessing(false);
+        setStatusMsg(urls.length > 1 ? `Added ${urls.length} images.` : 'Image added.');
+        setTimeout(() => setStatusMsg(''), 3000);
+        inputElement.value = '';
+      })
+      .catch(err => {
+        console.error("Upload failed:", err);
+        setIsProcessing(false);
+        setIsError(true);
+        setStatusMsg("Upload failed. Verify file format.");
+        inputElement.value = '';
       });
-      setHasUnsavedChanges(true);
-      setIsProcessing(false);
-      inputElement.value = '';
-    }).catch(err => {
-      console.error("Upload failed:", err);
-      setIsProcessing(false);
-      inputElement.value = '';
-    });
   };
 
   const triggerGenericUpload = (path: string) => {
@@ -153,7 +178,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 pb-20 font-sans">
-      <input type="file" ref={genericUploadRef} className="hidden" accept="image/*" onChange={handleGenericUpload} />
+      {/* ADDED MULTIPLE ATTRIBUTE HERE */}
+      <input 
+        type="file" 
+        ref={genericUploadRef} 
+        className="hidden" 
+        accept="image/*" 
+        multiple
+        onChange={handleGenericUpload} 
+      />
 
       <div className={`bg-white border-b border-slate-200 p-6 sticky ${stickyTopClass} z-[80] shadow-sm transition-all duration-300`}>
         <div className="container mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -162,7 +195,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
               <i className="fa-solid fa-gauge-high text-emerald-600 mr-3"></i> Institute Admin
             </h1>
             {statusMsg && (
-              <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border ${isError ? 'bg-red-50 text-red-600 border-red-100' : 'bg-emerald-50 text-emerald-600 border-emerald-100'}`}>
+              <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border transition-all ${isError ? 'bg-red-50 text-red-600 border-red-100' : 'bg-emerald-50 text-emerald-600 border-emerald-100'}`}>
                 {statusMsg}
               </span>
             )}
@@ -179,7 +212,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
       </div>
 
       <div className="container mx-auto px-4 mt-8 flex flex-col md:flex-row gap-8">
-        {/* SIDEBAR NAVIGATION - FIXING OVERLAP ISSUES */}
+        {/* SIDEBAR NAVIGATION */}
         <div className={`w-full md:w-64 space-y-4 shrink-0 md:sticky ${stickyTopClass} md:pt-6 h-fit z-50`}>
           <button 
             onClick={() => setActiveTab('leads')} 

@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { SiteConfig, AppState, FormField } from '../types';
+import { Link } from 'react-router-dom';
 
 interface ContactPageProps {
   config: SiteConfig['contact'];
@@ -175,9 +176,20 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
                     );
                   })}
                 </div>
-                <button disabled={isSubmitting} type="submit" className={`${btnPrimary} flex items-center justify-center gap-4`}>
-                  {isSubmitting ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Dispatching...</> : <>Submit Inquiry <i className="fa-solid fa-paper-plane text-sm"></i></>}
-                </button>
+
+                <div className="space-y-6 pt-4">
+                  <button disabled={isSubmitting} type="submit" className={`${btnPrimary} flex items-center justify-center gap-4`}>
+                    {isSubmitting ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Dispatching...</> : <>Submit Inquiry <i className="fa-solid fa-paper-plane text-sm"></i></>}
+                  </button>
+                  <div className="text-center px-4">
+                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-loose max-w-md mx-auto">
+                      By submitting this enquiry, you acknowledge and agree to our 
+                      <Link to="/privacy-policy" className="text-emerald-600 hover:underline mx-1">Privacy Policy</Link> 
+                      and 
+                      <Link to="/terms-of-service" className="text-emerald-600 hover:underline mx-1">Terms of Service</Link>.
+                    </p>
+                  </div>
+                </div>
               </form>
             )}
           </div>
