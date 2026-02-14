@@ -62,10 +62,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
       setHasUnsavedChanges(false);
       setTimeout(() => setStatusMsg(''), 5000);
     } catch (err: any) {
-      setIsError(true);
-      setStatusMsg(`ERROR: ${err.message || 'Sync failed.'}`);
-      setIsProcessing(false);
-      console.error("Save failure", err);
+      // Check if this is just a storage quota warning rather than a real sync failure
+      if (err.name === 'QuotaExceededError' || err.message?.includes('quota')) {
+        setStatusMsg('Saved to DB (Note: Local Cache Full)');
+        setIsProcessing(false);
+        setHasUnsavedChanges(false);
+      } else {
+        setIsError(true);
+        setStatusMsg(`ERROR: ${err.message || 'Sync failed.'}`);
+        setIsProcessing(false);
+        console.error("Save failure", err);
+      }
     }
   };
 

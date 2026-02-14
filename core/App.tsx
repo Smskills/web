@@ -157,7 +157,13 @@ const App: React.FC = () => {
 
   const updateContent = async (newContent: AppState) => {
     setContent(newContent);
-    localStorage.setItem('edu_insta_content', JSON.stringify(newContent));
+    
+    // Attempt local cache save but catch quota errors
+    try {
+      localStorage.setItem('edu_insta_content', JSON.stringify(newContent));
+    } catch (e) {
+      console.warn("LocalStorage Quota Exceeded. Site cache is disabled, but database sync will proceed.");
+    }
     
     if (isAuthenticated) {
       try {
