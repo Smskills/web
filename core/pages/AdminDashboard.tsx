@@ -179,16 +179,47 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
       </div>
 
       <div className="container mx-auto px-4 mt-8 flex flex-col md:flex-row gap-8">
-        <div className={`w-full md:w-64 space-y-2 shrink-0 md:sticky ${stickyTopClass} md:pt-6 h-fit z-50`}>
-          <button onClick={() => setActiveTab('leads')} className={`w-full text-left px-5 py-4 rounded-2xl font-black transition-all flex items-center gap-3 border shadow-sm ${activeTab === 'leads' ? 'bg-emerald-600 border-emerald-500 text-white' : 'text-emerald-600 bg-emerald-50 border-emerald-100'}`}>
-              <i className="fa-solid fa-user-graduate"></i> Student Leads
+        {/* SIDEBAR NAVIGATION - FIXING OVERLAP ISSUES */}
+        <div className={`w-full md:w-64 space-y-4 shrink-0 md:sticky ${stickyTopClass} md:pt-6 h-fit z-50`}>
+          <button 
+            onClick={() => setActiveTab('leads')} 
+            className={`w-full text-left px-5 py-4 rounded-2xl font-black transition-all flex items-center gap-4 border shadow-sm group ${activeTab === 'leads' ? 'bg-emerald-600 border-emerald-500 text-white' : 'text-emerald-600 bg-emerald-50 border-emerald-100 hover:bg-emerald-100'}`}
+          >
+              <i className="fa-solid fa-user-graduate shrink-0 text-lg"></i>
+              <span className="leading-none">Student Leads</span>
           </button>
-          <div className="h-px bg-slate-200 my-4"></div>
-          <div className="space-y-1.5 overflow-y-auto max-h-[60vh] custom-scrollbar pr-1">
+          
+          <div className="h-px bg-slate-200 my-6"></div>
+          
+          <div className="space-y-2 overflow-y-auto max-h-[60vh] custom-scrollbar pr-1 pb-4">
             {(['site', 'home', 'pages', 'about', 'academics', 'notices', 'gallery', 'faq', 'form', 'contact', 'footer', 'placements', 'legal', 'career'] as const).map(tab => (
-              <button key={tab} onClick={() => setActiveTab(tab)} className={`w-full text-left px-5 py-3.5 rounded-2xl font-black transition-all border text-[13px] ${activeTab === tab ? 'bg-emerald-600 border-emerald-500 text-white shadow-md translate-x-1' : 'text-slate-500 border-transparent hover:bg-white hover:border-slate-200 hover:text-slate-900'}`}>
-                <i className={`fa-solid fa-${tab === 'site' ? 'globe' : tab === 'home' ? 'house' : tab === 'pages' ? 'file-lines' : tab === 'about' ? 'circle-info' : tab === 'academics' ? 'graduation-cap' : tab === 'notices' ? 'bullhorn' : tab === 'gallery' ? 'images' : tab === 'faq' ? 'circle-question' : tab === 'contact' ? 'address-book' : tab === 'footer' ? 'shoe-prints' : tab === 'placements' ? 'briefcase' : tab === 'career' ? 'user-graduate' : tab === 'legal' ? 'scale-balanced' : 'wpforms'}`}></i>
-                {tab === 'form' ? 'Enroll Page' : (tab === 'academics' ? 'Academic Section' : tab)}
+              <button 
+                key={tab} 
+                onClick={() => setActiveTab(tab)} 
+                className={`w-full text-left px-5 py-4 rounded-2xl font-black transition-all border text-[13px] flex items-center gap-4 ${
+                  activeTab === tab 
+                    ? 'bg-emerald-600 border-emerald-500 text-white shadow-md translate-x-1' 
+                    : 'text-slate-500 border-transparent hover:bg-white hover:border-slate-200 hover:text-slate-900'
+                }`}
+              >
+                <i className={`fa-solid fa-${
+                  tab === 'site' ? 'globe' : 
+                  tab === 'home' ? 'house' : 
+                  tab === 'pages' ? 'file-lines' : 
+                  tab === 'about' ? 'circle-info' : 
+                  tab === 'academics' ? 'graduation-cap' : 
+                  tab === 'notices' ? 'bullhorn' : 
+                  tab === 'gallery' ? 'images' : 
+                  tab === 'faq' ? 'circle-question' : 
+                  tab === 'contact' ? 'address-book' : 
+                  tab === 'footer' ? 'shoe-prints' : 
+                  tab === 'placements' ? 'briefcase' : 
+                  tab === 'career' ? 'user-graduate' : 
+                  tab === 'legal' ? 'scale-balanced' : 'wpforms'
+                } shrink-0 w-5 text-center`}></i>
+                <span className="capitalize leading-normal whitespace-nowrap">
+                  {tab === 'form' ? 'Enroll Page' : (tab === 'academics' ? 'Academic Section' : tab)}
+                </span>
               </button>
             ))}
           </div>
