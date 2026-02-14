@@ -47,13 +47,13 @@ const App: React.FC = () => {
     const bootstrapConfig = async () => {
       try {
         const saved = localStorage.getItem('edu_insta_content');
-        let localData = {};
+        let localData: any = {};
         
         if (saved) {
            try {
              localData = JSON.parse(saved);
            } catch (e) {
-             console.error("Local storage corruption detected.");
+             console.error("Local storage sync bypassed.");
            }
         }
 
@@ -61,52 +61,65 @@ const App: React.FC = () => {
         const result = await response.json();
         const apiData = (result.success && result.data) ? result.data : {};
         
-        // Deep merge logic: Priority is Database (apiData) > Local (localData) > Hardcoded (INITIAL_CONTENT)
+        // Helper to handle the transition from Array-based storage to Object-based storage
+        const normalizeData = (incoming: any, key: string, defaultMeta: any) => {
+          const data = incoming[key];
+          if (!data) return INITIAL_CONTENT[key as keyof AppState];
+          // If the database has an old-style array, wrap it in the new object structure
+          if (Array.isArray(data)) {
+            return { list: data, pageMeta: defaultMeta };
+          }
+          // If it's already an object, spread it but ensure 'list' is an array
+          return {
+            ...INITIAL_CONTENT[key as keyof AppState],
+            ...data,
+            list: Array.isArray(data.list) ? data.list : []
+          };
+        };
+
         const finalContent: AppState = {
           ...INITIAL_CONTENT,
           ...localData,
           ...apiData,
           site: { 
             ...INITIAL_CONTENT.site, 
-            ...(localData as any).site, 
-            ...(apiData as any).site,
-            contact: { ...INITIAL_CONTENT.site.contact, ...(localData as any).site?.contact, ...(apiData as any).site?.contact },
-            footer: { ...INITIAL_CONTENT.site.footer, ...(localData as any).site?.footer, ...(apiData as any).site?.footer }
+            ...(localData.site || {}), 
+            ...(apiData.site || {}),
+            contact: { ...INITIAL_CONTENT.site.contact, ...(localData.site?.contact || {}), ...(apiData.site?.contact || {}) },
+            footer: { ...INITIAL_CONTENT.site.footer, ...(localData.site?.footer || {}), ...(apiData.site?.footer || {}) }
           },
           home: { 
             ...INITIAL_CONTENT.home, 
-            ...(localData as any).home, 
-            ...(apiData as any).home,
-            sectionLabels: { ...INITIAL_CONTENT.home.sectionLabels, ...(localData as any).home?.sectionLabels, ...(apiData as any).home?.sectionLabels },
-            ctaBlock: { ...INITIAL_CONTENT.home.ctaBlock, ...(localData as any).home?.ctaBlock, ...(apiData as any).home?.ctaBlock },
-            sections: { ...INITIAL_CONTENT.home.sections, ...(localData as any).home?.sections, ...(apiData as any).home?.sections },
-            bigShowcase: { ...INITIAL_CONTENT.home.bigShowcase, ...(localData as any).home?.bigShowcase, ...(apiData as any).home?.bigShowcase }
+            ...(localData.home || {}), 
+            ...(apiData.home || {}),
+            sectionLabels: { ...INITIAL_CONTENT.home.sectionLabels, ...(localData.home?.sectionLabels || {}), ...(apiData.home?.sectionLabels || {}) },
+            ctaBlock: { ...INITIAL_CONTENT.home.ctaBlock, ...(localData.home?.ctaBlock || {}), ...(apiData.home?.ctaBlock || {}) },
+            sections: { ...INITIAL_CONTENT.home.sections, ...(localData.home?.sections || {}), ...(apiData.home?.sections || {}) },
+            bigShowcase: { ...INITIAL_CONTENT.home.bigShowcase, ...(localData.home?.bigShowcase || {}), ...(apiData.home?.bigShowcase || {}) }
           },
+          // Explicitly merge Form Data to prevent roadmap/field resets
           enrollmentForm: {
             ...INITIAL_CONTENT.enrollmentForm,
-            ...(localData as any).enrollmentForm,
-            ...(apiData as any).enrollmentForm
+            ...(localData.enrollmentForm || {}),
+            ...(apiData.enrollmentForm || {}),
+            fields: apiData.enrollmentForm?.fields || localData.enrollmentForm?.fields || INITIAL_CONTENT.enrollmentForm.fields,
+            roadmapSteps: apiData.enrollmentForm?.roadmapSteps || localData.enrollmentForm?.roadmapSteps || INITIAL_CONTENT.enrollmentForm.roadmapSteps
           },
           contactForm: {
             ...INITIAL_CONTENT.contactForm,
-            ...(localData as any).contactForm,
-            ...(apiData as any).contactForm
+            ...(localData.contactForm || {}),
+            ...(apiData.contactForm || {})
           },
-          courses: {
-            ...INITIAL_CONTENT.courses,
-            ...((localData as any).courses && !Array.isArray((localData as any).courses) ? (localData as any).courses : {}),
-            ...((apiData as any).courses && !Array.isArray((apiData as any).courses) ? (apiData as any).courses : {})
-          },
-          notices: {
-            ...INITIAL_CONTENT.notices,
-            ...((localData as any).notices && !Array.isArray((localData as any).notices) ? (localData as any).notices : {}),
-            ...((apiData as any).notices && !Array.isArray((apiData as any).notices) ? (apiData as any).notices : {})
-          }
+          // Robust mapping for Sections that switched from Array to Object
+          courses: normalizeData(apiData, 'courses', INITIAL_CONTENT.courses.pageMeta),
+          notices: normalizeData(apiData, 'notices', INITIAL_CONTENT.notices.pageMeta),
+          gallery: normalizeData(apiData, 'gallery', INITIAL_CONTENT.gallery.pageMeta),
+          faqs: normalizeData(apiData, 'faqs', INITIAL_CONTENT.faqs.pageMeta)
         };
 
         setContent(finalContent);
       } catch (err) {
-        console.warn("Bootstrap: Could not reach backend. Using local cache.");
+        console.warn("Bootstrap: Using available cache while offline.");
       } finally {
         setIsInitializing(false);
       }
@@ -158,13 +171,11 @@ const App: React.FC = () => {
           body: JSON.stringify(newContent)
         });
         
-        const data = await res.json();
-        if (!data.success) {
-           throw new Error(data.message || "Database sync failed");
-        }
+        const result = await res.json();
+        if (!result.success) throw new Error(result.message);
         return true;
       } catch (e: any) {
-        console.error("Central Sync Error:", e.message);
+        console.error("Database Sync Failed:", e.message);
         throw e;
       }
     }
