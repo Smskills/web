@@ -46,30 +46,27 @@ const App: React.FC = () => {
   useEffect(() => {
     const bootstrapConfig = async () => {
       try {
+        const response = await fetch('http://localhost:5000/api/config');
+        const result = await response.json();
+        const apiData = (result.success && result.data) ? result.data : null;
+        
         const saved = localStorage.getItem('edu_insta_content');
         let localData: any = {};
-        
         if (saved) {
            try {
              localData = JSON.parse(saved);
            } catch (e) {
-             console.error("Local storage sync bypassed.");
+             console.error("Local cache invalid.");
            }
         }
 
-        const response = await fetch('http://localhost:5000/api/config');
-        const result = await response.json();
-        const apiData = (result.success && result.data) ? result.data : {};
-        
         // Helper to handle the transition from Array-based storage to Object-based storage
         const normalizeData = (incoming: any, key: string, defaultMeta: any) => {
           const data = incoming[key];
           if (!data) return INITIAL_CONTENT[key as keyof AppState];
-          // If the database has an old-style array, wrap it in the new object structure
           if (Array.isArray(data)) {
             return { list: data, pageMeta: defaultMeta };
           }
-          // If it's already an object, spread it but ensure 'list' is an array
           return {
             ...INITIAL_CONTENT[key as keyof AppState],
             ...data,
@@ -77,49 +74,42 @@ const App: React.FC = () => {
           };
         };
 
+        // IF API DATA EXISTS, IT IS THE MASTER SOURCE. 
+        // LocalData is only a fallback or merge layer for things not in DB.
+        const sourceData = apiData || localData;
+
         const finalContent: AppState = {
           ...INITIAL_CONTENT,
-          ...localData,
-          ...apiData,
+          ...sourceData,
           site: { 
             ...INITIAL_CONTENT.site, 
-            ...(localData.site || {}), 
-            ...(apiData.site || {}),
-            contact: { ...INITIAL_CONTENT.site.contact, ...(localData.site?.contact || {}), ...(apiData.site?.contact || {}) },
-            footer: { ...INITIAL_CONTENT.site.footer, ...(localData.site?.footer || {}), ...(apiData.site?.footer || {}) }
+            ...sourceData.site,
+            contact: { ...INITIAL_CONTENT.site.contact, ...(sourceData.site?.contact || {}) },
+            footer: { ...INITIAL_CONTENT.site.footer, ...(sourceData.site?.footer || {}) }
           },
           home: { 
             ...INITIAL_CONTENT.home, 
-            ...(localData.home || {}), 
-            ...(apiData.home || {}),
-            sectionLabels: { ...INITIAL_CONTENT.home.sectionLabels, ...(localData.home?.sectionLabels || {}), ...(apiData.home?.sectionLabels || {}) },
-            ctaBlock: { ...INITIAL_CONTENT.home.ctaBlock, ...(localData.home?.ctaBlock || {}), ...(apiData.home?.ctaBlock || {}) },
-            sections: { ...INITIAL_CONTENT.home.sections, ...(localData.home?.sections || {}), ...(apiData.home?.sections || {}) },
-            bigShowcase: { ...INITIAL_CONTENT.home.bigShowcase, ...(localData.home?.bigShowcase || {}), ...(apiData.home?.bigShowcase || {}) }
+            ...sourceData.home,
+            sectionLabels: { ...INITIAL_CONTENT.home.sectionLabels, ...(sourceData.home?.sectionLabels || {}) },
+            ctaBlock: { ...INITIAL_CONTENT.home.ctaBlock, ...(sourceData.home?.ctaBlock || {}) },
+            sections: { ...INITIAL_CONTENT.home.sections, ...(sourceData.home?.sections || {}) },
+            bigShowcase: { ...INITIAL_CONTENT.home.bigShowcase, ...(sourceData.home?.bigShowcase || {}) }
           },
-          // Explicitly merge Form Data to prevent roadmap/field resets
           enrollmentForm: {
             ...INITIAL_CONTENT.enrollmentForm,
-            ...(localData.enrollmentForm || {}),
-            ...(apiData.enrollmentForm || {}),
-            fields: apiData.enrollmentForm?.fields || localData.enrollmentForm?.fields || INITIAL_CONTENT.enrollmentForm.fields,
-            roadmapSteps: apiData.enrollmentForm?.roadmapSteps || localData.enrollmentForm?.roadmapSteps || INITIAL_CONTENT.enrollmentForm.roadmapSteps
+            ...(sourceData.enrollmentForm || {}),
+            fields: sourceData.enrollmentForm?.fields || INITIAL_CONTENT.enrollmentForm.fields,
+            roadmapSteps: sourceData.enrollmentForm?.roadmapSteps || INITIAL_CONTENT.enrollmentForm.roadmapSteps
           },
-          contactForm: {
-            ...INITIAL_CONTENT.contactForm,
-            ...(localData.contactForm || {}),
-            ...(apiData.contactForm || {})
-          },
-          // Robust mapping for Sections that switched from Array to Object
-          courses: normalizeData(apiData, 'courses', INITIAL_CONTENT.courses.pageMeta),
-          notices: normalizeData(apiData, 'notices', INITIAL_CONTENT.notices.pageMeta),
-          gallery: normalizeData(apiData, 'gallery', INITIAL_CONTENT.gallery.pageMeta),
-          faqs: normalizeData(apiData, 'faqs', INITIAL_CONTENT.faqs.pageMeta)
+          courses: normalizeData(sourceData, 'courses', INITIAL_CONTENT.courses.pageMeta),
+          notices: normalizeData(sourceData, 'notices', INITIAL_CONTENT.notices.pageMeta),
+          gallery: normalizeData(sourceData, 'gallery', INITIAL_CONTENT.gallery.pageMeta),
+          faqs: normalizeData(sourceData, 'faqs', INITIAL_CONTENT.faqs.pageMeta)
         };
 
         setContent(finalContent);
       } catch (err) {
-        console.warn("Bootstrap: Using available cache while offline.");
+        console.warn("Bootstrap: institutional server offline, using cache.");
       } finally {
         setIsInitializing(false);
       }
@@ -158,32 +148,31 @@ const App: React.FC = () => {
   const updateContent = async (newContent: AppState) => {
     setContent(newContent);
     
-    // Attempt local cache save but catch quota errors
+    // Attempt local cache save but silently ignore quota errors
+    // Since we save to DB, the local cache is just a 'speed' feature
     try {
       localStorage.setItem('edu_insta_content', JSON.stringify(newContent));
     } catch (e) {
-      console.warn("LocalStorage Quota Exceeded. Site cache is disabled, but database sync will proceed.");
+      // Quota exceeded is fine, we sync to DB next
     }
     
     if (isAuthenticated) {
-      try {
-        const token = localStorage.getItem('sms_auth_token');
-        const res = await fetch('http://localhost:5000/api/config', {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(newContent)
-        });
-        
-        const result = await res.json();
-        if (!result.success) throw new Error(result.message);
-        return true;
-      } catch (e: any) {
-        console.error("Database Sync Failed:", e.message);
-        throw e;
+      const token = localStorage.getItem('sms_auth_token');
+      const res = await fetch('http://localhost:5000/api/config', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(newContent)
+      });
+      
+      const result = await res.json();
+      if (!result.success) {
+        if (res.status === 413) throw new Error("The update is too large (Maximum 100MB). Please remove some old photos.");
+        throw new Error(result.message || "Institutional database rejected the update.");
       }
+      return true;
     }
     return true;
   };

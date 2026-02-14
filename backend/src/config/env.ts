@@ -15,7 +15,7 @@ export const ENV = {
     PORT: parseInt(process.env.DB_PORT || '3306'),
   },
   JWT_SECRET: process.env.JWT_SECRET || 'super_strong_secret_key_change_later',
-  UPLOAD_LIMIT: process.env.UPLOAD_LIMIT || '10mb',
+  UPLOAD_LIMIT: process.env.UPLOAD_LIMIT || '100mb',
   SMTP: {
     HOST: process.env.SMTP_HOST || 'smtp.gmail.com',
     PORT: parseInt(process.env.SMTP_PORT || '587'),
