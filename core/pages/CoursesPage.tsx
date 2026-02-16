@@ -23,14 +23,13 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
   const currentIndustry = searchParams.get('industry') || 'All';
   
   const { list, pageMeta } = useMemo(() => {
-    if (!coursesState) return { list: [], pageMeta: { title: 'Technical Programs', subtitle: '', tagline: 'PROFESSIONAL CURRICULA' } };
+    if (!coursesState) return { list: [], pageMeta: { title: 'Vocational Programs', subtitle: '', tagline: 'PROFESSIONAL CURRICULA' } };
     return {
       list: Array.isArray(coursesState.list) ? coursesState.list : [],
-      pageMeta: coursesState.pageMeta || { title: 'Technical Programs', subtitle: '', tagline: 'PROFESSIONAL CURRICULA' }
+      pageMeta: coursesState.pageMeta || { title: 'Vocational Programs', subtitle: '', tagline: 'PROFESSIONAL CURRICULA' }
     };
   }, [coursesState]);
 
-  // Specific order requested by user
   const tierPriority = [
     "Certificate (NSDC)", 
     "UG Certificate (NSDC)", 
@@ -60,20 +59,14 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
         return levelMatch && industryMatch && c.status === 'Active';
       })
       .sort((a, b) => {
-        // 1. PRIMARY: Academic Tier Hierarchy
         const priorityA = tierPriority.indexOf(a.academicLevel);
         const priorityB = tierPriority.indexOf(b.academicLevel);
         const scoreA = priorityA === -1 ? 999 : priorityA;
         const scoreB = priorityB === -1 ? 999 : priorityB;
-
         if (scoreA !== scoreB) return scoreA - scoreB;
-
-        // 2. SECONDARY: Vocational Sector (Industry) A-Z
         const indA = a.industry || "";
         const indB = b.industry || "";
         if (indA.localeCompare(indB) !== 0) return indA.localeCompare(indB);
-
-        // 3. TERTIARY: Course Name A-Z
         return (a.name || "").localeCompare(b.name || "");
       });
   }, [list, currentLevel, currentIndustry]);
@@ -83,17 +76,19 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
   }, [currentLevel, currentIndustry]);
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans pb-24">
-      <section className="bg-slate-900 pt-32 pb-16 text-white relative overflow-hidden text-center">
+    <div className="min-h-screen bg-white font-sans pb-24">
+      {/* Deep Dark Header Section */}
+      <section className="bg-[#0b1121] pt-32 pb-20 text-white relative overflow-hidden text-center">
+        <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-emerald-600/10 rounded-full blur-[120px] pointer-events-none"></div>
         <div className="container mx-auto px-4 relative z-10 max-w-4xl">
-          <span className="text-emerald-400 font-black uppercase tracking-[0.4em] text-[10px] mb-3 block animate-fade-in">
+          <span className="text-emerald-500 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block animate-fade-in">
             {pageMeta.tagline || 'PROFESSIONAL CURRICULA'}
           </span>
-          <h1 className="text-4xl md:text-5xl font-black mb-6 tracking-tighter leading-none animate-fade-in-up">
-            {pageMeta.title || 'Technical Programs'}
+          <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tighter leading-none animate-fade-in-up">
+            {pageMeta.title || 'Vocational Programs'}
           </h1>
-          <p className="text-slate-400 text-lg font-medium max-w-2xl mx-auto leading-relaxed animate-fade-in-up delay-100">
-            {pageMeta.subtitle || 'Browse industry-verified technical tracks optimized for global employability.'}
+          <p className="text-slate-400 text-lg md:text-xl font-medium max-w-2xl mx-auto leading-relaxed animate-fade-in-up delay-100">
+            {pageMeta.subtitle || 'Industry-verified technical tracks optimized for global employability.'}
           </p>
         </div>
       </section>
@@ -108,7 +103,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
       />
 
       <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-12">
           {isLoading ? (
             <CardSkeleton count={6} />
           ) : (
@@ -119,8 +114,8 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
         </div>
         
         {!isLoading && filteredCourses.length === 0 && (
-          <div className="text-center py-32 bg-white rounded-[3rem] border-4 border-dashed border-slate-200 max-w-2xl mx-auto">
-             <i className="fa-solid fa-folder-open text-6xl text-slate-100 mb-6 block"></i>
+          <div className="text-center py-32 bg-slate-50 rounded-[3rem] border-4 border-dashed border-slate-200 max-w-2xl mx-auto">
+             <i className="fa-solid fa-folder-open text-6xl text-slate-200 mb-6 block" aria-hidden="true"></i>
              <p className="text-slate-400 font-black uppercase tracking-widest">No matching programs found.</p>
           </div>
         )}

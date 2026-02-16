@@ -77,12 +77,13 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
 
   return (
     <div className="min-h-screen bg-slate-50 pb-24 font-sans">
-      <section className="bg-slate-900 pt-32 pb-24 text-white relative overflow-hidden text-center">
-        <div className="absolute inset-0 bg-emerald-500/5 blur-[100px] opacity-30"></div>
+      {/* Deep Dark Header Section */}
+      <section className="bg-[#0b1121] pt-32 pb-24 text-white relative overflow-hidden text-center">
+        <div className="absolute inset-0 bg-emerald-500/5 blur-[100px] opacity-30 pointer-events-none"></div>
         <div className="container mx-auto px-4 relative z-10 max-w-4xl">
-          <span className="text-emerald-500 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">Institutional Support</span>
+          <span className="text-emerald-500 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">INSTITUTIONAL SUPPORT</span>
           <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tighter leading-none">Get In Touch</h1>
-          <p className="text-slate-400 text-xl font-medium max-w-2xl mx-auto">Our academic advisors are available to guide your vocational journey.</p>
+          <p className="text-slate-400 text-xl font-medium max-w-2xl mx-auto leading-relaxed">Our academic advisors are available to guide your vocational journey.</p>
         </div>
       </section>
 
@@ -92,7 +93,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="p-10 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm flex flex-col gap-6 group hover:border-emerald-500 transition-all">
                 <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-                  <i className="fa-solid fa-location-dot"></i>
+                  <i className="fa-solid fa-location-dot" aria-hidden="true"></i>
                 </div>
                 <div>
                   <h4 className="font-black text-slate-900 text-lg mb-2 uppercase tracking-tight">Our Campus</h4>
@@ -101,7 +102,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
               </div>
               <div className="p-10 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm flex flex-col gap-6 group hover:border-emerald-500 transition-all">
                 <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-                  <i className="fa-solid fa-phone"></i>
+                  <i className="fa-solid fa-phone" aria-hidden="true"></i>
                 </div>
                 <div>
                   <h4 className="font-black text-slate-900 text-lg mb-2 uppercase tracking-tight">Call Center</h4>
@@ -124,7 +125,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
             {submitted ? (
               <div className="text-center py-24" role="alert">
                 <div className="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-[2rem] flex items-center justify-center text-4xl mx-auto mb-10 shadow-xl animate-bounce">
-                  <i className="fa-solid fa-check"></i>
+                  <i className="fa-solid fa-check" aria-hidden="true"></i>
                 </div>
                 <h2 className="text-4xl font-black text-slate-900 mb-6 tracking-tight">Enquiry Logged</h2>
                 <p className="text-slate-500 mb-12 text-lg font-medium">Your request has been queued. An advisor will contact you within 24 hours.</p>
@@ -157,7 +158,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
                                 <option key={course.id} value={course.name}>{course.name}</option>
                               ))}
                             </select>
-                            <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400"><i className="fa-solid fa-chevron-down text-xs"></i></div>
+                            <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400"><i className="fa-solid fa-chevron-down text-xs" aria-hidden="true"></i></div>
                           </div>
                         ) : field.type === 'select' ? (
                           <div className="relative">
@@ -167,7 +168,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
                                 <option key={opt} value={opt}>{opt}</option>
                               ))}
                             </select>
-                            <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400"><i className="fa-solid fa-chevron-down text-xs"></i></div>
+                            <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400"><i className="fa-solid fa-chevron-down text-xs" aria-hidden="true"></i></div>
                           </div>
                         ) : (
                           <input id={`field-${field.id}`} required={field.required} type={field.type} value={formData[field.id] || ''} onChange={(e) => handleChange(field.id, e.target.value)} className="w-full px-8 py-5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-medium text-slate-900 placeholder-slate-300 shadow-sm" placeholder={field.placeholder} />
@@ -179,7 +180,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
 
                 <div className="space-y-6 pt-4">
                   <button disabled={isSubmitting} type="submit" className={`${btnPrimary} flex items-center justify-center gap-4`}>
-                    {isSubmitting ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Dispatching...</> : <>Submit Inquiry <i className="fa-solid fa-paper-plane text-sm"></i></>}
+                    {isSubmitting ? <><i className="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i> Dispatching...</> : <>Submit Inquiry <i className="fa-solid fa-paper-plane text-sm" aria-hidden="true"></i></>}
                   </button>
                   <div className="text-center px-4">
                     <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-loose max-w-md mx-auto">

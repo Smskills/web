@@ -8,7 +8,7 @@ export const INITIAL_CONTENT: AppState = {
   site: siteDefaults,
   theme: {
     primary: "#059669",
-    secondary: "#0f172a", // Reverted from burgundy to deep slate
+    secondary: "#f8fafc", // Flipped from dark slate to very light gray
     accent: "#10b981",
     radius: "large"
   },

@@ -42,32 +42,32 @@ const FAQPage: React.FC<FAQPageProps> = ({ faqsState, contact }) => {
   });
 
   const categories = Array.from(new Set(list.map(f => f.category || 'General')));
-  // Fix: Update sanitizedPhone to use contact.phones[0] instead of contact.phone as the latter does not exist on the contact object
   const sanitizedPhone = (contact.phones?.[0] || '').replace(/[^\d+]/g, '');
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <section className="bg-slate-900 pt-32 pb-24 text-white relative overflow-hidden text-center">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl opacity-30 pointer-events-none"></div>
+    <div className="min-h-screen bg-slate-50 font-sans">
+      {/* Deep Dark Header Section */}
+      <section className="bg-[#0b1121] pt-32 pb-24 text-white relative overflow-hidden text-center">
+        <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-emerald-600/10 rounded-full blur-[120px] pointer-events-none"></div>
         <div className="container mx-auto px-4 relative z-10 max-w-4xl">
           <span className="text-emerald-500 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">
-            {meta.tagline || 'Institutional Assistance'}
+            {meta.tagline || 'ASSISTANCE'}
           </span>
           <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tighter leading-none">
             {meta.title || 'Help Center'}
           </h1>
-          <p className="text-slate-400 text-xl font-medium max-w-2xl mx-auto">
-            {meta.subtitle || 'Find answers to common questions about enrollment, curriculum, and placement services.'}
+          <p className="text-slate-400 text-xl font-medium max-w-2xl mx-auto leading-relaxed">
+            {meta.subtitle || 'Common questions regarding our institute.'}
           </p>
           
           <div className="mt-12 max-w-2xl mx-auto relative group">
-            <i className="fa-solid fa-magnifying-glass absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-500 transition-colors"></i>
+            <i className="fa-solid fa-magnifying-glass absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-500 transition-colors" aria-hidden="true"></i>
             <input 
               type="text"
               placeholder="Search help topics..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-14 pr-6 py-5 bg-white/10 backdrop-blur-xl border border-white/20 rounded-[2rem] text-white focus:outline-none focus:ring-4 focus:ring-emerald-500/30 transition-all text-lg font-medium shadow-2xl"
+              className="w-full pl-14 pr-6 py-5 bg-white/10 backdrop-blur-xl border border-white/10 rounded-full text-white placeholder-slate-500 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 transition-all text-lg font-medium shadow-2xl"
             />
           </div>
         </div>
@@ -95,7 +95,7 @@ const FAQPage: React.FC<FAQPageProps> = ({ faqsState, contact }) => {
                             {faq.question}
                           </span>
                           <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all ${isOpen ? 'bg-emerald-600 text-white rotate-45 shadow-lg' : 'bg-slate-50 text-slate-400 group-hover:bg-emerald-50'}`}>
-                            <i className="fa-solid fa-plus"></i>
+                            <i className="fa-solid fa-plus" aria-hidden="true"></i>
                           </div>
                         </button>
                         
@@ -113,7 +113,7 @@ const FAQPage: React.FC<FAQPageProps> = ({ faqsState, contact }) => {
           })
         ) : (
           <div className="text-center py-32 bg-white rounded-[3rem] border border-dashed border-slate-200">
-            <i className="fa-solid fa-circle-question text-6xl text-slate-100 mb-6 block"></i>
+            <i className="fa-solid fa-circle-question text-6xl text-slate-100 mb-6 block" aria-hidden="true"></i>
             <h3 className="text-2xl font-black text-slate-400 uppercase tracking-widest">Help Database Empty</h3>
           </div>
         )}
