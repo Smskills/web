@@ -30,7 +30,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
     };
   }, [coursesState]);
 
-  // Priority order for academic levels as requested
+  // Specific order requested by user
   const tierPriority = [
     "Certificate (NSDC)", 
     "UG Certificate (NSDC)", 
@@ -41,7 +41,6 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
     "Short Term"
   ];
 
-  // Labels for the filter buttons
   const academicLevels = ["All", ...tierPriority.filter(lvl => lvl !== "ITEP" && lvl !== "Short Term")];
   
   const sectors = useMemo<string[]>(() => {
@@ -61,18 +60,20 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
         return levelMatch && industryMatch && c.status === 'Active';
       })
       .sort((a, b) => {
-        // 1. Primary Sort: Academic Tier Priority
+        // 1. PRIMARY: Academic Tier Hierarchy
         const priorityA = tierPriority.indexOf(a.academicLevel);
         const priorityB = tierPriority.indexOf(b.academicLevel);
-        
         const scoreA = priorityA === -1 ? 999 : priorityA;
         const scoreB = priorityB === -1 ? 999 : priorityB;
 
-        if (scoreA !== scoreB) {
-          return scoreA - scoreB;
-        }
+        if (scoreA !== scoreB) return scoreA - scoreB;
 
-        // 2. Secondary Sort: Course Name (A-Z)
+        // 2. SECONDARY: Vocational Sector (Industry) A-Z
+        const indA = a.industry || "";
+        const indB = b.industry || "";
+        if (indA.localeCompare(indB) !== 0) return indA.localeCompare(indB);
+
+        // 3. TERTIARY: Course Name A-Z
         return (a.name || "").localeCompare(b.name || "");
       });
   }, [list, currentLevel, currentIndustry]);
@@ -83,7 +84,6 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans pb-24">
-      {/* Page Header */}
       <section className="bg-slate-900 pt-32 pb-16 text-white relative overflow-hidden text-center">
         <div className="container mx-auto px-4 relative z-10 max-w-4xl">
           <span className="text-emerald-400 font-black uppercase tracking-[0.4em] text-[10px] mb-3 block animate-fade-in">
@@ -107,18 +107,13 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
         onIndustryChange={(ind) => setSearchParams({ level: currentLevel, industry: ind })}
       />
 
-      {/* Grid */}
       <div className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {isLoading ? (
             <CardSkeleton count={6} />
           ) : (
             filteredCourses.map(course => (
-              <CourseCard 
-                key={course.id} 
-                course={course} 
-                onSelect={setSelectedCourse} 
-              />
+              <CourseCard key={course.id} course={course} onSelect={setSelectedCourse} />
             ))
           )}
         </div>
@@ -132,18 +127,12 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
       </div>
 
       {selectedCourse && (
-        <CourseModal 
-          course={selectedCourse} 
-          onClose={() => setSelectedCourse(null)} 
-        />
+        <CourseModal course={selectedCourse} onClose={() => setSelectedCourse(null)} />
       )}
       
       <style>{`
         .scale-in-center { animation: scale-in-center 0.3s cubic-bezier(0.250, 0.460, 0.450, 0.940) both; }
-        @keyframes scale-in-center { 
-          0% { transform: scale(0.97); opacity: 0; } 
-          100% { transform: scale(1); opacity: 1; } 
-        }
+        @keyframes scale-in-center { 0% { transform: scale(0.97); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
       `}</style>
