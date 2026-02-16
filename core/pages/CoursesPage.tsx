@@ -30,8 +30,19 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
     };
   }, [coursesState]);
 
-  // Updated button labels to exactly match the academicLevel data values
-  const academicLevels = ["All", "Certificate (NSDC)", "UG Certificate (NSDC)", "UG Diploma (NSDC)", "UG Degree", "Master"];
+  // Priority order for academic levels as requested
+  const tierPriority = [
+    "Certificate (NSDC)", 
+    "UG Certificate (NSDC)", 
+    "UG Diploma (NSDC)", 
+    "UG Degree", 
+    "Master",
+    "ITEP",
+    "Short Term"
+  ];
+
+  // Labels for the filter buttons
+  const academicLevels = ["All", ...tierPriority.filter(lvl => lvl !== "ITEP" && lvl !== "Short Term")];
   
   const sectors = useMemo<string[]>(() => {
     const baseSet = new Set<string>();
@@ -42,12 +53,28 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
   }, [list]);
 
   const filteredCourses = useMemo(() => {
-    return list.filter(c => {
-      if (!c) return false;
-      const levelMatch = currentLevel === 'All' || c.academicLevel === currentLevel;
-      const industryMatch = currentIndustry === 'All' || c.industry === currentIndustry;
-      return levelMatch && industryMatch && c.status === 'Active';
-    });
+    return list
+      .filter(c => {
+        if (!c) return false;
+        const levelMatch = currentLevel === 'All' || c.academicLevel === currentLevel;
+        const industryMatch = currentIndustry === 'All' || c.industry === currentIndustry;
+        return levelMatch && industryMatch && c.status === 'Active';
+      })
+      .sort((a, b) => {
+        // 1. Primary Sort: Academic Tier Priority
+        const priorityA = tierPriority.indexOf(a.academicLevel);
+        const priorityB = tierPriority.indexOf(b.academicLevel);
+        
+        const scoreA = priorityA === -1 ? 999 : priorityA;
+        const scoreB = priorityB === -1 ? 999 : priorityB;
+
+        if (scoreA !== scoreB) {
+          return scoreA - scoreB;
+        }
+
+        // 2. Secondary Sort: Course Name (A-Z)
+        return (a.name || "").localeCompare(b.name || "");
+      });
   }, [list, currentLevel, currentIndustry]);
 
   useEffect(() => {
@@ -56,7 +83,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans pb-24">
-      {/* Page Header - Using bg-slate-900 which maps to brand secondary */}
+      {/* Page Header */}
       <section className="bg-slate-900 pt-32 pb-16 text-white relative overflow-hidden text-center">
         <div className="container mx-auto px-4 relative z-10 max-w-4xl">
           <span className="text-emerald-400 font-black uppercase tracking-[0.4em] text-[10px] mb-3 block animate-fade-in">
@@ -95,6 +122,13 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
             ))
           )}
         </div>
+        
+        {!isLoading && filteredCourses.length === 0 && (
+          <div className="text-center py-32 bg-white rounded-[3rem] border-4 border-dashed border-slate-200 max-w-2xl mx-auto">
+             <i className="fa-solid fa-folder-open text-6xl text-slate-100 mb-6 block"></i>
+             <p className="text-slate-400 font-black uppercase tracking-widest">No matching programs found.</p>
+          </div>
+        )}
       </div>
 
       {selectedCourse && (
