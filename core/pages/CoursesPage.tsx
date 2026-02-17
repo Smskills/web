@@ -1,136 +1,252 @@
-
-import React, { useState, useMemo, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { Course, PageMeta } from '../types.ts';
+import React, { useMemo, useState, useEffect } from 'react';
+import { useSearchParams, Link } from 'react-router-dom';
+import { Course } from '../types.ts';
 import { CardSkeleton } from '../components/Skeleton.tsx';
-import FilterBar from './Courses/FilterBar.tsx';
-import CourseCard from './Courses/CourseCard.tsx';
-import CourseModal from './Courses/CourseModal.tsx';
+import FormattedText from '../components/FormattedText.tsx';
+import { INITIAL_CONTENT } from '../data/defaultContent.ts';
 
 interface CoursesPageProps {
   coursesState: {
     list: Course[];
-    pageMeta: PageMeta;
   };
   isLoading?: boolean;
 }
 
+/**
+ * Institutional Academic Catalog Page
+ * Features a "Single Screen Front Cover" spotlight for the selected program.
+ */
 const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = false }) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  const [spotlightCourse, setSpotlightCourse] = useState<Course | null>(null);
   
-  const currentLevel = searchParams.get('level') || 'All';
-  const currentIndustry = searchParams.get('industry') || 'All';
-  
-  const { list, pageMeta } = useMemo(() => {
-    if (!coursesState) return { list: [], pageMeta: { title: 'Vocational Programs', subtitle: '', tagline: 'PROFESSIONAL CURRICULA' } };
-    return {
-      list: Array.isArray(coursesState.list) ? coursesState.list : [],
-      pageMeta: coursesState.pageMeta || { title: 'Vocational Programs', subtitle: '', tagline: 'PROFESSIONAL CURRICULA' }
-    };
-  }, [coursesState]);
+  const levelFilter = searchParams.get('level');
+  const courseIdParam = searchParams.get('courseId');
 
-  const tierPriority = [
-    "Certificate (NSDC)", 
-    "UG Certificate (NSDC)", 
-    "UG Diploma (NSDC)", 
-    "UG Degree", 
-    "Master",
-    "ITEP",
-    "Short Term"
-  ];
-
-  const academicLevels = ["All", ...tierPriority.filter(lvl => lvl !== "ITEP" && lvl !== "Short Term")];
+  const list = coursesState?.list || INITIAL_CONTENT.courses.list;
   
-  const sectors = useMemo<string[]>(() => {
-    const baseSet = new Set<string>();
-    list.forEach(c => {
-      if (c && c.industry) baseSet.add(c.industry);
-    });
-    return ["All", ...Array.from(baseSet).sort()];
-  }, [list]);
+  useEffect(() => {
+    if (courseIdParam && list.length > 0) {
+      const course = list.find(c => c.id === courseIdParam);
+      if (course) {
+        setSpotlightCourse(course);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    } else {
+      setSpotlightCourse(null);
+    }
+  }, [courseIdParam, list]);
 
   const filteredCourses = useMemo(() => {
-    return list
-      .filter(c => {
-        if (!c) return false;
-        const levelMatch = currentLevel === 'All' || c.academicLevel === currentLevel;
-        const industryMatch = currentIndustry === 'All' || c.industry === currentIndustry;
-        return levelMatch && industryMatch && c.status === 'Active';
-      })
-      .sort((a, b) => {
-        const priorityA = tierPriority.indexOf(a.academicLevel);
-        const priorityB = tierPriority.indexOf(b.academicLevel);
-        const scoreA = priorityA === -1 ? 999 : priorityA;
-        const scoreB = priorityB === -1 ? 999 : priorityB;
-        if (scoreA !== scoreB) return scoreA - scoreB;
-        const indA = a.industry || "";
-        const indB = b.industry || "";
-        if (indA.localeCompare(indB) !== 0) return indA.localeCompare(indB);
-        return (a.name || "").localeCompare(b.name || "");
-      });
-  }, [list, currentLevel, currentIndustry]);
+    return list.filter(c => {
+      const isLevelMatch = !levelFilter || (c.academicLevel || '').toLowerCase().includes(levelFilter.toLowerCase());
+      return c.status === 'Active' && isLevelMatch;
+    });
+  }, [list, levelFilter]);
 
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [currentLevel, currentIndustry]);
+  const handleCloseSpotlight = () => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete('courseId');
+    setSearchParams(newParams);
+    setSpotlightCourse(null);
+  };
+
+  const handleSelectCourse = (id: string) => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('courseId', id);
+    setSearchParams(newParams);
+  };
 
   return (
-    <div className="min-h-screen bg-white font-sans pb-24">
-      {/* Deep Dark Header Section */}
-      <section className="bg-[#0b1121] pt-32 pb-20 text-white relative overflow-hidden text-center">
-        <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-emerald-600/10 rounded-full blur-[120px] pointer-events-none"></div>
-        <div className="container mx-auto px-4 relative z-10 max-w-4xl">
-          <span className="text-emerald-500 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block animate-fade-in">
-            {pageMeta.tagline || 'PROFESSIONAL CURRICULA'}
-          </span>
-          <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tighter leading-none animate-fade-in-up">
-            {pageMeta.title || 'Vocational Programs'}
-          </h1>
-          <p className="text-slate-400 text-lg md:text-xl font-medium max-w-2xl mx-auto leading-relaxed animate-fade-in-up delay-100">
-            {pageMeta.subtitle || 'Industry-verified technical tracks optimized for global employability.'}
-          </p>
-        </div>
-      </section>
+    <div className="bg-white font-sans min-h-screen">
+      
+      {/* 1. SINGLE-SCREEN FRONT COVER SPOTLIGHT */}
+      {spotlightCourse && (
+        <section className="bg-[#0b1121] text-white overflow-hidden animate-fade-in relative min-h-[calc(100vh-130px)] lg:h-[calc(100vh-130px)] flex flex-col justify-center border-b border-white/5">
+          {/* Subtle Ambient Background */}
+          <div className="absolute top-0 left-0 w-full h-full bg-emerald-500/5 blur-[120px] pointer-events-none"></div>
+          
+          <div className="container mx-auto px-6 py-8 relative z-10">
+            {/* Top Navigation Strip */}
+            <div className="flex justify-between items-center mb-10 border-b border-white/10 pb-4 shrink-0">
+              <div className="flex items-center gap-3">
+                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(16,185,129,0.6)]"></span>
+                <span className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.4em]">PROGRAM SPOTLIGHT</span>
+              </div>
+              <button 
+                onClick={handleCloseSpotlight}
+                className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-all flex items-center gap-2 group"
+              >
+                Close View <i className="fa-solid fa-xmark text-xs transition-transform group-hover:rotate-90"></i>
+              </button>
+            </div>
 
-      <FilterBar 
-        academicLevels={academicLevels}
-        currentLevel={currentLevel}
-        currentIndustry={currentIndustry}
-        sectors={sectors}
-        onLevelChange={(lvl) => setSearchParams({ level: lvl, industry: currentIndustry })}
-        onIndustryChange={(ind) => setSearchParams({ level: currentLevel, industry: ind })}
-      />
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-20 items-center">
+              {/* LEFT: THE HERO COVER IMAGE */}
+              <div className="lg:col-span-5 hidden lg:block">
+                <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden border border-white/10 shadow-4xl group bg-slate-900 h-[550px]">
+                  <img 
+                    src={spotlightCourse.image} 
+                    alt={spotlightCourse.name} 
+                    className="w-full h-full object-cover transition-transform duration-[10s] group-hover:scale-105 opacity-80 group-hover:opacity-100"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0b1121]/80 via-transparent to-transparent"></div>
+                  
+                  {/* Visual Certification Badge */}
+                  <div className="absolute top-8 left-8">
+                     <div className="bg-emerald-600 text-white p-4 rounded-2xl shadow-2xl border border-emerald-400/30 flex items-center gap-4">
+                        <i className="fa-solid fa-award text-2xl"></i>
+                        <div>
+                           <p className="text-[8px] font-black uppercase tracking-widest leading-none">Government Verified</p>
+                           <p className="text-xs font-bold leading-tight uppercase">Institutional Path</p>
+                        </div>
+                     </div>
+                  </div>
+                </div>
+              </div>
 
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-12">
-          {isLoading ? (
-            <CardSkeleton count={6} />
-          ) : (
-            filteredCourses.map(course => (
-              <CourseCard key={course.id} course={course} onSelect={setSelectedCourse} />
-            ))
+              {/* RIGHT: THE CRITICAL DETAILS COLUMN */}
+              <div className="lg:col-span-7 space-y-8">
+                <div className="space-y-4">
+                  <div className="inline-flex items-center gap-3 bg-emerald-500/10 px-4 py-2 rounded-xl border border-emerald-500/20">
+                    <span className="text-emerald-400 font-black text-[10px] uppercase tracking-[0.3em]">
+                      {spotlightCourse.academicLevel}
+                    </span>
+                  </div>
+                  <h1 className="text-4xl md:text-6xl xl:text-7xl font-black tracking-tighter leading-tight text-white">
+                    {spotlightCourse.name}
+                  </h1>
+                </div>
+
+                {/* Program Specification Grid */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                   {[
+                     { label: 'Certificate', value: spotlightCourse.certification || spotlightCourse.academicLevel, icon: 'fa-certificate' },
+                     { label: 'Mode', value: spotlightCourse.mode === 'Hybrid' ? 'Hybrid Track' : spotlightCourse.mode, icon: 'fa-chalkboard-user' },
+                     { label: 'Duration', value: spotlightCourse.duration, icon: 'fa-clock' },
+                     { label: 'Eligibility', value: spotlightCourse.eligibility || '12th Pass', icon: 'fa-id-card' }
+                   ].map((spec, i) => (
+                     <div key={i} className="p-4 bg-white/[0.03] border border-white/10 rounded-2xl group hover:bg-white/[0.06] transition-all">
+                        <div className="flex items-center gap-2 mb-3">
+                           <i className={`fa-solid ${spec.icon} text-emerald-500 text-[10px]`}></i>
+                           <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{spec.label}</span>
+                        </div>
+                        <p className="text-sm font-black text-white leading-tight uppercase truncate">{spec.value}</p>
+                     </div>
+                   ))}
+                </div>
+
+                {/* Description Narrative */}
+                <div className="space-y-6">
+                   <div className="bg-white/[0.02] p-6 rounded-[2rem] border border-white/5 relative">
+                      <div className="absolute top-4 right-6 text-white/5 text-4xl"><i className="fa-solid fa-quote-right"></i></div>
+                      <FormattedText 
+                        text={spotlightCourse.description} 
+                        className="text-slate-400 text-base md:text-lg leading-relaxed font-medium"
+                      />
+                   </div>
+                   
+                   {/* Verification Outcomes */}
+                   <div className="grid grid-cols-2 gap-4">
+                      <div className="flex items-center gap-3">
+                         <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500"><i className="fa-solid fa-check text-[10px]"></i></div>
+                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Industry Mentor Support</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                         <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500"><i className="fa-solid fa-check text-[10px]"></i></div>
+                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">NSDC Standards Compliant</span>
+                      </div>
+                   </div>
+                </div>
+
+                {/* Final Action Integration */}
+                <div className="pt-6 flex flex-col sm:flex-row items-center gap-6">
+                  <Link 
+                    to={`/enroll?course=${encodeURIComponent(spotlightCourse.name)}`}
+                    className="w-full sm:w-auto px-12 py-5 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-500 hover:scale-[1.02] transition-all text-center uppercase tracking-widest text-xs shadow-2xl active:scale-95 shadow-emerald-600/20"
+                  >
+                    Start Your Application <i className="fa-solid fa-paper-plane ml-3 text-[10px]"></i>
+                  </Link>
+                  <div className="flex items-center gap-3">
+                     <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Fees:</span>
+                     <span className="text-xl font-black text-emerald-400">{spotlightCourse.price || 'Scholarship'}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 2. INSTITUTIONAL CATALOG GRID */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-6">
+          {!spotlightCourse && (
+            <div className="text-center mb-20 max-w-3xl mx-auto">
+              <span className="text-emerald-600 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">OFFICIAL CATALOG</span>
+              <h2 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter mb-8 leading-tight">Explore Our Programs</h2>
+              <p className="text-slate-500 text-lg md:text-xl font-medium leading-relaxed">
+                Browse our industry-verified technical tracks optimized for immediate career deployment.
+              </p>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+            {isLoading ? (
+              <CardSkeleton count={6} />
+            ) : (
+              filteredCourses.map(course => (
+                <article 
+                  key={course.id} 
+                  className={`flex flex-col rounded-[2.5rem] overflow-hidden border transition-all duration-500 group cursor-pointer ${
+                    spotlightCourse?.id === course.id 
+                      ? 'border-emerald-500 shadow-3xl scale-[1.02] ring-8 ring-emerald-500/5 bg-emerald-50/10' 
+                      : 'border-slate-100 bg-slate-50/30 hover:shadow-2xl hover:bg-white hover:border-emerald-200'
+                  }`}
+                  onClick={() => handleSelectCourse(course.id)}
+                >
+                  <div className="relative h-64 overflow-hidden">
+                    <img 
+                      src={course.image} 
+                      alt={course.name} 
+                      className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110" 
+                    />
+                    <div className="absolute top-6 right-6 bg-white/95 backdrop-blur-xl px-4 py-2 rounded-full font-black text-emerald-600 text-[8px] shadow-xl tracking-widest uppercase border border-slate-100">
+                       {course.price || 'Scholarship'}
+                    </div>
+                  </div>
+                  <div className="p-8 flex flex-col flex-grow">
+                    <div className="flex items-center gap-3 mb-5">
+                       <span className="text-[8px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-500/10 px-3 py-1 rounded-lg border border-emerald-500/20">
+                         {course.academicLevel}
+                       </span>
+                    </div>
+                    <h3 className="text-2xl font-black text-slate-900 mb-6 group-hover:text-emerald-600 transition-colors leading-tight">{course.name}</h3>
+                    <p className="text-slate-500 text-sm leading-relaxed mb-10 line-clamp-2 font-medium flex-grow">
+                       {course.description}
+                    </p>
+                    <div className="pt-6 border-t border-slate-100 flex items-center justify-between">
+                       <div className="flex items-center gap-3">
+                          <i className="fa-regular fa-calendar-check text-slate-300 text-sm"></i>
+                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{course.duration}</span>
+                       </div>
+                       <span className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em]">View Program <i className="fa-solid fa-arrow-right-long ml-2"></i></span>
+                    </div>
+                  </div>
+                </article>
+              ))
+            )}
+          </div>
+
+          {!isLoading && filteredCourses.length === 0 && (
+            <div className="text-center py-32 bg-slate-50 rounded-[3rem] border-2 border-dashed border-slate-200 max-w-2xl mx-auto">
+               <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center text-3xl text-slate-200 mx-auto mb-6 shadow-sm"><i className="fa-solid fa-magnifying-glass"></i></div>
+               <p className="text-slate-400 font-black uppercase tracking-widest text-xs">No active programs found in this segment.</p>
+               <button onClick={() => handleSelectCourse('')} className="mt-8 text-emerald-600 font-black text-[10px] uppercase tracking-widest hover:underline">Clear Search Filter</button>
+            </div>
           )}
         </div>
-        
-        {!isLoading && filteredCourses.length === 0 && (
-          <div className="text-center py-32 bg-slate-50 rounded-[3rem] border-4 border-dashed border-slate-200 max-w-2xl mx-auto">
-             <i className="fa-solid fa-folder-open text-6xl text-slate-200 mb-6 block" aria-hidden="true"></i>
-             <p className="text-slate-400 font-black uppercase tracking-widest">No matching programs found.</p>
-          </div>
-        )}
-      </div>
-
-      {selectedCourse && (
-        <CourseModal course={selectedCourse} onClose={() => setSelectedCourse(null)} />
-      )}
-      
-      <style>{`
-        .scale-in-center { animation: scale-in-center 0.3s cubic-bezier(0.250, 0.460, 0.450, 0.940) both; }
-        @keyframes scale-in-center { 0% { transform: scale(0.97); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-      `}</style>
+      </section>
     </div>
   );
 };

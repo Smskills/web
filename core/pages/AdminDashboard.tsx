@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppState, Course, Notice, FAQItem, FormField, PlacementStat, StudentReview, IndustryPartner, LegalSection, CareerService, CustomPage, TeamMember, PageMeta, SocialLink, AchievementStat, ExtraChapter, Lead } from '../types.ts';
@@ -29,7 +28,7 @@ interface AdminDashboardProps {
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'site' | 'home' | 'pages' | 'about' | 'academics' | 'notices' | 'gallery' | 'faq' | 'form' | 'contact' | 'footer' | 'placements' | 'legal' | 'career' | 'leads'>('site');
+  const [activeTab, setActiveTab] = useState<'site' | 'home' | 'pages' | 'about' | 'academics' | 'notices' | 'gallery' | 'faq' | 'form' | 'contact' | 'footer' | 'placements' | 'legal' | 'career' | 'leads'>('leads');
   const [localContent, setLocalContent] = useState(content);
   const [statusMsg, setStatusMsg] = useState('');
   const [isError, setIsError] = useState(false);
@@ -50,28 +49,35 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
   const activeUploadCategory = useRef<string>('General');
   const activeThumbnailCategory = useRef<string | null>(null);
 
+  const handleLogout = () => {
+    if (window.confirm("Are you sure you want to log out of the Institutional Dashboard?")) {
+      localStorage.removeItem('sms_auth_token');
+      localStorage.removeItem('sms_is_auth');
+      localStorage.removeItem('sms_auth_user');
+      navigate('/');
+    }
+  };
+
   const handleSave = async () => {
     setIsProcessing(true);
     setIsError(false);
     setStatusMsg('Syncing Database...');
     
     try {
-      await onUpdate(localContent);
-      setStatusMsg('Changes Saved Successfully');
-      setIsProcessing(false);
-      setHasUnsavedChanges(false);
-      setTimeout(() => setStatusMsg(''), 5000);
-    } catch (err: any) {
-      if (err.name === 'QuotaExceededError' || err.message?.includes('quota')) {
-        setStatusMsg('Saved to DB (Note: Local Cache Full)');
-        setIsProcessing(false);
+      const success = await onUpdate(localContent);
+      if (success) {
+        setStatusMsg('Changes Saved Successfully');
         setHasUnsavedChanges(false);
       } else {
         setIsError(true);
-        setStatusMsg(`ERROR: ${err.message || 'Sync failed.'}`);
-        setIsProcessing(false);
-        console.error("Save failure", err);
+        setStatusMsg('Save Failed: Quota Exceeded');
       }
+      setIsProcessing(false);
+      setTimeout(() => setStatusMsg(''), 5000);
+    } catch (err: any) {
+      setIsError(true);
+      setStatusMsg(`ERROR: ${err.message || 'Sync failed.'}`);
+      setIsProcessing(false);
     }
   };
 
@@ -155,7 +161,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
       })
       .catch(err => {
         console.error("Upload failed:", err);
-        setIsProcessing(false);
+        setIsProcessing(true);
         setIsError(true);
         setStatusMsg("Upload failed.");
         inputElement.value = '';
@@ -167,10 +173,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
     genericUploadRef.current?.click();
   };
 
-  const stickyTopClass = "top-24 md:top-32";
-
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 pb-20 font-sans">
+    <div className="min-h-screen bg-[#0f172a] text-slate-100 pb-20 font-sans">
       <input 
         type="file" 
         ref={genericUploadRef} 
@@ -180,36 +184,45 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
         onChange={handleGenericUpload} 
       />
 
-      <div className={`bg-white border-b border-slate-200 p-6 sticky ${stickyTopClass} z-[80] shadow-sm transition-all duration-300`}>
+      <div className="bg-[#1e293b] border-b border-slate-700/50 p-6 sticky top-16 md:top-20 z-[80] shadow-2xl">
         <div className="container mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-black uppercase tracking-tight text-slate-900">
-              <i className="fa-solid fa-gauge-high text-emerald-600 mr-3"></i> Institute Admin
+            <h1 className="text-2xl font-black uppercase tracking-tight text-white flex items-center gap-3">
+              <i className="fa-solid fa-gauge-high text-emerald-500"></i>
+              INSTITUTE ADMIN
             </h1>
             {statusMsg && (
-              <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border transition-all ${isError ? 'bg-red-50 text-red-600 border-red-100' : 'bg-emerald-50 text-emerald-600 border-emerald-100'}`}>
+              <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border transition-all ${isError ? 'bg-red-500/10 text-red-500 border-red-500/20' : 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'}`}>
                 {statusMsg}
               </span>
             )}
           </div>
-          <div className="flex items-center gap-2">
-              <button onClick={handleDiscard} className="px-5 py-2 text-slate-500 hover:text-slate-900 text-xs font-black transition-all border border-slate-200 rounded-lg bg-white">Discard</button>
-              <button onClick={handleSave} className={`px-8 py-2 rounded-lg text-xs font-black transition-all shadow-lg uppercase tracking-widest ${hasUnsavedChanges ? 'bg-emerald-600 hover:bg-emerald-500 text-white animate-pulse' : 'bg-slate-100 text-slate-400 cursor-default'}`}>Save All Changes</button>
+          <div className="flex items-center gap-3">
+              <button 
+                onClick={handleLogout} 
+                className="px-4 py-2 text-red-400 hover:text-white hover:bg-red-500/10 text-[10px] font-black transition-all border border-red-500/30 rounded-lg uppercase tracking-widest flex items-center gap-2"
+              >
+                <i className="fa-solid fa-right-from-bracket"></i>
+                Logout
+              </button>
+              <div className="w-px h-6 bg-slate-700 mx-1"></div>
+              <button onClick={handleDiscard} className="px-5 py-2 text-slate-400 hover:text-white text-[10px] font-black transition-all border border-slate-700 rounded-lg uppercase tracking-widest">DISCARD</button>
+              <button onClick={handleSave} className={`px-8 py-2 rounded-lg text-[10px] font-black transition-all shadow-xl uppercase tracking-widest ${hasUnsavedChanges ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-slate-800 text-slate-500 cursor-default'}`}>Save All Changes</button>
           </div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 mt-8 flex flex-col md:flex-row gap-8">
-        <div className={`w-full md:w-64 space-y-4 shrink-0 md:sticky ${stickyTopClass} md:pt-6 h-fit z-50`}>
+        <div className="w-full md:w-64 space-y-4 shrink-0 h-fit z-50">
           <button 
             onClick={() => setActiveTab('leads')} 
-            className={`w-full text-left px-5 py-4 rounded-2xl font-black transition-all flex items-center gap-4 border shadow-sm group ${activeTab === 'leads' ? 'bg-emerald-600 border-emerald-500 text-white' : 'text-emerald-600 bg-emerald-50 border-emerald-100 hover:bg-emerald-100'}`}
+            className={`w-full text-left px-5 py-4 rounded-2xl font-black transition-all flex items-center gap-4 border shadow-xl group ${activeTab === 'leads' ? 'bg-emerald-600 border-emerald-500 text-white' : 'text-emerald-500 bg-emerald-500/5 border-emerald-500/20 hover:bg-emerald-500/10'}`}
           >
               <i className="fa-solid fa-user-graduate shrink-0 text-lg"></i>
               <span className="leading-none text-sm uppercase tracking-widest">Student Leads</span>
           </button>
           
-          <div className="h-px bg-slate-200 my-6"></div>
+          <div className="h-px bg-slate-800 my-6 opacity-50"></div>
           
           <div className="space-y-2">
             {(['site', 'home', 'pages', 'about', 'academics', 'notices', 'gallery', 'faq', 'form', 'contact', 'footer', 'placements', 'legal', 'career'] as const).map(tab => (
@@ -218,8 +231,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
                 onClick={() => setActiveTab(tab)} 
                 className={`w-full text-left px-5 py-4 rounded-2xl font-black transition-all border text-[13px] flex items-center gap-4 ${
                   activeTab === tab 
-                    ? 'bg-emerald-600 border-emerald-500 text-white shadow-md translate-x-1' 
-                    : 'text-slate-500 border-transparent hover:bg-white hover:border-slate-200 hover:text-slate-900'
+                    ? 'bg-slate-700 border-emerald-500/50 text-emerald-400 shadow-xl translate-x-1' 
+                    : 'text-slate-500 border-transparent hover:bg-slate-800 hover:text-slate-200'
                 }`}
               >
                 <i className={`fa-solid fa-${
@@ -245,7 +258,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
           </div>
         </div>
 
-        <div className="flex-grow bg-white rounded-[2.5rem] p-8 md:p-12 border border-slate-200 shadow-sm min-h-[75vh]">
+        <div className="flex-grow bg-[#1e293b] rounded-[2.5rem] p-8 md:p-12 border border-slate-700/50 shadow-4xl min-h-[75vh]">
           {activeTab === 'leads' && <LeadsTab leads={localContent.leads || []} onUpdateLeads={(updated) => { setLocalContent(prev => ({ ...prev, leads: updated })); trackChange(); }} />}
           {activeTab === 'site' && <SiteTab data={localContent.site} theme={localContent.theme} updateTheme={(f, v) => updateField('theme', f, v)} updateField={(f, v) => updateField('site', f, v)} onLogoUploadClick={() => triggerGenericUpload('site.logo')} updateNavigation={(idx, f, v) => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, navigation: prev.site.navigation.map((n, i) => i === idx ? { ...n, [f]: v } : n) } })); trackChange(); }} addNavigation={() => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, navigation: [...prev.site.navigation, { label: 'New Link', path: '/' }] } })); trackChange(); }} removeNavigation={(idx) => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, navigation: prev.site.navigation.filter((_, i) => i !== idx) } })); trackChange(); }} />}
           {activeTab === 'home' && <HomeTab data={localContent.home} updateNestedField={(p, f, v) => updateNestedField('home', p, f, v)} updateHomeSubField={(p, f, v) => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, [p]: { ...(prev.home as any)[p], [f]: v } } })); trackChange(); }} onHeroBgClick={() => triggerGenericUpload('home.hero.bgImage')} onShowcaseImgClick={() => triggerGenericUpload('home.bigShowcase.image')} addHighlight={() => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, highlights: [...prev.home.highlights, { icon: 'fa-star', title: 'New', description: '' }] } })); trackChange(); }} updateHighlight={(idx, f, v) => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, highlights: prev.home.highlights.map((h, i) => i === idx ? { ...h, [f]: v } : h) } })); trackChange(); }} deleteHighlight={(idx) => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, highlights: prev.home.highlights.filter((_, i) => i !== idx) } })); trackChange(); }} reorderSections={(idx, dir) => { setLocalContent(prev => { const order = [...prev.home.sectionOrder]; const t = dir === 'up' ? idx - 1 : idx + 1; if (t >= 0 && t < order.length) [order[idx], order[t]] = [order[t], order[idx]]; return { ...prev, home: { ...prev.home, sectionOrder: order } }; }); trackChange(); }} />}

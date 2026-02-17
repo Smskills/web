@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Suspense, useMemo } from 'react';
-import { HashRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { INITIAL_CONTENT } from './data/defaultContent.ts';
 import { AppState } from './types.ts';
 
@@ -58,7 +58,9 @@ const App: React.FC = () => {
         placements: { ...INITIAL_CONTENT.placements, ...(parsed.placements || {}) },
         legal: { ...INITIAL_CONTENT.legal, ...(parsed.legal || {}) },
         career: { ...INITIAL_CONTENT.career, ...(parsed.career || {}) },
-        faqs: parsed.faqs || INITIAL_CONTENT.faqs,
+        courses: { ...INITIAL_CONTENT.courses, ...(parsed.courses || {}) },
+        notices: { ...INITIAL_CONTENT.notices, ...(parsed.notices || {}) },
+        faqs: { ...INITIAL_CONTENT.faqs, ...(parsed.faqs || {}) },
         leads: parsed.leads || []
       };
 
@@ -75,20 +77,26 @@ const App: React.FC = () => {
   }, []);
 
   const brandingStyles = useMemo(() => {
-    const { primary, secondary, accent, radius } = content.theme;
+    const primary = "#059669"; // Professional Green
+    const midnight = "#020617"; // Deep Midnight Navy (Perfect for Contrast)
+    const accent = "#10b981"; // Vibrant Accent Green
+    const radius = content.theme.radius;
     const borderRadius = radius === 'none' ? '0' : radius === 'small' ? '0.5rem' : radius === 'medium' ? '1rem' : radius === 'large' ? '2.5rem' : '9999px';
     
     return `
       :root {
         --brand-primary: ${primary};
-        --brand-secondary: ${secondary};
+        --brand-midnight: ${midnight};
         --brand-accent: ${accent};
         --brand-radius: ${borderRadius};
       }
       .bg-emerald-600 { background-color: var(--brand-primary) !important; }
       .text-emerald-600 { color: var(--brand-primary) !important; }
       .border-emerald-600 { border-color: var(--brand-primary) !important; }
-      .bg-slate-900 { background-color: var(--brand-secondary) !important; }
+      
+      .bg-midnight-navy { background-color: var(--brand-midnight) !important; }
+      .text-midnight-navy { color: var(--brand-midnight) !important; }
+      
       .bg-emerald-500 { background-color: var(--brand-accent) !important; }
       .text-emerald-500 { color: var(--brand-accent) !important; }
     `;
@@ -100,21 +108,20 @@ const App: React.FC = () => {
       localStorage.setItem('edu_insta_content', JSON.stringify(newContent));
       return true;
     } catch (err: any) {
-      if (err.name === 'QuotaExceededError') {
-        alert("CRITICAL WARNING: The total data size has exceeded the browser limit. Please remove some photos or use image links instead of uploads to prevent data loss.");
-        return false;
-      }
+      console.error("CMS Save Error", err);
       return false;
     }
   };
+
+  const headerHeightClass = content.site.admissionAlert?.enabled ? 'pt-36 md:pt-40' : 'pt-24 md:pt-32';
 
   return (
     <HashRouter>
       <style>{brandingStyles}</style>
       <ScrollToTop />
-      <div className="flex flex-col min-h-screen overflow-x-hidden">
+      <div className="flex flex-col min-h-screen overflow-x-hidden bg-white">
         <Header config={content.site} courses={content.courses.list} />
-        <main id="main-content" className="flex-grow pt-24 md:pt-32 focus:outline-none" tabIndex={-1}>
+        <main id="main-content" className={`flex-grow ${headerHeightClass} focus:outline-none`} tabIndex={-1}>
           <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><i className="fa-solid fa-spinner fa-spin text-4xl text-emerald-600"></i></div>}>
             <Routes>
               <Route path="/" element={<HomePage content={content} />} />
@@ -130,8 +137,6 @@ const App: React.FC = () => {
               <Route path="/terms-of-service" element={<TermsOfServicePage data={content.legal.terms} />} />
               <Route path="/career-guidance" element={<CareerGuidancePage data={content.career} />} />
               <Route path="/placement-review" element={<PlacementReviewPage placements={content.placements} label={content.home.sectionLabels.placementMainLabel} />} />
-              {/* Backwards compatibility for old course link */}
-              <Route path="/courses" element={<Navigate to="/academics" replace />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Suspense>
