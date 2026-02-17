@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { AppState } from '../types.ts';
-import PageStateGuard from '../components/PageStateGuard.tsx';
+import { INITIAL_CONTENT } from '../data/defaultContent.ts';
 
 interface PlacementReviewPageProps {
   placements: AppState['placements'];
@@ -9,8 +9,17 @@ interface PlacementReviewPageProps {
 }
 
 const PlacementReviewPage: React.FC<PlacementReviewPageProps> = ({ placements, label = "Placement" }) => {
-  const { stats, reviews, pageDescription, wallTitle, pageMeta } = placements;
-  const meta = pageMeta || { title: "Placements Reviews", tagline: "Proven Outcomes", subtitle: "" };
+  // Resilience layer
+  const { stats, reviews, pageDescription, wallTitle, pageMeta } = useMemo(() => {
+    if (!placements) return INITIAL_CONTENT.placements;
+    return {
+      stats: Array.isArray(placements.stats) ? placements.stats : [],
+      reviews: Array.isArray(placements.reviews) ? placements.reviews : [],
+      pageDescription: placements.pageDescription || '',
+      wallTitle: placements.wallTitle || 'Wall of Success',
+      pageMeta: placements.pageMeta || INITIAL_CONTENT.placements.pageMeta
+    };
+  }, [placements]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -18,10 +27,10 @@ const PlacementReviewPage: React.FC<PlacementReviewPageProps> = ({ placements, l
       <section className="bg-slate-900 py-24 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl -mr-48 -mt-48"></div>
         <div className="container mx-auto px-4 relative z-10 text-center">
-          <span className="text-emerald-500 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">{meta.tagline}</span>
-          <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tighter">{meta.title}</h1>
+          <span className="text-emerald-500 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">{pageMeta.tagline}</span>
+          <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tighter">{pageMeta.title}</h1>
           <p className="text-slate-400 font-medium max-w-2xl mx-auto text-lg leading-relaxed">
-            {meta.subtitle}
+            {pageMeta.subtitle}
           </p>
         </div>
       </section>
@@ -105,7 +114,7 @@ const PlacementReviewPage: React.FC<PlacementReviewPageProps> = ({ placements, l
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl font-black text-slate-900 mb-8 tracking-tight">Ready to be our next success story?</h2>
           <Link to="/enroll" className="inline-block px-12 py-5 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-500 transition-all shadow-2xl active:scale-95 text-xs uppercase tracking-widest">
-            Submit Your inquery
+            Submit Your Inquery
           </Link>
         </div>
       </section>

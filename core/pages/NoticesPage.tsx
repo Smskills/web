@@ -1,8 +1,8 @@
-
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { AppState } from '../types.ts';
 import FormattedText from '../components/FormattedText.tsx';
 import PageStateGuard from '../components/PageStateGuard.tsx';
+import { INITIAL_CONTENT } from '../data/defaultContent.ts';
 
 interface NoticesPageProps {
   noticesState: AppState['notices'];
@@ -13,7 +13,17 @@ const NoticesPage: React.FC<NoticesPageProps> = ({ noticesState }) => {
   const [activeFilter, setActiveFilter] = useState<'All' | 'Urgent' | 'Event' | 'Holiday' | 'New'>('All');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   
-  const { list, pageMeta } = noticesState;
+  // Data resilience layer to prevent crashes if props are missing
+  const { list, pageMeta } = useMemo(() => {
+    if (!noticesState) return { 
+      list: INITIAL_CONTENT.notices.list, 
+      pageMeta: INITIAL_CONTENT.notices.pageMeta 
+    };
+    return {
+      list: Array.isArray(noticesState.list) ? noticesState.list : [],
+      pageMeta: noticesState.pageMeta || INITIAL_CONTENT.notices.pageMeta
+    };
+  }, [noticesState]);
 
   const getNoticeTheme = (category?: string) => {
     switch(category) {

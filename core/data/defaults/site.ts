@@ -3,20 +3,20 @@ import { SiteConfig } from '../../types';
 
 export const siteDefaults: SiteConfig = {
   name: "S M Skills",
-  tagline: "TRAINING INSTITUTE • ESTD 2024",
+  tagline: "SM SKILLS TRAINING INSTITUTE • ESTD 2024",
   logo: "https://lwfiles.mycourse.app/62a6cd5-public/6efdd5e.png", 
   loginLabel: "DASHBOARD",
   admissionAlert: {
     enabled: true,
     text: "2024 ADMISSIONS NOW OPEN:",
-    subtext: "SECURE YOUR FUTURE WITH OUR CERTIFICATE & DEGREE TRACKS.",
+    subtext: "SECURE YOUR FUTURE WITH OUR VOCATIONAL TRACKS.",
     linkText: "APPLY TODAY",
     linkPath: "/enroll"
   },
   contact: {
     email: "info@smskills.in",
     phones: ["+91 6002313158"],
-    address: "J M Road, Christianpatty, Nagaon",
+    address: "J M Road, Christianpatty, Nagaon, Assam",
     mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3579.544793616803!2d92.68652037525492!3d26.341258676993183!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x37452d3a33333333%3A0x3333333333333333!2sNagaon%2C%20Assam!5e0!3m2!1sen!2sin!4v1700000000000"
   },
   social: [
@@ -27,7 +27,7 @@ export const siteDefaults: SiteConfig = {
   navigation: [
     { label: "Home", path: "/" },
     { label: "About", path: "/about" },
-    { label: "Academics", path: "/academics" },
+    { label: "Academics", path: "/courses" },
     { label: "Notices", path: "/notices" },
     { label: "Gallery", path: "/gallery" },
     { label: "FAQ", path: "/faq" },
@@ -38,7 +38,7 @@ export const siteDefaults: SiteConfig = {
     quickLinksLabel: "NAVIGATION",
     supportLinksLabel: "RESOURCES",
     reachUsLabel: "CONNECT",
-    bottomText: "S M Skills • ESTD 2024",
+    bottomText: "S M SKILLS • ESTD 2024",
     supportLinks: [
       { label: "Privacy Policy", path: "/privacy-policy" },
       { label: "Terms of Service", path: "/terms-of-service" },

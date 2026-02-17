@@ -62,7 +62,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
       setHasUnsavedChanges(false);
       setTimeout(() => setStatusMsg(''), 5000);
     } catch (err: any) {
-      // Check if this is just a storage quota warning rather than a real sync failure
       if (err.name === 'QuotaExceededError' || err.message?.includes('quota')) {
         setStatusMsg('Saved to DB (Note: Local Cache Full)');
         setIsProcessing(false);
@@ -82,15 +81,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
       setHasUnsavedChanges(false);
       setIsError(false);
       setStatusMsg('');
-    }
-  };
-
-  const handleLogout = () => {
-    if (window.confirm("End administrator session? Any unsaved changes will be lost.")) {
-      localStorage.removeItem('sms_auth_token');
-      localStorage.removeItem('sms_is_auth');
-      window.dispatchEvent(new Event('authChange'));
-      navigate('/login');
     }
   };
 
@@ -114,7 +104,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
     setIsProcessing(true);
     setStatusMsg(files.length > 1 ? `Optimizing ${files.length} images...` : 'Optimizing image...');
     
-    // Fix: Explicitly cast the Array-like FileList to a File array to resolve 'unknown' type assignment issues
     const fileArray = Array.from(files) as File[];
 
     Promise.all(fileArray.map(file => optimizeImage(file)))
@@ -123,7 +112,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
           const next = { ...prev };
           const pathParts = activeUploadPath.current!.split('.');
           
-          // Specialized handler for multiple gallery images
           if (pathParts[0] === 'gallery' && pathParts[1] !== 'thumbnails') {
             const newItems = urls.map((url, idx) => ({
               id: `img_${Date.now()}_${idx}`,
@@ -138,7 +126,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
             return next;
           }
           
-          // Singular handlers for other fields (taking the first URL)
           const url = urls[0];
           
           if (pathParts[0] === 'courses' && activeCourseId.current) {
@@ -151,7 +138,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
             return next;
           }
           
-          // Fallback generic deep update
           let current: any = next;
           for (let i = 0; i < pathParts.length - 1; i++) {
             const key = pathParts[i];
@@ -171,7 +157,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
         console.error("Upload failed:", err);
         setIsProcessing(false);
         setIsError(true);
-        setStatusMsg("Upload failed. Verify file format.");
+        setStatusMsg("Upload failed.");
         inputElement.value = '';
       });
   };
@@ -181,11 +167,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
     genericUploadRef.current?.click();
   };
 
-  const stickyTopClass = content.site.admissionAlert?.enabled ? "top-[8.5rem]" : "top-24 md:top-32";
+  const stickyTopClass = "top-24 md:top-32";
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 pb-20 font-sans">
-      {/* ADDED MULTIPLE ATTRIBUTE HERE */}
       <input 
         type="file" 
         ref={genericUploadRef} 
@@ -209,29 +194,24 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
           </div>
           <div className="flex items-center gap-2">
               <button onClick={handleDiscard} className="px-5 py-2 text-slate-500 hover:text-slate-900 text-xs font-black transition-all border border-slate-200 rounded-lg bg-white">Discard</button>
-              <button onClick={handleSave} className={`px-8 py-2 rounded-lg text-xs font-black transition-all shadow-lg uppercase tracking-widest ${hasUnsavedChanges ? 'bg-emerald-600 hover:bg-emerald-500 text-white animate-pulse' : 'bg-slate-100 text-slate-400 cursor-default'}`}>Save Database</button>
-              <div className="w-px h-8 bg-slate-200 mx-2"></div>
-              <button onClick={handleLogout} className="px-4 py-2 text-slate-500 hover:text-red-600 text-xs font-black transition-all flex items-center gap-2 group">
-                <i className="fa-solid fa-power-off"></i> Logout
-              </button>
+              <button onClick={handleSave} className={`px-8 py-2 rounded-lg text-xs font-black transition-all shadow-lg uppercase tracking-widest ${hasUnsavedChanges ? 'bg-emerald-600 hover:bg-emerald-500 text-white animate-pulse' : 'bg-slate-100 text-slate-400 cursor-default'}`}>Save All Changes</button>
           </div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 mt-8 flex flex-col md:flex-row gap-8">
-        {/* SIDEBAR NAVIGATION */}
         <div className={`w-full md:w-64 space-y-4 shrink-0 md:sticky ${stickyTopClass} md:pt-6 h-fit z-50`}>
           <button 
             onClick={() => setActiveTab('leads')} 
             className={`w-full text-left px-5 py-4 rounded-2xl font-black transition-all flex items-center gap-4 border shadow-sm group ${activeTab === 'leads' ? 'bg-emerald-600 border-emerald-500 text-white' : 'text-emerald-600 bg-emerald-50 border-emerald-100 hover:bg-emerald-100'}`}
           >
               <i className="fa-solid fa-user-graduate shrink-0 text-lg"></i>
-              <span className="leading-none">Student Leads</span>
+              <span className="leading-none text-sm uppercase tracking-widest">Student Leads</span>
           </button>
           
           <div className="h-px bg-slate-200 my-6"></div>
           
-          <div className="space-y-2 overflow-y-auto max-h-[60vh] custom-scrollbar pr-1 pb-4">
+          <div className="space-y-2">
             {(['site', 'home', 'pages', 'about', 'academics', 'notices', 'gallery', 'faq', 'form', 'contact', 'footer', 'placements', 'legal', 'career'] as const).map(tab => (
               <button 
                 key={tab} 
@@ -267,32 +247,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
 
         <div className="flex-grow bg-white rounded-[2.5rem] p-8 md:p-12 border border-slate-200 shadow-sm min-h-[75vh]">
           {activeTab === 'leads' && <LeadsTab leads={localContent.leads || []} onUpdateLeads={(updated) => { setLocalContent(prev => ({ ...prev, leads: updated })); trackChange(); }} />}
-          {activeTab === 'site' && <SiteTab data={localContent.site} theme={localContent.theme} updateTheme={(f, v) => updateField('theme', f, v)} updateField={(f, v) => updateField('site', f, v)} onLogoUploadClick={() => triggerGenericUpload('site.logo')} onExport={() => {}} onImport={() => {}} updateNavigation={(idx, f, v) => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, navigation: prev.site.navigation.map((n, i) => i === idx ? { ...n, [f]: v } : n) } })); trackChange(); }} addNavigation={() => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, navigation: [...prev.site.navigation, { label: 'New Link', path: '/' }] } })); trackChange(); }} removeNavigation={(idx) => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, navigation: prev.site.navigation.filter((_, i) => i !== idx) } })); trackChange(); }} />}
+          {activeTab === 'site' && <SiteTab data={localContent.site} theme={localContent.theme} updateTheme={(f, v) => updateField('theme', f, v)} updateField={(f, v) => updateField('site', f, v)} onLogoUploadClick={() => triggerGenericUpload('site.logo')} updateNavigation={(idx, f, v) => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, navigation: prev.site.navigation.map((n, i) => i === idx ? { ...n, [f]: v } : n) } })); trackChange(); }} addNavigation={() => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, navigation: [...prev.site.navigation, { label: 'New Link', path: '/' }] } })); trackChange(); }} removeNavigation={(idx) => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, navigation: prev.site.navigation.filter((_, i) => i !== idx) } })); trackChange(); }} />}
           {activeTab === 'home' && <HomeTab data={localContent.home} updateNestedField={(p, f, v) => updateNestedField('home', p, f, v)} updateHomeSubField={(p, f, v) => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, [p]: { ...(prev.home as any)[p], [f]: v } } })); trackChange(); }} onHeroBgClick={() => triggerGenericUpload('home.hero.bgImage')} onShowcaseImgClick={() => triggerGenericUpload('home.bigShowcase.image')} addHighlight={() => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, highlights: [...prev.home.highlights, { icon: 'fa-star', title: 'New', description: '' }] } })); trackChange(); }} updateHighlight={(idx, f, v) => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, highlights: prev.home.highlights.map((h, i) => i === idx ? { ...h, [f]: v } : h) } })); trackChange(); }} deleteHighlight={(idx) => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, highlights: prev.home.highlights.filter((_, i) => i !== idx) } })); trackChange(); }} reorderSections={(idx, dir) => { setLocalContent(prev => { const order = [...prev.home.sectionOrder]; const t = dir === 'up' ? idx - 1 : idx + 1; if (t >= 0 && t < order.length) [order[idx], order[t]] = [order[t], order[idx]]; return { ...prev, home: { ...prev.home, sectionOrder: order } }; }); trackChange(); }} />}
           {activeTab === 'about' && <AboutTab data={localContent.about} updateChapter={(ch, f, v) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, [ch]: { ...(prev.about as any)[ch], [f]: v } } })); trackChange(); }} triggerUpload={(p) => triggerGenericUpload(p)} addTeamMember={() => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, faculty: { ...prev.about.faculty, members: [...prev.about.faculty.members, { id: Date.now().toString(), name: 'Name', role: 'Role', bio: '', image: 'https://i.pravatar.cc/150' }] } } })); trackChange(); }} updateTeamMember={(id, f, v) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, faculty: { ...prev.about.faculty, members: prev.about.faculty.members.map(m => m.id === id ? { ...m, [f]: v } : m) } } })); trackChange(); }} removeTeamMember={(id) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, faculty: { ...prev.about.faculty, members: prev.about.faculty.members.filter(m => m.id !== id) } } })); trackChange(); }} updateStats={(id, f, v) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, achievements: { ...prev.about.achievements, stats: prev.about.achievements.stats.map(s => s.id === id ? { ...s, [f]: v } : s) } } })); trackChange(); }} addStat={() => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, achievements: { ...prev.about.achievements, stats: [...prev.about.achievements.stats, { id: Date.now().toString(), label: 'Stat', value: '0' }] } } })); trackChange(); }} removeStat={(id) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, achievements: { ...prev.about.achievements, stats: prev.about.achievements.stats.filter(s => s.id !== id) } } })); trackChange(); }} updateValues={(idx, v) => { setLocalContent(prev => { const next = [...prev.about.vision.values]; next[idx] = v; return { ...prev, about: { ...prev.about, vision: { ...prev.about.vision, values: next } } }; }); trackChange(); }} addValue={() => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, vision: { ...prev.about.vision, values: [...prev.about.vision.values, 'New Value'] } } })); trackChange(); }} removeValue={(idx) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, vision: { ...prev.about.vision, values: prev.about.vision.values.filter((_, i) => i !== idx) } } })); trackChange(); }} addExtraChapter={() => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, extraChapters: [...(prev.about.extraChapters || []), { id: Date.now().toString(), label: 'CH', title: 'Title', story: '', image: '' }] } })); trackChange(); }} updateExtraChapter={(id, f, v) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, extraChapters: prev.about.extraChapters.map(c => c.id === id ? { ...c, [f]: v } : c) } })); trackChange(); }} removeExtraChapter={(id) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, extraChapters: prev.about.extraChapters.filter(c => c.id !== id) } })); trackChange(); }} />}
           {activeTab === 'academics' && <AcademicsTab coursesState={localContent.courses} updateCourseItem={(id, f, v) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: prev.courses.list.map(c => c.id === id ? { ...c, [f]: v } : c) } })); trackChange(); }} updatePageMeta={(f, v) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, pageMeta: { ...prev.courses.pageMeta, [f]: v } } })); trackChange(); }} onCourseImageClick={(id) => { activeCourseId.current = id; triggerGenericUpload('courses.list'); }} addItem={() => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: [{ id: Date.now().toString(), name: 'New Program', duration: '6 Months', mode: 'Offline', academicLevel: 'Certificate (NSDC)', industry: 'General', description: '', status: 'Active', image: 'https://picsum.photos/800/600', price: 'Rs. 0', certification: 'SMS Technical Diploma', eligibility: '', benefits: '' }, ...prev.courses.list] } })); trackChange(); }} deleteItem={(id) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: prev.courses.list.filter(c => c.id !== id) } })); trackChange(); }} />}
           {activeTab === 'notices' && <NoticesTab noticesState={localContent.notices} updateNoticeItem={(id, f, v) => { setLocalContent(prev => ({ ...prev, notices: { ...prev.notices, list: prev.notices.list.map(n => n.id === id ? { ...n, [f]: v } : n) } })); trackChange(); }} updatePageMeta={(f, v) => { setLocalContent(prev => ({ ...prev, notices: { ...prev.notices, pageMeta: { ...prev.notices.pageMeta, [f]: v } } })); trackChange(); }} addItem={() => { setLocalContent(prev => ({ ...prev, notices: { ...prev.notices, list: [{ id: Date.now().toString(), date: new Date().toISOString().split('T')[0], title: 'Announcement', description: '', isImportant: false, category: 'General' }, ...prev.notices.list] } })); trackChange(); }} deleteItem={(id) => { setLocalContent(prev => ({ ...prev, notices: { ...prev.notices, list: prev.notices.list.filter(n => n.id !== id) } })); trackChange(); }} />}
           {activeTab === 'gallery' && <GalleryTab galleryState={localContent.gallery} galleryMetadata={localContent.galleryMetadata} updateGalleryItem={(id, f, v) => { setLocalContent(prev => ({ ...prev, gallery: { ...prev.gallery, list: prev.gallery.list.map(i => i.id === id ? { ...i, [f]: v } : i) } })); trackChange(); }} updatePageMeta={(f, v) => { setLocalContent(prev => ({ ...prev, gallery: { ...prev.gallery, pageMeta: { ...prev.gallery.pageMeta, [f]: v } } })); trackChange(); }} deleteItem={(id) => { setLocalContent(prev => ({ ...prev, gallery: { ...prev.gallery, list: prev.gallery.list.filter(i => i.id !== id) } })); trackChange(); }} triggerUpload={(cat) => { activeUploadCategory.current = cat; triggerGenericUpload('gallery'); }} triggerThumbnailUpload={(cat) => { activeThumbnailCategory.current = cat; triggerGenericUpload('gallery.thumbnails'); }} />}
           {activeTab === 'faq' && <FAQTab faqsState={localContent.faqs} updateFAQ={(id, f, v) => { setLocalContent(prev => ({ ...prev, faqs: { ...prev.faqs, list: prev.faqs.list.map(i => i.id === id ? { ...i, [f]: v } : i) } })); trackChange(); }} updatePageMeta={(f, v) => { setLocalContent(prev => ({ ...prev, faqs: { ...prev.faqs, pageMeta: { ...prev.faqs.pageMeta, [f]: v } } })); trackChange(); }} addFAQ={() => { setLocalContent(prev => ({ ...prev, faqs: { ...prev.faqs, list: [{ id: Date.now().toString(), question: 'Question?', answer: '', category: 'General' }, ...prev.faqs.list] } })); trackChange(); }} deleteFAQ={(id) => { setLocalContent(prev => ({ ...prev, faqs: { ...prev.faqs, list: prev.faqs.list.filter(i => i.id !== id) } })); trackChange(); }} reorderFAQs={(s, e) => { setLocalContent(prev => { const next = [...prev.faqs.list]; const [rem] = next.splice(s, 1); next.splice(e, 0, rem); return { ...prev, faqs: { ...prev.faqs, list: next } }; }); trackChange(); }} />}
-          {activeTab === 'form' && (
-            <FormTab 
-              formData={localContent.enrollmentForm} 
-              addField={() => { setLocalContent(prev => ({ ...prev, enrollmentForm: { ...prev.enrollmentForm, fields: [...prev.enrollmentForm.fields, { id: Date.now().toString(), label: 'New Field', type: 'text', placeholder: '', required: false }] } })); trackChange(); }} 
-              updateField={(id, up) => { setLocalContent(prev => ({ ...prev, enrollmentForm: { ...prev.enrollmentForm, fields: prev.enrollmentForm.fields.map(f => f.id === id ? { ...f, ...up } : f) } })); trackChange(); }} 
-              deleteField={(id) => { setLocalContent(prev => ({ ...prev, enrollmentForm: { ...prev.enrollmentForm, fields: prev.enrollmentForm.fields.filter(f => f.id !== id) } })); trackChange(); }} 
-              updatePageInfo={(f, v) => { setLocalContent(prev => ({ ...prev, enrollmentForm: { ...prev.enrollmentForm, [f]: v } })); trackChange(); }} 
-              reorderFields={(s, e) => { 
-                setLocalContent(prev => { 
-                  const nextFields = [...(prev.enrollmentForm.fields || [])];
-                  if (e < 0 || e >= nextFields.length) return prev;
-                  const [removed] = nextFields.splice(s, 1);
-                  nextFields.splice(e, 0, removed);
-                  return { ...prev, enrollmentForm: { ...prev.enrollmentForm, fields: nextFields } };
-                }); 
-                trackChange(); 
-              }}
-            />
-          )}
+          {activeTab === 'form' && <FormTab formData={localContent.enrollmentForm} addField={() => { setLocalContent(prev => ({ ...prev, enrollmentForm: { ...prev.enrollmentForm, fields: [...prev.enrollmentForm.fields, { id: Date.now().toString(), label: 'New Field', type: 'text', placeholder: '', required: false }] } })); trackChange(); }} updateField={(id, up) => { setLocalContent(prev => ({ ...prev, enrollmentForm: { ...prev.enrollmentForm, fields: prev.enrollmentForm.fields.map(f => f.id === id ? { ...f, ...up } : f) } })); trackChange(); }} deleteField={(id) => { setLocalContent(prev => ({ ...prev, enrollmentForm: { ...prev.enrollmentForm, fields: prev.enrollmentForm.fields.filter(f => f.id !== id) } })); trackChange(); }} updatePageInfo={(f, v) => { setLocalContent(prev => ({ ...prev, enrollmentForm: { ...prev.enrollmentForm, [f]: v } })); trackChange(); }} reorderFields={(s, e) => { setLocalContent(prev => { const next = [...prev.enrollmentForm.fields]; const [rem] = next.splice(s, 1); next.splice(e, 0, rem); return { ...prev, enrollmentForm: { ...prev.enrollmentForm, fields: next } }; }); trackChange(); }} />}
           {activeTab === 'contact' && <ContactTab contact={localContent.site.contact} social={localContent.site.social} contactForm={localContent.contactForm} updateContactField={(f, v) => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, contact: { ...prev.site.contact, [f]: v } } })); trackChange(); }} addSocialLink={() => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, social: [...prev.site.social, { id: Date.now().toString(), platform: 'New', url: '#', icon: 'fa-globe' }] } })); trackChange(); }} updateSocialLink={(id, f, v) => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, social: prev.site.social.map(s => s.id === id ? { ...s, [f]: v } : s) } })); trackChange(); }} removeSocialLink={(id) => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, social: prev.site.social.filter(s => s.id !== id) } })); trackChange(); }} addFormField={() => { setLocalContent(prev => ({ ...prev, contactForm: { ...prev.contactForm, fields: [...prev.contactForm.fields, { id: Date.now().toString(), label: 'New', type: 'text', placeholder: '', required: false }] } })); trackChange(); }} updateFormField={(id, up) => { setLocalContent(prev => ({ ...prev, contactForm: { ...prev.contactForm, fields: prev.contactForm.fields.map(f => f.id === id ? { ...f, ...up } : f) } })); trackChange(); }} deleteFormField={(id) => { setLocalContent(prev => ({ ...prev, contactForm: { ...prev.contactForm, fields: prev.contactForm.fields.filter(f => f.id !== id) } })); trackChange(); }} updateFormTitle={(v) => { setLocalContent(prev => ({ ...prev, contactForm: { ...prev.contactForm, title: v } })); trackChange(); }} />}
           {activeTab === 'footer' && <FooterTab footer={localContent.site.footer} updateFooterField={(f, v) => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, footer: { ...prev.site.footer, [f]: v } } })); trackChange(); }} addSupportLink={() => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, footer: { ...prev.site.footer, supportLinks: [...prev.site.footer.supportLinks, { label: 'New', path: '#' }] } } })); trackChange(); }} updateSupportLink={(idx, f, v) => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, footer: { ...prev.site.footer, supportLinks: prev.site.footer.supportLinks.map((l, i) => i === idx ? { ...l, [f]: v } : l) } } })); trackChange(); }} deleteSupportLink={(idx) => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, footer: { ...prev.site.footer, supportLinks: prev.site.footer.supportLinks.filter((_, i) => i !== idx) } } })); trackChange(); }} />}
           {activeTab === 'placements' && <PlacementsTab stats={localContent.placements.stats} reviews={localContent.placements.reviews} partners={localContent.placements.partners} pageMeta={localContent.placements.pageMeta} wallTitle={localContent.placements.wallTitle} pageDescription={localContent.placements.pageDescription} updateStat={(id, f, v) => { setLocalContent(prev => ({ ...prev, placements: { ...prev.placements, stats: prev.placements.stats.map(s => s.id === id ? { ...s, [f]: v } : s) } })); trackChange(); }} addStat={() => { setLocalContent(prev => ({ ...prev, placements: { ...prev.placements, stats: [...prev.placements.stats, { id: Date.now().toString(), label: 'Label', value: '0', icon: 'fa-chart-line' }] } })); trackChange(); }} deleteStat={(id) => { setLocalContent(prev => ({ ...prev, placements: { ...prev.placements, stats: prev.placements.stats.filter(s => s.id !== id) } })); trackChange(); }} updateReview={(id, f, v) => { setLocalContent(prev => ({ ...prev, placements: { ...prev.placements, reviews: prev.placements.reviews.map(r => r.id === id ? { ...r, [f]: v } : r) } })); trackChange(); }} addReview={() => { setLocalContent(prev => ({ ...prev, placements: { ...prev.placements, reviews: [{ id: Date.now().toString(), name: 'Name', course: 'Track', company: 'Org', companyIcon: 'fa-building', image: 'https://i.pravatar.cc/150', text: '', salaryIncrease: '' }, ...prev.placements.reviews] } })); trackChange(); }} deleteReview={(id) => { setLocalContent(prev => ({ ...prev, placements: { ...prev.placements, reviews: prev.placements.reviews.filter(r => r.id !== id) } })); trackChange(); }} updatePartner={(id, f, v) => { setLocalContent(prev => ({ ...prev, placements: { ...prev.placements, partners: prev.placements.partners.map(p => p.id === id ? { ...p, [f]: v } : p) } })); trackChange(); }} addPartner={() => { setLocalContent(prev => ({ ...prev, placements: { ...prev.placements, partners: [...prev.placements.partners, { id: Date.now().toString(), name: 'New Partner', icon: 'fa-building' }] } })); trackChange(); }} deletePartner={(id) => { setLocalContent(prev => ({ ...prev, placements: { ...prev.placements, partners: prev.placements.partners.filter(p => p.id !== id) } })); trackChange(); }} updatePageMeta={(f, v) => { setLocalContent(prev => ({ ...prev, placements: { ...prev.placements, pageMeta: { ...prev.placements.pageMeta, [f]: v } } })); trackChange(); }} updateWallTitle={(v) => { setLocalContent(prev => ({ ...prev, placements: { ...prev.placements, wallTitle: v } })); trackChange(); }} updatePageDescription={(v) => { setLocalContent(prev => ({ ...prev, placements: { ...prev.placements, pageDescription: v } })); trackChange(); }} onReviewImageClick={(id) => { activeReviewId.current = id; triggerGenericUpload('placements.reviews'); }} onPartnerImageClick={(id) => { activePartnerId.current = id; triggerGenericUpload('placements.partners'); }} />}

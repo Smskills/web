@@ -22,6 +22,51 @@ export interface CustomPage {
   showHeader: boolean;
 }
 
+// Fix: Added missing PlacementStat interface for tracking placement data.
+export interface PlacementStat {
+  id: string;
+  label: string;
+  value: string;
+  icon: string;
+}
+
+// Fix: Added missing StudentReview interface for student placement stories.
+export interface StudentReview {
+  id: string;
+  name: string;
+  course: string;
+  company: string;
+  companyIcon: string;
+  image: string;
+  text: string;
+  salaryIncrease: string;
+  role?: string;
+}
+
+// Fix: Added missing IndustryPartner interface for corporate partner tracking.
+export interface IndustryPartner {
+  id: string;
+  name: string;
+  icon: string;
+  image?: string;
+}
+
+// Fix: Added missing LegalSection interface for modular legal page content.
+export interface LegalSection {
+  id: string;
+  title: string;
+  content: string;
+}
+
+// Fix: Added missing CareerService interface for career guidance features.
+export interface CareerService {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  image?: string;
+}
+
 export interface SiteConfig {
   name: string;
   tagline: string;
@@ -224,46 +269,6 @@ export interface PageMeta {
   title: string;
   subtitle: string;
   tagline?: string;
-}
-
-export interface PlacementStat {
-  id: string;
-  label: string;
-  value: string;
-  icon: string;
-}
-
-export interface StudentReview {
-  id: string;
-  name: string;
-  course: string;
-  company: string;
-  companyIcon: string;
-  image: string;
-  text: string;
-  salaryIncrease: string;
-  role?: string;
-}
-
-export interface IndustryPartner {
-  id: string;
-  name: string;
-  icon: string;
-  image?: string;
-}
-
-export interface LegalSection {
-  id: string;
-  title: string;
-  content: string;
-}
-
-export interface CareerService {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-  image?: string;
 }
 
 export interface Lead {

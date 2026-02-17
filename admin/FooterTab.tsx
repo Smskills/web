@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { SiteConfig } from '../types.ts';
 

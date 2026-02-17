@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { PlacementStat, StudentReview, IndustryPartner } from '../types.ts';
 
@@ -22,6 +21,10 @@ interface PlacementsTabProps {
   label?: string;
 }
 
+/**
+ * PlacementsTab component for managing institutional placement records,
+ * industry partners, and student success stories.
+ */
 const PlacementsTab: React.FC<PlacementsTabProps> = ({
   stats,
   reviews,
@@ -135,20 +138,20 @@ const PlacementsTab: React.FC<PlacementsTabProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {stats.map(stat => (
             <div key={stat.id} className="bg-slate-900/50 p-6 rounded-3xl border border-slate-700 group relative">
-              <button onClick={() => handleDeleteStat(stat.id, stat.label)} className="absolute -top-2 -right-2 w-8 h-8 bg-red-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center shadow-xl"><i className="fa-solid fa-xmark"></i></button>
+              <button onClick={() => handleDeleteStat(stat.id, stat.label)} className="absolute -top-2 -right-2 w-8 h-8 bg-red-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center shadow-xl"><i className="fa-solid fa-trash text-[10px]"></i></button>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Label</label>
-                  <input value={stat.label} onChange={e => updateStat(stat.id, 'label', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" />
+                  <label className="text-[8px] font-black text-slate-600 uppercase tracking-widest">Label</label>
+                  <input value={stat.label} onChange={e => updateStat(stat.id, 'label', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1 text-[10px] text-white" />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Value</label>
-                  <input value={stat.value} onChange={e => updateStat(stat.id, 'value', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-emerald-400 font-black" />
+                  <label className="text-[8px] font-black text-slate-600 uppercase tracking-widest">Value</label>
+                  <input value={stat.value} onChange={e => updateStat(stat.id, 'value', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1 text-[10px] text-emerald-400 font-black" />
                 </div>
               </div>
-              <div className="mt-4 space-y-1">
-                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Icon (fa-icon)</label>
-                <input value={stat.icon} onChange={e => updateStat(stat.id, 'icon', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-[10px] text-slate-400 font-mono" />
+              <div className="mt-2 space-y-1">
+                 <label className="text-[8px] font-black text-slate-600 uppercase tracking-widest">FA Icon</label>
+                 <input value={stat.icon} onChange={e => updateStat(stat.id, 'icon', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1 text-[10px] text-slate-500 font-mono" />
               </div>
             </div>
           ))}
@@ -158,34 +161,33 @@ const PlacementsTab: React.FC<PlacementsTabProps> = ({
       {/* Student Reviews Section */}
       <div className="space-y-8">
         <div className="flex justify-between items-center border-b border-slate-700 pb-4">
-          <h2 className="text-2xl font-black text-white uppercase tracking-tight">{label} Reviews</h2>
+          <h2 className="text-2xl font-black text-white uppercase tracking-tight">{label} Wall Reviews</h2>
           <button onClick={addReview} className="bg-emerald-600 hover:bg-emerald-500 px-6 py-2 rounded-xl text-xs font-black shadow-lg transition-all active:scale-95">ADD REVIEW</button>
         </div>
         <div className="space-y-6">
           {reviews.map(review => (
-            <div key={review.id} className="bg-slate-900/50 p-8 rounded-[2.5rem] border border-slate-700 hover:border-emerald-500/30 transition-all group">
+            <div key={review.id} className="bg-slate-900/50 p-8 rounded-[2rem] border border-slate-700 group">
               <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                <div className="lg:col-span-1">
-                  <div onClick={() => onReviewImageClick(review.id)} className="relative aspect-square rounded-2xl overflow-hidden border-2 border-slate-800 bg-slate-800 group/img cursor-pointer">
-                    <img src={review.image} className="w-full h-full object-cover transition-opacity group-hover/img:opacity-50" />
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity"><i className="fa-solid fa-camera text-white text-xl"></i></div>
+                <div onClick={() => onReviewImageClick(review.id)} className="lg:col-span-1 cursor-pointer">
+                  <div className="aspect-square rounded-2xl overflow-hidden border-2 border-slate-800 bg-slate-800 relative group/img">
+                    <img src={review.image} className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition-opacity"><i className="fa-solid fa-camera text-white"></i></div>
                   </div>
                 </div>
                 <div className="lg:col-span-3 space-y-4">
                   <div className="flex justify-between items-center">
-                    <input value={review.name} onChange={e => updateReview(review.id, 'name', e.target.value)} className="text-xl font-black bg-transparent border-b border-slate-700 text-white w-full mr-4 outline-none focus:border-emerald-500" placeholder="Student Name" />
-                    <button onClick={() => handleDeleteReview(review.id, review.name)} className="text-red-500 hover:bg-red-500/10 p-2 rounded-lg transition-colors"><i className="fa-solid fa-trash-can"></i></button>
+                    <input value={review.name} onChange={e => updateReview(review.id, 'name', e.target.value)} className="text-xl font-black bg-transparent border-b border-slate-700 text-white w-full mr-4 outline-none" placeholder="Student Name" />
+                    <button onClick={() => handleDeleteReview(review.id, review.name)} className="text-red-500"><i className="fa-solid fa-trash-can"></i></button>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <input value={review.course} onChange={e => updateReview(review.id, 'course', e.target.value)} className="bg-slate-800 p-2 rounded text-xs text-white" placeholder="Course" />
-                    <input value={review.role} onChange={e => updateReview(review.id, 'role', e.target.value)} className="bg-slate-800 p-2 rounded text-xs text-white" placeholder="Role (e.g. Software Engineer)" />
+                    <input value={review.company} onChange={e => updateReview(review.id, 'company', e.target.value)} className="bg-slate-800 p-2 rounded text-xs text-white" placeholder="Company" />
                   </div>
-                  <div className="grid grid-cols-3 gap-4">
-                    <input value={review.company} onChange={e => updateReview(review.id, 'company', e.target.value)} className="bg-slate-800 p-2 rounded text-xs text-white" placeholder="Company Name" />
-                    <input value={review.companyIcon} onChange={e => updateReview(review.id, 'companyIcon', e.target.value)} className="bg-slate-800 p-2 rounded text-[10px] text-emerald-500 font-mono" placeholder="fa-google" />
-                    <input value={review.salaryIncrease} onChange={e => updateReview(review.id, 'salaryIncrease', e.target.value)} className="bg-slate-800 p-2 rounded text-xs text-emerald-400 font-black" placeholder="+80% Hike" />
+                  <div className="grid grid-cols-2 gap-4">
+                    <input value={review.companyIcon} onChange={e => updateReview(review.id, 'companyIcon', e.target.value)} className="bg-slate-800 p-2 rounded text-[10px] text-emerald-500 font-mono" placeholder="fa-brands icon" />
+                    <input value={review.salaryIncrease} onChange={e => updateReview(review.id, 'salaryIncrease', e.target.value)} className="bg-slate-800 p-2 rounded text-xs text-white" placeholder="+100% Hike" />
                   </div>
-                  <textarea value={review.text} onChange={e => updateReview(review.id, 'text', e.target.value)} rows={3} className="w-full bg-slate-800 p-3 rounded-xl text-xs text-slate-300 resize-none" placeholder="Student testimonial review..." />
+                  <textarea value={review.text} onChange={e => updateReview(review.id, 'text', e.target.value)} rows={3} className="w-full bg-slate-800 p-3 rounded-xl text-xs text-slate-300 resize-none" placeholder="Review Text" />
                 </div>
               </div>
             </div>

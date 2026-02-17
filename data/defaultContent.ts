@@ -1,4 +1,3 @@
-
 import { AppState } from '../types';
 
 export const INITIAL_CONTENT: AppState = {
@@ -104,11 +103,9 @@ export const INITIAL_CONTENT: AppState = {
       contact: true,
       industryTieups: true,
       placementReviews: true,
-      // Added missing highlights and bigShowcase properties
       highlights: true,
       bigShowcase: true
     },
-    // Added missing sectionOrder
     sectionOrder: ["highlights", "industryTieups", "placementReviews", "notices", "featuredCourses", "bigShowcase"]
   },
   enrollmentForm: {
@@ -149,7 +146,6 @@ export const INITIAL_CONTENT: AppState = {
       { id: "c4", label: "Detailed Message", type: "textarea", placeholder: "How can we help you?", required: true }
     ]
   },
-  // Updated courses to object structure
   courses: {
     list: [
       {
@@ -165,7 +161,6 @@ export const INITIAL_CONTENT: AppState = {
     ],
     pageMeta: { title: "Vocational Programs", subtitle: "Curated learning paths focused on high-demand professional skills." }
   },
-  // Updated notices to object structure
   notices: {
     list: [
       {
@@ -179,12 +174,10 @@ export const INITIAL_CONTENT: AppState = {
     ],
     pageMeta: { title: "Institute Feed", subtitle: "Recent announcements regarding batches, events, and scholarships." }
   },
-  // Updated gallery to object structure
   gallery: {
     list: [],
     pageMeta: { title: "Campus Life", subtitle: "Explore our facilities, classroom interactions, and achievement galleries." }
   },
-  // Updated faqs to object structure
   faqs: {
     list: [
       { id: "q1", question: "What is the admission criteria?", answer: "We look for a basic technical aptitude and a passion for learning. Previous experience is not mandatory for foundation tracks.", category: "Admissions" },
@@ -192,7 +185,6 @@ export const INITIAL_CONTENT: AppState = {
     ],
     pageMeta: { title: "Frequently Asked Questions", subtitle: "Common queries regarding our institute." }
   },
-  // Updated about to AboutState structure
   about: {
     beginning: {
       label: "Chapter 01 — Our Genesis",
@@ -234,7 +226,6 @@ export const INITIAL_CONTENT: AppState = {
     extraChapters: []
   },
   placements: {
-    // Added missing pageMeta and wallTitle
     pageMeta: { title: "Success Stories", subtitle: "Celebrating SM Skills graduates who have joined industry-leading organizations." },
     wallTitle: "Our Placement Record",
     pageDescription: "SM Skills graduates are consistently hired by the world's most innovative companies.",
@@ -278,7 +269,6 @@ export const INITIAL_CONTENT: AppState = {
     }
   },
   career: {
-    // Added missing pageMeta
     pageMeta: { title: "Career Guidance", subtitle: "Success roadmap with industry vets." },
     hero: {
       title: "Career Lab",

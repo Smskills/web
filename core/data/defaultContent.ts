@@ -8,7 +8,7 @@ export const INITIAL_CONTENT: AppState = {
   site: siteDefaults,
   theme: {
     primary: "#059669",
-    secondary: "#f8fafc", // Flipped from dark slate to very light gray
+    secondary: "#f8fafc", 
     accent: "#10b981",
     radius: "large"
   },
@@ -16,20 +16,20 @@ export const INITIAL_CONTENT: AppState = {
   customPages: [],
   enrollmentForm: {
     title: "S M Skills Official Enrollment",
-    description: "Please complete the comprehensive academic application form below.",
+    description: "Please complete the comprehensive academic application form below. Our registrar team evaluates each candidate for program alignment.",
     successTitle: "Application Received",
     successMessage: "Your registration is being processed. An institutional registrar will review your application soon.",
     roadmapTitle: "Enrollment Flow",
     roadmapSteps: [
-      { id: "s1", title: "Identity Submission", description: "Provide verifiable academic and personal records." },
-      { id: "s2", title: "Technical Review", description: "Specialists evaluate your alignment with the chosen track." },
-      { id: "s3", title: "Confirmation", description: "Official admission offer sent via advisor call." }
+      { id: "s1", title: "Identity Submission", description: "Provide verifiable academic and personal records for initial screening." },
+      { id: "s2", title: "Technical Review", description: "Specialists evaluate your alignment with the chosen program track." },
+      { id: "s3", title: "Confirmation", description: "Official admission offer and joining protocols sent via advisor call." }
     ],
     fields: [
       { id: "f1", label: "Student Full Name", type: "text", placeholder: "e.g. Michael Smith", required: true },
       { id: "f2", label: "Email address", type: "email", placeholder: "mike@example.com", required: true },
-      { id: "f3", label: "Father's / Guardian's name", type: "text", placeholder: "Enter Father's Name", required: true },
-      { id: "f3_mother", label: "Mother's / Guardian's name", type: "text", placeholder: "Enter Mother's Name", required: true },
+      { id: "f3", label: "Father's / Guardian's name", type: "text", placeholder: "Enter Full Name", required: true },
+      { id: "f3_mother", label: "Mother's / Guardian's name", type: "text", placeholder: "Enter Full Name", required: true },
       { id: "f4", label: "Date of Birth", type: "date", placeholder: "", required: true },
       { id: "f5", label: "Primary contact number", type: "tel", placeholder: "+91", required: true },
       { id: "f6", label: "Alternative contact number", type: "tel", placeholder: "+91", required: false },
@@ -38,7 +38,7 @@ export const INITIAL_CONTENT: AppState = {
       { id: "f7_state", label: "State", type: "text", placeholder: "e.g. Assam", required: true },
       { id: "f7_pin", label: "Pin code", type: "text", placeholder: "6-digit PIN", required: true },
       { id: "f9", label: "Course interest", type: "course-select", placeholder: "Choose Program Track", required: true },
-      { id: "f11", label: "Current education", type: "select", placeholder: "Select Highest Qualification", required: true, options: ["Secondary School (10th)", "Higher Secondary (12th)", "Diploma Holder", "Graduate / Bachelor's", "Post Graduate", "Other (Specify in Additional Question)"] },
+      { id: "f11", label: "Current education", type: "select", placeholder: "Select Highest Qualification", required: true, options: ["Secondary School (10th)", "Higher Secondary (12th)", "Diploma Holder", "Graduate / Bachelor's", "Post Graduate", "Other"] },
       { id: "f10", label: "Source of information", type: "select", placeholder: "How did you hear about us?", required: true, options: ["Social Media", "Friend / Student Referral", "Newspaper / Print", "Web Search", "Educational Seminar"] },
       { id: "f12", label: "Additional question", type: "textarea", placeholder: "Any specific queries for the registrar?", required: false }
     ]
@@ -56,7 +56,7 @@ export const INITIAL_CONTENT: AppState = {
     beginning: {
       label: "CHAPTER 01 — OUR GENESIS",
       title: "Our Foundations",
-      story: "Founded in 2024, S M Skills was born out of a critical observation: the widening gap between traditional academic knowledge and modern workforce demands.",
+      story: "Founded in 2024, S M Skills was born out of a critical observation: the widening gap between traditional academic knowledge and the rapidly evolving demands of the modern workforce.",
       image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=1200"
     },
     learning: {
@@ -71,7 +71,7 @@ export const INITIAL_CONTENT: AppState = {
     faculty: {
       label: "CHAPTER 03 — THE GUARDIANS",
       title: "Taught by Practitioners",
-      description: "Our mentors are industry veterans with decades of experience.",
+      description: "Our mentors are industry veterans with decades of combined technical expertise.",
       members: [
         { id: "m1", name: "Institutional Registrar", role: "Admissions Head", bio: "Leading institutional growth through vocational excellence.", image: "https://i.pravatar.cc/150?u=reg" }
       ]
@@ -79,7 +79,7 @@ export const INITIAL_CONTENT: AppState = {
     vision: {
       label: "CHAPTER 04 — CORE DNA",
       title: "Vision & Values",
-      content: "To build a world where every learner is equipped with precision.",
+      content: "To build a world where every learner is equipped with the precision required for immediate career launching.",
       values: ["Relentless Practicality", "Absolute Transparency", "Industry Alignment", "Student Ownership"],
       image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200"
     },
@@ -105,16 +105,16 @@ export const INITIAL_CONTENT: AppState = {
         id: "n1",
         date: "2024-06-01",
         title: "Fall 2024 Intake Open",
-        description: "Secure your place in our flagship programs.",
+        description: "Secure your place in our flagship engineering and design programs.",
         isImportant: true,
         category: 'New'
       }
     ],
-    pageMeta: { title: "Campus Announcements", subtitle: "Stay informed about batch timings and events.", tagline: "OFFICIAL FEED" }
+    pageMeta: { title: "Campus Announcements", subtitle: "Stay informed about batch timings, events, and scholarships.", tagline: "OFFICIAL FEED" }
   },
   gallery: {
     list: [],
-    pageMeta: { title: "Our Campus Life", subtitle: "Explore our facilities and achievements.", tagline: "VISUAL ARCHIVES" }
+    pageMeta: { title: "Our Campus Life", subtitle: "Explore our facilities, classroom interactions, and achievement galleries.", tagline: "VISUAL ARCHIVES" }
   },
   faqs: {
     list: [
@@ -123,8 +123,8 @@ export const INITIAL_CONTENT: AppState = {
     pageMeta: { title: "Help Center", subtitle: "Common questions regarding our institute.", tagline: "ASSISTANCE" }
   },
   placements: {
-    pageMeta: { title: "Success Stories", subtitle: "Celebrating our graduates.", tagline: "PROVEN OUTCOMES" },
-    pageDescription: "S M Skills graduates are consistently hired by innovative companies.",
+    pageMeta: { title: "Success Stories", subtitle: "Celebrating S M Skills graduates who have joined industry-leading organizations.", tagline: "PROVEN OUTCOMES" },
+    pageDescription: "S M Skills graduates are consistently hired by the world's most innovative companies.",
     wallTitle: "Wall of Success",
     stats: [
       { id: "s1", label: "Average Hike", value: "85%", icon: "fa-chart-line" },
@@ -139,16 +139,16 @@ export const INITIAL_CONTENT: AppState = {
     privacy: {
       title: "Data Privacy",
       subtitle: "How S M Skills manages your records.",
-      sections: [{ id: "p1", title: "Policy", content: "Data is secure." }]
+      sections: [{ id: "p1", title: "Information Handling", content: "Student records are encrypted." }]
     },
     terms: {
       title: "Enrollment Terms",
       subtitle: "Code of conduct.",
-      sections: [{ id: "t1", title: "Conduct", content: "Professionalism is required." }]
+      sections: [{ id: "t1", title: "Academic Integrity", content: "Professionalism is required." }]
     }
   },
   career: {
-    pageMeta: { title: "Career Lab", subtitle: "Interview prep with industry vets.", tagline: "SUCCESS ROADMAP" },
+    pageMeta: { title: "Career Lab", subtitle: "Success roadmap with industry vets.", tagline: "SUCCESS ROADMAP" },
     hero: {
       title: "Career Lab",
       subtitle: "Interview prep with industry vets.",

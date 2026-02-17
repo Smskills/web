@@ -22,12 +22,11 @@ export const optimizeImage = (file: File, maxWidth = 1200, quality = 0.5): Promi
         const ctx = canvas.getContext('2d');
         if (!ctx) return reject('Could not get canvas context');
         
-        // Clear canvas to ensure transparency is preserved
+        // Clear canvas to ensure transparency is preserved if using PNG
         ctx.clearRect(0, 0, width, height);
         ctx.drawImage(img, 0, 0, width, height);
         
-        // Use image/webp as it supports both transparency and quality optimization.
-        // Modern browsers will preserve the alpha channel.
+        // Use WebP for maximum compression/quality ratio
         const optimizedDataUrl = canvas.toDataURL('image/webp', quality);
         resolve(optimizedDataUrl);
       };

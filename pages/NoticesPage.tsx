@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Notice } from '../types.ts';
 import FormattedText from '../components/FormattedText.tsx';
