@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { SiteConfig, Course } from '../types';
@@ -11,6 +12,8 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAcademicsOpen, setIsAcademicsOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('sms_is_auth') === 'true');
+  
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -35,14 +38,24 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
   }, [courses, categories]);
 
   useEffect(() => {
+    const handleAuthChange = () => {
+      setIsAuthenticated(localStorage.getItem('sms_is_auth') === 'true');
+    };
+
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsAcademicsOpen(false);
         setActiveCategory(null);
       }
     };
+
+    window.addEventListener('authChange', handleAuthChange);
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    
+    return () => {
+      window.removeEventListener('authChange', handleAuthChange);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const handleCourseClick = (courseId: string) => {
@@ -59,10 +72,13 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
         : 'text-slate-900 hover:text-emerald-600'
     }`;
 
+  // Dynamic Button Class based on state
   const adminBtnClass = `px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border flex items-center gap-2 ${
-    location.pathname === '/admin' 
+    location.pathname === '/admin' || location.pathname === '/login'
       ? 'bg-emerald-600 text-white border-emerald-700 shadow-lg' 
-      : 'bg-slate-900 text-slate-100 border-slate-950 hover:bg-emerald-600 hover:border-emerald-700'
+      : isAuthenticated 
+        ? 'bg-emerald-600/10 text-emerald-700 border-emerald-600/20 hover:bg-emerald-600 hover:text-white'
+        : 'bg-slate-900 text-slate-100 border-slate-950 hover:bg-emerald-600 hover:border-emerald-700'
   }`;
 
   const alert = config.admissionAlert;
@@ -182,10 +198,10 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
               ENROLL NOW
             </Link>
 
-            {/* DASHBOARD PLACED TO THE RIGHT OF ENROLL NOW */}
+            {/* DYNAMIC DASHBOARD/LOGIN BUTTON */}
             <Link to="/admin" className={adminBtnClass}>
-              <i className="fa-solid fa-user-shield"></i>
-              {config.loginLabel || "DASHBOARD"}
+              <i className={`fa-solid ${isAuthenticated ? 'fa-gauge-high' : 'fa-lock'}`}></i>
+              {isAuthenticated ? "DASHBOARD" : "LOGIN"}
             </Link>
           </nav>
 
@@ -230,7 +246,8 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
             <Link to="/gallery" onClick={() => setIsMenuOpen(false)} className="font-black text-xs uppercase tracking-widest text-slate-900">GALLERY</Link>
             <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="font-black text-xs uppercase tracking-widest text-slate-900">CONTACT</Link>
             <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="font-black text-xs uppercase tracking-widest text-emerald-600 flex items-center gap-2">
-               <i className="fa-solid fa-user-shield"></i> {config.loginLabel || "DASHBOARD"}
+               <i className={`fa-solid ${isAuthenticated ? 'fa-gauge-high' : 'fa-lock'}`}></i> 
+               {isAuthenticated ? "DASHBOARD" : "LOGIN"}
             </Link>
           </div>
           

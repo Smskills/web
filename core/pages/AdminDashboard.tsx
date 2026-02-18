@@ -43,17 +43,20 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
   const genericUploadRef = useRef<HTMLInputElement>(null);
   const activeUploadPath = useRef<string | null>(null);
   const activeCourseId = useRef<string | null>(null);
+  // Fix: Added missing refs for tracking specific list item image uploads
   const activeReviewId = useRef<string | null>(null);
   const activePartnerId = useRef<string | null>(null);
   const activeCareerServiceId = useRef<string | null>(null);
+
   const activeUploadCategory = useRef<string>('General');
   const activeThumbnailCategory = useRef<string | null>(null);
 
   const handleLogout = () => {
-    if (window.confirm("Are you sure you want to log out of the Institutional Dashboard?")) {
+    if (window.confirm("Are you sure you want to log out?")) {
       localStorage.removeItem('sms_auth_token');
       localStorage.removeItem('sms_is_auth');
       localStorage.removeItem('sms_auth_user');
+      window.dispatchEvent(new Event('authChange'));
       navigate('/');
     }
   };
@@ -70,7 +73,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
         setHasUnsavedChanges(false);
       } else {
         setIsError(true);
-        setStatusMsg('Save Failed: Quota Exceeded');
+        setStatusMsg('Save Failed');
       }
       setIsProcessing(false);
       setTimeout(() => setStatusMsg(''), 5000);
@@ -106,9 +109,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
     const files = e.target.files;
     if (!files || files.length === 0 || !activeUploadPath.current || isProcessing) return;
     
-    const inputElement = e.target;
     setIsProcessing(true);
-    setStatusMsg(files.length > 1 ? `Optimizing ${files.length} images...` : 'Optimizing image...');
+    const inputElement = e.target;
     
     const fileArray = Array.from(files) as File[];
 
@@ -125,17 +127,27 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
               category: activeUploadCategory.current,
               title: ''
             }));
-            next.gallery = { 
-              ...next.gallery, 
-              list: [...newItems, ...next.gallery.list] 
-            };
+            next.gallery = { ...next.gallery, list: [...newItems, ...next.gallery.list] };
             return next;
           }
           
           const url = urls[0];
-          
           if (pathParts[0] === 'courses' && activeCourseId.current) {
             next.courses = { ...next.courses, list: next.courses.list.map((c: any) => c.id === activeCourseId.current ? { ...c, image: url } : c) };
+            return next;
+          }
+
+          // Fix: Added logic to handle image updates for placements (reviews/partners) and career services
+          if (pathParts[0] === 'placements' && pathParts[1] === 'reviews' && activeReviewId.current) {
+            next.placements = { ...next.placements, reviews: next.placements.reviews.map((r: any) => r.id === activeReviewId.current ? { ...r, image: url } : r) };
+            return next;
+          }
+          if (pathParts[0] === 'placements' && pathParts[1] === 'partners' && activePartnerId.current) {
+            next.placements = { ...next.placements, partners: next.placements.partners.map((p: any) => p.id === activePartnerId.current ? { ...p, image: url } : p) };
+            return next;
+          }
+          if (pathParts[0] === 'career' && pathParts[1] === 'services' && activeCareerServiceId.current) {
+            next.career = { ...next.career, services: next.career.services.map((s: any) => s.id === activeCareerServiceId.current ? { ...s, image: url } : s) };
             return next;
           }
           
@@ -147,7 +159,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
           let current: any = next;
           for (let i = 0; i < pathParts.length - 1; i++) {
             const key = pathParts[i];
-            current[key] = Array.isArray(current[key]) ? [...current[key]] : { ...current[key] };
+            current[key] = { ...current[key] };
             current = current[key];
           }
           current[pathParts[pathParts.length - 1]] = url;
@@ -155,15 +167,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
         });
         setHasUnsavedChanges(true);
         setIsProcessing(false);
-        setStatusMsg(urls.length > 1 ? `Added ${urls.length} images.` : 'Image added.');
-        setTimeout(() => setStatusMsg(''), 3000);
         inputElement.value = '';
       })
       .catch(err => {
-        console.error("Upload failed:", err);
-        setIsProcessing(true);
+        console.error(err);
+        setIsProcessing(false);
         setIsError(true);
-        setStatusMsg("Upload failed.");
         inputElement.value = '';
       });
   };
@@ -184,13 +193,24 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
         onChange={handleGenericUpload} 
       />
 
-      <div className="bg-[#1e293b] border-b border-slate-700/50 p-6 sticky top-16 md:top-20 z-[80] shadow-2xl">
+      <div className="bg-[#1e293b] border-b border-slate-700/50 p-6 sticky top-16 md:top-24 z-[80] shadow-2xl">
         <div className="container mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
             <h1 className="text-2xl font-black uppercase tracking-tight text-white flex items-center gap-3">
               <i className="fa-solid fa-gauge-high text-emerald-500"></i>
               INSTITUTE ADMIN
             </h1>
+
+            {/* THE LOCK: Secure Session Indicator */}
+            <div className="hidden lg:flex items-center gap-2.5 px-4 py-1.5 bg-amber-500/10 border border-amber-500/30 rounded-full shadow-inner group">
+               <div className="relative">
+                 <i className="fa-solid fa-shield-halved text-amber-500 text-xs"></i>
+                 <i className="fa-solid fa-lock text-[6px] text-amber-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-0.5"></i>
+               </div>
+               <span className="text-[9px] font-black text-amber-500 uppercase tracking-[0.2em] leading-none">Secure Session Active</span>
+               <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse ml-1 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+            </div>
+
             {statusMsg && (
               <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border transition-all ${isError ? 'bg-red-500/10 text-red-500 border-red-500/20' : 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'}`}>
                 {statusMsg}
@@ -200,10 +220,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
           <div className="flex items-center gap-3">
               <button 
                 onClick={handleLogout} 
-                className="px-4 py-2 text-red-400 hover:text-white hover:bg-red-500/10 text-[10px] font-black transition-all border border-red-500/30 rounded-lg uppercase tracking-widest flex items-center gap-2"
+                className="px-4 py-2 text-slate-400 hover:text-white hover:bg-white/5 text-[10px] font-black transition-all border border-slate-700 rounded-lg uppercase tracking-widest flex items-center gap-2"
               >
                 <i className="fa-solid fa-right-from-bracket"></i>
-                Logout
+                Log out
               </button>
               <div className="w-px h-6 bg-slate-700 mx-1"></div>
               <button onClick={handleDiscard} className="px-5 py-2 text-slate-400 hover:text-white text-[10px] font-black transition-all border border-slate-700 rounded-lg uppercase tracking-widest">DISCARD</button>

@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect, Suspense, useMemo } from 'react';
-import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { HashRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { INITIAL_CONTENT } from './data/defaultContent.ts';
 import { AppState } from './types.ts';
 
@@ -22,16 +23,20 @@ import CareerGuidancePage from './pages/CareerGuidancePage.tsx';
 import PlacementReviewPage from './pages/PlacementReviewPage.tsx';
 import FAQPage from './pages/FAQPage.tsx';
 import NotFoundPage from './pages/NotFoundPage.tsx';
+import LoginPage from './pages/LoginPage.tsx';
+import ForgotPasswordPage from './pages/ForgotPasswordPage.tsx';
+import ResetPasswordPage from './pages/ResetPasswordPage.tsx';
 
 const App: React.FC = () => {
   const [isInitializing, setIsInitializing] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('sms_is_auth') === 'true');
+
   const [content, setContent] = useState<AppState>(() => {
     const saved = localStorage.getItem('edu_insta_content');
     if (!saved) return INITIAL_CONTENT;
     
     try {
       const parsed = JSON.parse(saved);
-      
       const mergedState: AppState = {
         ...INITIAL_CONTENT,
         ...parsed,
@@ -73,13 +78,22 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => setIsInitializing(false), 800);
-    return () => clearTimeout(timer);
+    
+    const handleAuthChange = () => {
+      setIsAuthenticated(localStorage.getItem('sms_is_auth') === 'true');
+    };
+
+    window.addEventListener('authChange', handleAuthChange);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('authChange', handleAuthChange);
+    };
   }, []);
 
   const brandingStyles = useMemo(() => {
-    const primary = "#059669"; // Professional Green
-    const midnight = "#020617"; // Deep Midnight Navy (Perfect for Contrast)
-    const accent = "#10b981"; // Vibrant Accent Green
+    const primary = "#059669";
+    const midnight = "#020617";
+    const accent = "#10b981";
     const radius = content.theme.radius;
     const borderRadius = radius === 'none' ? '0' : radius === 'small' ? '0.5rem' : radius === 'medium' ? '1rem' : radius === 'large' ? '2.5rem' : '9999px';
     
@@ -90,15 +104,6 @@ const App: React.FC = () => {
         --brand-accent: ${accent};
         --brand-radius: ${borderRadius};
       }
-      .bg-emerald-600 { background-color: var(--brand-primary) !important; }
-      .text-emerald-600 { color: var(--brand-primary) !important; }
-      .border-emerald-600 { border-color: var(--brand-primary) !important; }
-      
-      .bg-midnight-navy { background-color: var(--brand-midnight) !important; }
-      .text-midnight-navy { color: var(--brand-midnight) !important; }
-      
-      .bg-emerald-500 { background-color: var(--brand-accent) !important; }
-      .text-emerald-500 { color: var(--brand-accent) !important; }
     `;
   }, [content.theme]);
 
@@ -119,7 +124,7 @@ const App: React.FC = () => {
     <HashRouter>
       <style>{brandingStyles}</style>
       <ScrollToTop />
-      <div className="flex flex-col min-h-screen overflow-x-hidden bg-white">
+      <div className="flex flex-col min-h-screen overflow-x-hidden bg-white font-sans">
         <Header config={content.site} courses={content.courses.list} />
         <main id="main-content" className={`flex-grow ${headerHeightClass} focus:outline-none`} tabIndex={-1}>
           <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><i className="fa-solid fa-spinner fa-spin text-4xl text-emerald-600"></i></div>}>
@@ -131,7 +136,22 @@ const App: React.FC = () => {
               <Route path="/gallery" element={<GalleryPage content={content} />} />
               <Route path="/faq" element={<FAQPage faqsState={content.faqs} contact={content.site.contact} />} />
               <Route path="/contact" element={<ContactPage config={content.site.contact} social={content.site.social} content={content} />} />
-              <Route path="/admin" element={<AdminDashboard content={content} onUpdate={updateContent} />} />
+              
+              {/* AUTHENTICATION ROUTES */}
+              <Route path="/login" element={<LoginPage siteConfig={content.site} />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage siteConfig={content.site} />} />
+              <Route path="/reset-password" element={<ResetPasswordPage siteConfig={content.site} />} />
+              
+              {/* PROTECTED ADMIN ROUTE */}
+              <Route 
+                path="/admin" 
+                element={
+                  isAuthenticated 
+                    ? <AdminDashboard content={content} onUpdate={updateContent} /> 
+                    : <Navigate to="/login" replace />
+                } 
+              />
+              
               <Route path="/enroll" element={<EnrollmentPage content={content} />} />
               <Route path="/privacy-policy" element={<PrivacyPolicyPage siteName={content.site.name} data={content.legal.privacy} />} />
               <Route path="/terms-of-service" element={<TermsOfServicePage data={content.legal.terms} />} />
