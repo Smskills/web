@@ -114,7 +114,7 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
             <img 
               src={config.logo || "https://lwfiles.mycourse.app/62a6cd5-public/6efdd5e.png"} 
               alt="Logo" 
-              className="h-12 w-auto object-contain transition-transform group-hover:scale-105" 
+              className="h-16 w-auto object-contain transition-transform group-hover:scale-105" 
             />
             <div className="hidden md:flex flex-col leading-tight border-l border-slate-200 pl-4">
               <span className="font-black text-xl text-emerald-600 tracking-tighter uppercase whitespace-nowrap transition-colors">
