@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppState, Course, Notice, FAQItem, FormField, PlacementStat, StudentReview, IndustryPartner, LegalSection, CareerService, CustomPage, TeamMember, PageMeta, SocialLink, AchievementStat, ExtraChapter, Lead } from '../types.ts';
@@ -36,7 +37,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
   const [isProcessing, setIsProcessing] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   
-  // Crop state
   const [croppingCourseId, setCroppingCourseId] = useState<string | null>(null);
   
   useEffect(() => {
@@ -98,13 +98,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
 
   const trackChange = () => setHasUnsavedChanges(true);
 
-  // Helper State Update Functions
   const updateField = (section: keyof AppState, field: string, value: any) => {
     setLocalContent(prev => ({ ...prev, [section]: { ...(prev[section] as any), [field]: value } }));
     trackChange();
   };
 
-  // Fix: Added updateNestedField helper to handle 2-level state updates properly (e.g., home.hero.title)
   const updateNestedField = (section: keyof AppState, parent: string, field: string, value: any) => {
     setLocalContent(prev => ({ 
       ...prev, 
@@ -125,7 +123,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
     
     setIsProcessing(true);
     const inputElement = e.target;
-    
     const fileArray = Array.from(files) as File[];
 
     Promise.all(fileArray.map(file => optimizeImage(file)))
@@ -211,7 +208,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
   const currentCroppingCourse = croppingCourseId ? localContent.courses.list.find(c => c.id === croppingCourseId) : null;
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-slate-100 pb-20 font-sans">
+    <div className="min-h-screen bg-slate-100 text-slate-900 pb-20 font-sans transition-colors duration-500">
       <input 
         type="file" 
         ref={genericUploadRef} 
@@ -221,7 +218,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
         onChange={handleGenericUpload} 
       />
 
-      {/* Institutional Cropper Modal */}
       {currentCroppingCourse && (
         <ImageCropper 
           imageSrc={currentCroppingCourse.image}
@@ -231,25 +227,26 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
         />
       )}
 
-      <div className="bg-[#1e293b] border-b border-slate-700/50 p-6 sticky top-16 md:top-24 z-[80] shadow-2xl">
+      {/* Light Professional Header */}
+      <div className="bg-white/80 backdrop-blur-xl border-b border-slate-200 p-6 sticky top-16 md:top-24 z-[80] shadow-sm">
         <div className="container mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-6">
-            <h1 className="text-2xl font-black uppercase tracking-tight text-white flex items-center gap-3">
-              <i className="fa-solid fa-gauge-high text-emerald-500"></i>
+            <h1 className="text-2xl font-black uppercase tracking-tight text-slate-900 flex items-center gap-3">
+              <i className="fa-solid fa-gauge-high text-emerald-600"></i>
               INSTITUTE ADMIN
             </h1>
 
-            <div className="hidden lg:flex items-center gap-2.5 px-4 py-1.5 bg-amber-500/10 border border-amber-500/30 rounded-full shadow-inner group">
+            <div className="hidden lg:flex items-center gap-2.5 px-4 py-1.5 bg-emerald-50 border border-emerald-100 rounded-full group">
                <div className="relative">
-                 <i className="fa-solid fa-shield-halved text-amber-500 text-xs"></i>
-                 <i className="fa-solid fa-lock text-[6px] text-amber-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-0.5"></i>
+                 <i className="fa-solid fa-shield-halved text-emerald-600 text-xs"></i>
+                 <i className="fa-solid fa-lock text-[6px] text-emerald-600 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-0.5"></i>
                </div>
-               <span className="text-[9px] font-black text-amber-500 uppercase tracking-[0.2em] leading-none">Secure Session Active</span>
+               <span className="text-[9px] font-black text-emerald-600 uppercase tracking-[0.2em] leading-none">Management Session</span>
                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse ml-1 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
             </div>
 
             {statusMsg && (
-              <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border transition-all ${isError ? 'bg-red-500/10 text-red-500 border-red-500/20' : 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'}`}>
+              <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border transition-all ${isError ? 'bg-red-50 text-red-600 border-red-200' : 'bg-emerald-50 text-emerald-600 border-emerald-200'}`}>
                 {statusMsg}
               </span>
             )}
@@ -257,29 +254,30 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
           <div className="flex items-center gap-3">
               <button 
                 onClick={handleLogout} 
-                className="px-4 py-2 text-slate-400 hover:text-white hover:bg-white/5 text-[10px] font-black transition-all border border-slate-700 rounded-lg uppercase tracking-widest flex items-center gap-2"
+                className="px-4 py-2 text-slate-500 hover:text-red-600 hover:bg-red-50 text-[10px] font-black transition-all border border-slate-200 rounded-lg uppercase tracking-widest flex items-center gap-2"
               >
                 <i className="fa-solid fa-right-from-bracket"></i>
                 Log out
               </button>
-              <div className="w-px h-6 bg-slate-700 mx-1"></div>
-              <button onClick={handleDiscard} className="px-5 py-2 text-slate-400 hover:text-white text-[10px] font-black transition-all border border-slate-700 rounded-lg uppercase tracking-widest">DISCARD</button>
-              <button onClick={handleSave} className={`px-8 py-2 rounded-lg text-[10px] font-black transition-all shadow-xl uppercase tracking-widest ${hasUnsavedChanges ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-slate-800 text-slate-500 cursor-default'}`}>Save All Changes</button>
+              <div className="w-px h-6 bg-slate-200 mx-1"></div>
+              <button onClick={handleDiscard} className="px-5 py-2 text-slate-500 hover:text-slate-900 text-[10px] font-black transition-all border border-slate-200 rounded-lg uppercase tracking-widest">DISCARD</button>
+              <button onClick={handleSave} className={`px-8 py-2 rounded-lg text-[10px] font-black transition-all shadow-xl uppercase tracking-widest ${hasUnsavedChanges ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-slate-200 text-slate-400 cursor-default shadow-none'}`}>Save All Changes</button>
           </div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 mt-8 flex flex-col md:flex-row gap-8">
+        {/* Navigation Sidebar - Clean Light Theme */}
         <div className="w-full md:w-64 space-y-4 shrink-0 h-fit z-50">
           <button 
             onClick={() => setActiveTab('leads')} 
-            className={`w-full text-left px-5 py-4 rounded-2xl font-black transition-all flex items-center gap-4 border shadow-xl group ${activeTab === 'leads' ? 'bg-emerald-600 border-emerald-500 text-white' : 'text-emerald-500 bg-emerald-500/5 border-emerald-500/20 hover:bg-emerald-500/10'}`}
+            className={`w-full text-left px-5 py-4 rounded-2xl font-black transition-all flex items-center gap-4 border shadow-sm group ${activeTab === 'leads' ? 'bg-emerald-600 border-emerald-500 text-white shadow-xl' : 'text-slate-600 bg-white border-slate-200 hover:bg-emerald-50 hover:border-emerald-200 hover:text-emerald-700'}`}
           >
               <i className="fa-solid fa-user-graduate shrink-0 text-lg"></i>
               <span className="leading-none text-sm uppercase tracking-widest">Student Leads</span>
           </button>
           
-          <div className="h-px bg-slate-800 my-6 opacity-50"></div>
+          <div className="h-px bg-slate-200 my-6 opacity-80"></div>
           
           <div className="space-y-2">
             {(['site', 'home', 'pages', 'about', 'academics', 'notices', 'gallery', 'faq', 'form', 'contact', 'footer', 'placements', 'legal', 'career'] as const).map(tab => (
@@ -288,8 +286,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
                 onClick={() => setActiveTab(tab)} 
                 className={`w-full text-left px-5 py-4 rounded-2xl font-black transition-all border text-[13px] flex items-center gap-4 ${
                   activeTab === tab 
-                    ? 'bg-slate-700 border-emerald-500/50 text-emerald-400 shadow-xl translate-x-1' 
-                    : 'text-slate-500 border-transparent hover:bg-slate-800 hover:text-slate-200'
+                    ? 'bg-white border-emerald-500 text-emerald-600 shadow-lg translate-x-1 ring-2 ring-emerald-50' 
+                    : 'text-slate-500 bg-white/50 border-transparent hover:bg-white hover:text-slate-900 hover:shadow-md'
                 }`}
               >
                 <i className={`fa-solid fa-${
@@ -315,10 +313,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
           </div>
         </div>
 
-        <div className="flex-grow bg-[#1e293b] rounded-[2.5rem] p-8 md:p-12 border border-slate-700/50 shadow-4xl min-h-[75vh]">
+        {/* Content Area - Bright White Card */}
+        <div className="flex-grow bg-white rounded-[2.5rem] p-8 md:p-12 border border-slate-200 shadow-2xl shadow-slate-200/50 min-h-[75vh]">
           {activeTab === 'leads' && <LeadsTab leads={localContent.leads || []} onUpdateLeads={(updated) => { setLocalContent(prev => ({ ...prev, leads: updated })); trackChange(); }} />}
           {activeTab === 'site' && <SiteTab data={localContent.site} theme={localContent.theme} updateTheme={(f, v) => updateField('theme', f, v)} updateField={(f, v) => updateField('site', f, v)} onLogoUploadClick={() => triggerGenericUpload('site.logo')} updateNavigation={(idx, f, v) => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, navigation: prev.site.navigation.map((n, i) => i === idx ? { ...n, [f]: v } : n) } })); trackChange(); }} addNavigation={() => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, navigation: [...prev.site.navigation, { label: 'New Link', path: '/' }] } })); trackChange(); }} removeNavigation={(idx) => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, navigation: prev.site.navigation.filter((_, i) => i !== idx) } })); trackChange(); }} />}
-          {/* Fix: Replaced incorrect updateField usage with updateNestedField to resolve "Expected 3 arguments, but got 4" error */}
           {activeTab === 'home' && <HomeTab data={localContent.home} updateNestedField={(p, f, v) => updateNestedField('home', p, f, v)} updateHomeSubField={(p, f, v) => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, [p]: { ...(prev.home as any)[p], [f]: v } } })); trackChange(); }} onHeroBgClick={() => triggerGenericUpload('home.hero.bgImage')} onShowcaseImgClick={() => triggerGenericUpload('home.bigShowcase.image')} addHighlight={() => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, highlights: [...prev.home.highlights, { icon: 'fa-star', title: 'New', description: '' }] } })); trackChange(); }} updateHighlight={(idx, f, v) => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, highlights: prev.home.highlights.map((h, i) => i === idx ? { ...h, [f]: v } : h) } })); trackChange(); }} deleteHighlight={(idx) => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, highlights: prev.home.highlights.filter((_, i) => i !== idx) } })); trackChange(); }} reorderSections={(idx, dir) => { setLocalContent(prev => { const order = [...prev.home.sectionOrder]; const t = dir === 'up' ? idx - 1 : idx + 1; if (t >= 0 && t < order.length) [order[idx], order[t]] = [order[t], order[idx]]; return { ...prev, home: { ...prev.home, sectionOrder: order } }; }); trackChange(); }} />}
           {activeTab === 'about' && <AboutTab data={localContent.about} updateChapter={(ch, f, v) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, [ch]: { ...(prev.about as any)[ch], [f]: v } } })); trackChange(); }} triggerUpload={(p) => triggerGenericUpload(p)} addTeamMember={() => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, faculty: { ...prev.about.faculty, members: [...prev.about.faculty.members, { id: Date.now().toString(), name: 'Name', role: 'Role', bio: '', image: 'https://i.pravatar.cc/150' }] } } })); trackChange(); }} updateTeamMember={(id, f, v) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, faculty: { ...prev.about.faculty, members: prev.about.faculty.members.map(m => m.id === id ? { ...m, [f]: v } : m) } } })); trackChange(); }} removeTeamMember={(id) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, faculty: { ...prev.about.faculty, members: prev.about.faculty.members.filter(m => m.id !== id) } } })); trackChange(); }} updateStats={(id, f, v) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, achievements: { ...prev.about.achievements, stats: prev.about.achievements.stats.map(s => s.id === id ? { ...s, [f]: v } : s) } } })); trackChange(); }} addStat={() => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, achievements: { ...prev.about.achievements, stats: [...prev.about.achievements.stats, { id: Date.now().toString(), label: 'Stat', value: '0' }] } } })); trackChange(); }} removeStat={(id) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, achievements: { ...prev.about.achievements, stats: prev.about.achievements.stats.filter(s => s.id !== id) } } })); trackChange(); }} updateValues={(idx, v) => { setLocalContent(prev => { const next = [...prev.about.vision.values]; next[idx] = v; return { ...prev, about: { ...prev.about, vision: { ...prev.about.vision, values: next } } }; }); trackChange(); }} addValue={() => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, vision: { ...prev.about.vision, values: [...prev.about.vision.values, 'New Value'] } } })); trackChange(); }} removeValue={(idx) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, vision: { ...prev.about.vision, values: prev.about.vision.values.filter((_, i) => i !== idx) } } })); trackChange(); }} addExtraChapter={() => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, extraChapters: [...(prev.about.extraChapters || []), { id: Date.now().toString(), label: 'CH', title: 'Title', story: '', image: '' }] } })); trackChange(); }} updateExtraChapter={(id, f, v) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, extraChapters: prev.about.extraChapters.map(c => c.id === id ? { ...c, [f]: v } : c) } })); trackChange(); }} removeExtraChapter={(id) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, extraChapters: prev.about.extraChapters.filter(c => c.id !== id) } })); trackChange(); }} />}
           {activeTab === 'academics' && <AcademicsTab coursesState={localContent.courses} updateCourseItem={(id, f, v) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: prev.courses.list.map(c => c.id === id ? { ...c, [f]: v } : c) } })); trackChange(); }} updatePageMeta={(f, v) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, pageMeta: { ...prev.courses.pageMeta, [f]: v } } })); trackChange(); }} onCourseImageClick={(id) => { activeCourseId.current = id; triggerGenericUpload('courses.list'); }} onCropCardClick={(id) => setCroppingCourseId(id)} addItem={() => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: [{ id: Date.now().toString(), name: 'New Program', duration: '6 Months', mode: 'Offline', academicLevel: 'Certificate (NSDC)', industry: 'General', description: '', status: 'Active', image: 'https://picsum.photos/800/600', price: 'Rs. 0', certification: 'SMS Technical Diploma', eligibility: '', benefits: '' }, ...prev.courses.list] } })); trackChange(); }} deleteItem={(id) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: prev.courses.list.filter(c => c.id !== id) } })); trackChange(); }} />}
