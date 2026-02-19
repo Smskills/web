@@ -6,6 +6,7 @@ interface ProgramEditorProps {
   course: Course;
   updateCourseItem: (id: string, field: keyof Course, value: any) => void;
   onCourseImageClick: (id: string) => void;
+  onCropCardClick: (id: string) => void;
   onDelete: (id: string, name: string) => void;
 }
 
@@ -13,6 +14,7 @@ const ProgramEditor: React.FC<ProgramEditorProps> = ({
   course, 
   updateCourseItem, 
   onCourseImageClick, 
+  onCropCardClick,
   onDelete 
 }) => {
   const handlePriceChange = (id: string, value: string) => {
@@ -25,16 +27,33 @@ const ProgramEditor: React.FC<ProgramEditorProps> = ({
     <div className="bg-white p-8 rounded-[2rem] border border-slate-200 group transition-all hover:border-emerald-500/50 shadow-sm">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <div className="lg:col-span-1">
-          <div 
-            onClick={() => onCourseImageClick(course.id)} 
-            className="relative aspect-video rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 group/img cursor-pointer"
-          >
-            <img src={course.image} className="w-full h-full object-cover transition-opacity group-hover/img:opacity-50" />
-            <div className="absolute inset-0 bg-emerald-600/20 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition-opacity">
-              <i className="fa-solid fa-camera text-emerald-700 text-2xl"></i>
+          <div className="space-y-4">
+            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Hero Image (Full View)</label>
+            <div 
+              onClick={() => onCourseImageClick(course.id)} 
+              className="relative aspect-video rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 group/img cursor-pointer"
+            >
+              <img src={course.image} className="w-full h-full object-cover transition-opacity group-hover/img:opacity-50" />
+              <div className="absolute inset-0 bg-emerald-600/20 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition-opacity">
+                <i className="fa-solid fa-camera text-emerald-700 text-2xl"></i>
+              </div>
+            </div>
+            
+            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 mt-4 block">Card Framing (Catalog)</label>
+            <div className="flex gap-3">
+              <div className="w-20 h-15 aspect-[4/3] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
+                <img src={course.cardImage || course.image} className="w-full h-full object-cover" />
+              </div>
+              <button 
+                onClick={() => onCropCardClick(course.id)}
+                className="flex-grow py-2 bg-slate-900 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all flex items-center justify-center gap-2"
+              >
+                <i className="fa-solid fa-crop-simple"></i> Edit Framing
+              </button>
             </div>
           </div>
-          <div className="mt-4 space-y-3">
+
+          <div className="mt-6 space-y-3">
              <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200">
                 <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Home Spotlight</span>
                 <button 
@@ -131,7 +150,7 @@ const ProgramEditor: React.FC<ProgramEditorProps> = ({
           </div>
 
           <div className="space-y-1">
-            <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Program Description</label>
+            <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Main Description</label>
             <textarea value={course.description} onChange={e => updateCourseItem(course.id, 'description', e.target.value)} className="w-full bg-slate-50 border border-slate-200 p-3 rounded text-sm text-slate-600 resize-none outline-none focus:ring-1 focus:ring-emerald-500 shadow-inner" rows={3} placeholder="Detailed course summary..." />
             <p className="text-[9px] text-emerald-600/70 font-bold uppercase mt-1 tracking-widest italic">Supports basic HTML tags: &lt;b&gt;, &lt;ul&gt;, &lt;li&gt;</p>
           </div>

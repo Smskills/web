@@ -20,6 +20,7 @@ import LegalTab from '../admin/LegalTab.tsx';
 import CareerTab from '../admin/CareerTab.tsx';
 import PagesTab from '../admin/PagesTab.tsx';
 import LeadsTab from '../admin/LeadsTab.tsx';
+import ImageCropper from '../components/ImageCropper.tsx';
 
 interface AdminDashboardProps {
   content: AppState;
@@ -35,6 +36,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
   const [isProcessing, setIsProcessing] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   
+  // Crop state
+  const [croppingCourseId, setCroppingCourseId] = useState<string | null>(null);
+  
   useEffect(() => {
     setLocalContent(content);
     setHasUnsavedChanges(false);
@@ -43,7 +47,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
   const genericUploadRef = useRef<HTMLInputElement>(null);
   const activeUploadPath = useRef<string | null>(null);
   const activeCourseId = useRef<string | null>(null);
-  // Fix: Added missing refs for tracking specific list item image uploads
   const activeReviewId = useRef<string | null>(null);
   const activePartnerId = useRef<string | null>(null);
   const activeCareerServiceId = useRef<string | null>(null);
@@ -95,13 +98,24 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
 
   const trackChange = () => setHasUnsavedChanges(true);
 
+  // Helper State Update Functions
   const updateField = (section: keyof AppState, field: string, value: any) => {
     setLocalContent(prev => ({ ...prev, [section]: { ...(prev[section] as any), [field]: value } }));
     trackChange();
   };
 
+  // Fix: Added updateNestedField helper to handle 2-level state updates properly (e.g., home.hero.title)
   const updateNestedField = (section: keyof AppState, parent: string, field: string, value: any) => {
-    setLocalContent(prev => ({ ...prev, [section]: { ...(prev[section] as any), [parent]: { ...(prev[section] as any)[parent], [field]: value } } }));
+    setLocalContent(prev => ({ 
+      ...prev, 
+      [section]: { 
+        ...(prev[section] as any), 
+        [parent]: { 
+          ...(prev[section] as any)[parent], 
+          [field]: value 
+        } 
+      } 
+    }));
     trackChange();
   };
 
@@ -137,7 +151,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
             return next;
           }
 
-          // Fix: Added logic to handle image updates for placements (reviews/partners) and career services
           if (pathParts[0] === 'placements' && pathParts[1] === 'reviews' && activeReviewId.current) {
             next.placements = { ...next.placements, reviews: next.placements.reviews.map((r: any) => r.id === activeReviewId.current ? { ...r, image: url } : r) };
             return next;
@@ -182,6 +195,21 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
     genericUploadRef.current?.click();
   };
 
+  const handleApplyCrop = (croppedBase64: string) => {
+    if (!croppingCourseId) return;
+    setLocalContent(prev => ({
+      ...prev,
+      courses: {
+        ...prev.courses,
+        list: prev.courses.list.map(c => c.id === croppingCourseId ? { ...c, cardImage: croppedBase64 } : c)
+      }
+    }));
+    trackChange();
+    setCroppingCourseId(null);
+  };
+
+  const currentCroppingCourse = croppingCourseId ? localContent.courses.list.find(c => c.id === croppingCourseId) : null;
+
   return (
     <div className="min-h-screen bg-[#0f172a] text-slate-100 pb-20 font-sans">
       <input 
@@ -193,6 +221,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
         onChange={handleGenericUpload} 
       />
 
+      {/* Institutional Cropper Modal */}
+      {currentCroppingCourse && (
+        <ImageCropper 
+          imageSrc={currentCroppingCourse.image}
+          onCrop={handleApplyCrop}
+          onCancel={() => setCroppingCourseId(null)}
+          aspectRatio={4/3}
+        />
+      )}
+
       <div className="bg-[#1e293b] border-b border-slate-700/50 p-6 sticky top-16 md:top-24 z-[80] shadow-2xl">
         <div className="container mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-6">
@@ -201,7 +239,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
               INSTITUTE ADMIN
             </h1>
 
-            {/* THE LOCK: Secure Session Indicator */}
             <div className="hidden lg:flex items-center gap-2.5 px-4 py-1.5 bg-amber-500/10 border border-amber-500/30 rounded-full shadow-inner group">
                <div className="relative">
                  <i className="fa-solid fa-shield-halved text-amber-500 text-xs"></i>
@@ -281,9 +318,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
         <div className="flex-grow bg-[#1e293b] rounded-[2.5rem] p-8 md:p-12 border border-slate-700/50 shadow-4xl min-h-[75vh]">
           {activeTab === 'leads' && <LeadsTab leads={localContent.leads || []} onUpdateLeads={(updated) => { setLocalContent(prev => ({ ...prev, leads: updated })); trackChange(); }} />}
           {activeTab === 'site' && <SiteTab data={localContent.site} theme={localContent.theme} updateTheme={(f, v) => updateField('theme', f, v)} updateField={(f, v) => updateField('site', f, v)} onLogoUploadClick={() => triggerGenericUpload('site.logo')} updateNavigation={(idx, f, v) => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, navigation: prev.site.navigation.map((n, i) => i === idx ? { ...n, [f]: v } : n) } })); trackChange(); }} addNavigation={() => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, navigation: [...prev.site.navigation, { label: 'New Link', path: '/' }] } })); trackChange(); }} removeNavigation={(idx) => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, navigation: prev.site.navigation.filter((_, i) => i !== idx) } })); trackChange(); }} />}
+          {/* Fix: Replaced incorrect updateField usage with updateNestedField to resolve "Expected 3 arguments, but got 4" error */}
           {activeTab === 'home' && <HomeTab data={localContent.home} updateNestedField={(p, f, v) => updateNestedField('home', p, f, v)} updateHomeSubField={(p, f, v) => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, [p]: { ...(prev.home as any)[p], [f]: v } } })); trackChange(); }} onHeroBgClick={() => triggerGenericUpload('home.hero.bgImage')} onShowcaseImgClick={() => triggerGenericUpload('home.bigShowcase.image')} addHighlight={() => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, highlights: [...prev.home.highlights, { icon: 'fa-star', title: 'New', description: '' }] } })); trackChange(); }} updateHighlight={(idx, f, v) => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, highlights: prev.home.highlights.map((h, i) => i === idx ? { ...h, [f]: v } : h) } })); trackChange(); }} deleteHighlight={(idx) => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, highlights: prev.home.highlights.filter((_, i) => i !== idx) } })); trackChange(); }} reorderSections={(idx, dir) => { setLocalContent(prev => { const order = [...prev.home.sectionOrder]; const t = dir === 'up' ? idx - 1 : idx + 1; if (t >= 0 && t < order.length) [order[idx], order[t]] = [order[t], order[idx]]; return { ...prev, home: { ...prev.home, sectionOrder: order } }; }); trackChange(); }} />}
           {activeTab === 'about' && <AboutTab data={localContent.about} updateChapter={(ch, f, v) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, [ch]: { ...(prev.about as any)[ch], [f]: v } } })); trackChange(); }} triggerUpload={(p) => triggerGenericUpload(p)} addTeamMember={() => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, faculty: { ...prev.about.faculty, members: [...prev.about.faculty.members, { id: Date.now().toString(), name: 'Name', role: 'Role', bio: '', image: 'https://i.pravatar.cc/150' }] } } })); trackChange(); }} updateTeamMember={(id, f, v) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, faculty: { ...prev.about.faculty, members: prev.about.faculty.members.map(m => m.id === id ? { ...m, [f]: v } : m) } } })); trackChange(); }} removeTeamMember={(id) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, faculty: { ...prev.about.faculty, members: prev.about.faculty.members.filter(m => m.id !== id) } } })); trackChange(); }} updateStats={(id, f, v) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, achievements: { ...prev.about.achievements, stats: prev.about.achievements.stats.map(s => s.id === id ? { ...s, [f]: v } : s) } } })); trackChange(); }} addStat={() => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, achievements: { ...prev.about.achievements, stats: [...prev.about.achievements.stats, { id: Date.now().toString(), label: 'Stat', value: '0' }] } } })); trackChange(); }} removeStat={(id) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, achievements: { ...prev.about.achievements, stats: prev.about.achievements.stats.filter(s => s.id !== id) } } })); trackChange(); }} updateValues={(idx, v) => { setLocalContent(prev => { const next = [...prev.about.vision.values]; next[idx] = v; return { ...prev, about: { ...prev.about, vision: { ...prev.about.vision, values: next } } }; }); trackChange(); }} addValue={() => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, vision: { ...prev.about.vision, values: [...prev.about.vision.values, 'New Value'] } } })); trackChange(); }} removeValue={(idx) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, vision: { ...prev.about.vision, values: prev.about.vision.values.filter((_, i) => i !== idx) } } })); trackChange(); }} addExtraChapter={() => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, extraChapters: [...(prev.about.extraChapters || []), { id: Date.now().toString(), label: 'CH', title: 'Title', story: '', image: '' }] } })); trackChange(); }} updateExtraChapter={(id, f, v) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, extraChapters: prev.about.extraChapters.map(c => c.id === id ? { ...c, [f]: v } : c) } })); trackChange(); }} removeExtraChapter={(id) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, extraChapters: prev.about.extraChapters.filter(c => c.id !== id) } })); trackChange(); }} />}
-          {activeTab === 'academics' && <AcademicsTab coursesState={localContent.courses} updateCourseItem={(id, f, v) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: prev.courses.list.map(c => c.id === id ? { ...c, [f]: v } : c) } })); trackChange(); }} updatePageMeta={(f, v) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, pageMeta: { ...prev.courses.pageMeta, [f]: v } } })); trackChange(); }} onCourseImageClick={(id) => { activeCourseId.current = id; triggerGenericUpload('courses.list'); }} addItem={() => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: [{ id: Date.now().toString(), name: 'New Program', duration: '6 Months', mode: 'Offline', academicLevel: 'Certificate (NSDC)', industry: 'General', description: '', status: 'Active', image: 'https://picsum.photos/800/600', price: 'Rs. 0', certification: 'SMS Technical Diploma', eligibility: '', benefits: '' }, ...prev.courses.list] } })); trackChange(); }} deleteItem={(id) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: prev.courses.list.filter(c => c.id !== id) } })); trackChange(); }} />}
+          {activeTab === 'academics' && <AcademicsTab coursesState={localContent.courses} updateCourseItem={(id, f, v) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: prev.courses.list.map(c => c.id === id ? { ...c, [f]: v } : c) } })); trackChange(); }} updatePageMeta={(f, v) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, pageMeta: { ...prev.courses.pageMeta, [f]: v } } })); trackChange(); }} onCourseImageClick={(id) => { activeCourseId.current = id; triggerGenericUpload('courses.list'); }} onCropCardClick={(id) => setCroppingCourseId(id)} addItem={() => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: [{ id: Date.now().toString(), name: 'New Program', duration: '6 Months', mode: 'Offline', academicLevel: 'Certificate (NSDC)', industry: 'General', description: '', status: 'Active', image: 'https://picsum.photos/800/600', price: 'Rs. 0', certification: 'SMS Technical Diploma', eligibility: '', benefits: '' }, ...prev.courses.list] } })); trackChange(); }} deleteItem={(id) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: prev.courses.list.filter(c => c.id !== id) } })); trackChange(); }} />}
           {activeTab === 'notices' && <NoticesTab noticesState={localContent.notices} updateNoticeItem={(id, f, v) => { setLocalContent(prev => ({ ...prev, notices: { ...prev.notices, list: prev.notices.list.map(n => n.id === id ? { ...n, [f]: v } : n) } })); trackChange(); }} updatePageMeta={(f, v) => { setLocalContent(prev => ({ ...prev, notices: { ...prev.notices, pageMeta: { ...prev.notices.pageMeta, [f]: v } } })); trackChange(); }} addItem={() => { setLocalContent(prev => ({ ...prev, notices: { ...prev.notices, list: [{ id: Date.now().toString(), date: new Date().toISOString().split('T')[0], title: 'Announcement', description: '', isImportant: false, category: 'General' }, ...prev.notices.list] } })); trackChange(); }} deleteItem={(id) => { setLocalContent(prev => ({ ...prev, notices: { ...prev.notices, list: prev.notices.list.filter(n => n.id !== id) } })); trackChange(); }} />}
           {activeTab === 'gallery' && <GalleryTab galleryState={localContent.gallery} galleryMetadata={localContent.galleryMetadata} updateGalleryItem={(id, f, v) => { setLocalContent(prev => ({ ...prev, gallery: { ...prev.gallery, list: prev.gallery.list.map(i => i.id === id ? { ...i, [f]: v } : i) } })); trackChange(); }} updatePageMeta={(f, v) => { setLocalContent(prev => ({ ...prev, gallery: { ...prev.gallery, pageMeta: { ...prev.gallery.pageMeta, [f]: v } } })); trackChange(); }} deleteItem={(id) => { setLocalContent(prev => ({ ...prev, gallery: { ...prev.gallery, list: prev.gallery.list.filter(i => i.id !== id) } })); trackChange(); }} triggerUpload={(cat) => { activeUploadCategory.current = cat; triggerGenericUpload('gallery'); }} triggerThumbnailUpload={(cat) => { activeThumbnailCategory.current = cat; triggerGenericUpload('gallery.thumbnails'); }} />}
           {activeTab === 'faq' && <FAQTab faqsState={localContent.faqs} updateFAQ={(id, f, v) => { setLocalContent(prev => ({ ...prev, faqs: { ...prev.faqs, list: prev.faqs.list.map(i => i.id === id ? { ...i, [f]: v } : i) } })); trackChange(); }} updatePageMeta={(f, v) => { setLocalContent(prev => ({ ...prev, faqs: { ...prev.faqs, pageMeta: { ...prev.faqs.pageMeta, [f]: v } } })); trackChange(); }} addFAQ={() => { setLocalContent(prev => ({ ...prev, faqs: { ...prev.faqs, list: [{ id: Date.now().toString(), question: 'Question?', answer: '', category: 'General' }, ...prev.faqs.list] } })); trackChange(); }} deleteFAQ={(id) => { setLocalContent(prev => ({ ...prev, faqs: { ...prev.faqs, list: prev.faqs.list.filter(i => i.id !== id) } })); trackChange(); }} reorderFAQs={(s, e) => { setLocalContent(prev => { const next = [...prev.faqs.list]; const [rem] = next.splice(s, 1); next.splice(e, 0, rem); return { ...prev, faqs: { ...prev.faqs, list: next } }; }); trackChange(); }} />}

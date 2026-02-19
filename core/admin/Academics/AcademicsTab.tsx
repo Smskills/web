@@ -9,6 +9,7 @@ interface AcademicsTabProps {
   updateCourseItem: (id: string, field: keyof Course, value: any) => void;
   updatePageMeta: (field: keyof PageMeta, value: string) => void;
   onCourseImageClick: (id: string) => void;
+  onCropCardClick: (id: string) => void;
   addItem: () => void;
   deleteItem: (id: string) => void;
 }
@@ -18,6 +19,7 @@ const AcademicsTab: React.FC<AcademicsTabProps> = ({
   updateCourseItem, 
   updatePageMeta,
   onCourseImageClick, 
+  onCropCardClick,
   addItem, 
   deleteItem 
 }) => {
@@ -49,6 +51,7 @@ const AcademicsTab: React.FC<AcademicsTabProps> = ({
         list={list} 
         updateCourseItem={updateCourseItem} 
         onCourseImageClick={onCourseImageClick} 
+        onCropCardClick={onCropCardClick}
         deleteItem={deleteItem} 
       />
     </div>

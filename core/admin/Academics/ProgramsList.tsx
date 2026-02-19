@@ -7,6 +7,7 @@ interface ProgramsListProps {
   list: Course[];
   updateCourseItem: (id: string, field: keyof Course, value: any) => void;
   onCourseImageClick: (id: string) => void;
+  onCropCardClick: (id: string) => void;
   deleteItem: (id: string) => void;
 }
 
@@ -14,6 +15,7 @@ const ProgramsList: React.FC<ProgramsListProps> = ({
   list, 
   updateCourseItem, 
   onCourseImageClick, 
+  onCropCardClick,
   deleteItem 
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -61,6 +63,7 @@ const ProgramsList: React.FC<ProgramsListProps> = ({
             course={course} 
             updateCourseItem={updateCourseItem}
             onCourseImageClick={onCourseImageClick}
+            onCropCardClick={onCropCardClick}
             onDelete={deleteItem}
           />
         ))}

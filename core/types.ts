@@ -221,6 +221,7 @@ export interface Course {
   description: string;
   status: 'Active' | 'Inactive';
   image: string;
+  cardImage?: string; // Cropped thumbnail for small cards
   price?: string;
   eligibility?: string;
   benefits?: string;

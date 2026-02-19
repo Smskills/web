@@ -317,7 +317,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                 >
                   <div className="relative h-64 overflow-hidden">
                     <img 
-                      src={course.image} 
+                      src={course.cardImage || course.image} 
                       alt={course.name} 
                       className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110" 
                     />
