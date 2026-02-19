@@ -34,17 +34,33 @@ const ProgramEditor: React.FC<ProgramEditorProps> = ({
               <i className="fa-solid fa-camera text-emerald-700 text-2xl"></i>
             </div>
           </div>
-          <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest text-center mt-3">Click to change cover</p>
+          <div className="mt-4 space-y-3">
+             <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Home Spotlight</span>
+                <button 
+                  onClick={() => updateCourseItem(course.id, 'isFeatured', !course.isFeatured)}
+                  className={`w-12 h-6 rounded-full transition-all relative ${course.isFeatured ? 'bg-emerald-600 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-slate-300'}`}
+                >
+                  <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${course.isFeatured ? 'right-1' : 'left-1'}`}></div>
+                </button>
+             </div>
+             <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest text-center">Toggle to show in "Vocational Tracks" on Home</p>
+          </div>
         </div>
 
         <div className="lg:col-span-3 space-y-6">
           <div className="flex justify-between items-center">
-            <input 
-              value={course.name} 
-              onChange={e => updateCourseItem(course.id, 'name', e.target.value)} 
-              className="text-xl font-black bg-transparent border-b border-slate-200 text-slate-900 w-full mr-4 outline-none focus:border-emerald-500 transition-colors" 
-              placeholder="Course Name" 
-            />
+            <div className="flex items-center gap-3 w-full mr-4">
+              <input 
+                value={course.name} 
+                onChange={e => updateCourseItem(course.id, 'name', e.target.value)} 
+                className="text-xl font-black bg-transparent border-b border-slate-200 text-slate-900 flex-grow outline-none focus:border-emerald-500 transition-colors" 
+                placeholder="Course Name" 
+              />
+              {course.isFeatured && (
+                <span className="bg-emerald-500 text-white text-[8px] font-black uppercase px-2 py-1 rounded tracking-[0.2em] shrink-0 shadow-lg animate-pulse">TOP TRACK</span>
+              )}
+            </div>
             <button onClick={() => onDelete(course.id, course.name)} className="text-red-500 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-colors">
               <i className="fa-solid fa-trash-can"></i>
             </button>

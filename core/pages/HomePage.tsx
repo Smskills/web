@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { AppState, Notice } from '../types';
@@ -15,7 +16,7 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
       case 'Urgent': return { bg: 'bg-red-500', text: 'text-white', lightBg: 'bg-red-500/10', lightText: 'text-red-500', border: 'border-red-500/20', icon: 'fa-circle-exclamation' };
       case 'New': return { bg: 'bg-emerald-600', text: 'text-white', lightBg: 'bg-emerald-600/10', lightText: 'text-emerald-500', border: 'border-emerald-600/20', icon: 'fa-wand-magic-sparkles' };
       case 'Event': return { bg: 'bg-blue-600', text: 'text-white', lightBg: 'bg-blue-600/10', lightText: 'text-blue-500', border: 'border-blue-600/20', icon: 'fa-calendar-check' };
-      case 'Holiday': return { bg: 'bg-amber-500', text: 'text-white', lightBg: 'bg-amber-500/10', lightText: 'text-amber-500', border: 'border-amber-500/20', icon: 'fa-umbrella-beach' };
+      case 'Holiday': return { bg: 'bg-amber-500', text: 'text-white', lightBg: 'bg-amber-50/10', lightText: 'text-amber-500', border: 'border-amber-500/20', icon: 'fa-umbrella-beach' };
       default: return { bg: 'bg-slate-700', text: 'text-white', lightBg: 'bg-slate-700/20', lightText: 'text-slate-400', border: 'border-slate-700/50', icon: 'fa-bullhorn' };
     }
   };
@@ -35,7 +36,12 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
 
   const btnPrimary = "px-10 py-5 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-500 focus-visible:ring-4 focus-visible:ring-emerald-500/30 transition-all shadow-2xl shadow-emerald-600/20 active:scale-95 text-[11px] uppercase tracking-widest text-center min-h-[56px] flex items-center justify-center";
   const btnMidnight = "px-10 py-5 bg-[#020617] text-white font-black rounded-2xl hover:bg-emerald-600 focus-visible:ring-4 focus-visible:ring-slate-900/20 transition-all shadow-2xl active:scale-95 text-[11px] uppercase tracking-widest text-center min-h-[56px] flex items-center justify-center";
-  const btnOutline = "px-10 py-5 bg-white border-2 border-[#020617] text-[#020617] font-black rounded-2xl hover:bg-slate-50 focus-visible:ring-4 focus-visible:ring-slate-200 transition-all text-[11px] uppercase tracking-widest text-center min-h-[56px] flex items-center justify-center";
+
+  // --- Logic for Vocational Tracks Showcase ---
+  const featuredPrograms = courses.list.filter(c => c.status === 'Active' && c.isFeatured);
+  const displayCourses = featuredPrograms.length > 0 
+    ? featuredPrograms.slice(0, 6) 
+    : courses.list.filter(c => c.status === 'Active').slice(0, 3);
 
   return (
     <div className="space-y-0 overflow-x-hidden bg-white font-sans">
@@ -47,18 +53,24 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
         .animate-marquee-vertical:hover, .animate-marquee-horizontal:hover { animation-play-state: paused; }
       `}</style>
 
-      {/* Hero Section - Light & Sophisticated */}
+      {/* Hero Section */}
       {home.hero.visible && (
-        <section 
-          className="relative min-h-[85vh] flex items-center bg-cover bg-center text-slate-900 overflow-hidden"
-          style={{ backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), url(${home.hero.bgImage})` }}
-        >
-          <div className="container mx-auto px-6 py-24 text-center max-w-5xl">
-            <span className="text-emerald-700 font-black uppercase tracking-[0.4em] text-[10px] md:text-[12px] mb-8 block animate-fade-in-up">The Future of Vocational Excellence</span>
+        <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-slate-100">
+          <div 
+            className="absolute inset-0 bg-cover bg-center scale-105"
+            style={{ 
+              backgroundImage: `url(${home.hero.bgImage})`,
+              filter: 'blur(4px)'
+            }}
+          />
+          <div className="absolute inset-0 bg-white/50 backdrop-brightness-110"></div>
+          
+          <div className="container mx-auto px-6 py-24 text-center max-w-5xl relative z-10">
+            <span className="text-emerald-800 font-black uppercase tracking-[0.4em] text-[10px] md:text-[12px] mb-8 block animate-fade-in-up">The Future of Vocational Excellence</span>
             <h1 className="text-4xl sm:text-6xl md:text-8xl font-black mb-10 leading-[1] md:leading-[0.9] tracking-tighter text-[#020617] animate-fade-in-up">
               {home.hero.title}
             </h1>
-            <p className="text-base md:text-2xl text-slate-600 mb-14 leading-relaxed max-w-3xl mx-auto font-medium animate-fade-in-up delay-100">
+            <p className="text-base md:text-2xl text-slate-800 mb-14 leading-relaxed max-w-3xl mx-auto font-bold animate-fade-in-up delay-100">
               {home.hero.subtitle}
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center animate-fade-in-up delay-200">
@@ -69,7 +81,7 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
         </section>
       )}
 
-      {/* Global Partner Ticker - Deep Contrast */}
+      {/* Global Partner Ticker */}
       {home.sections.industryTieups && placements.partners.length > 0 && (
         <section className="py-12 bg-[#020617] border-y border-white/5 relative z-20 overflow-hidden">
           <div className="container mx-auto px-6 mb-8 flex justify-center">
@@ -80,11 +92,11 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
               {[...placements.partners, ...placements.partners].map((partner, idx) => (
                 <div key={`${partner.id}-${idx}`} className="flex items-center gap-6 px-16 group cursor-default">
                   {partner.image ? (
-                    <img src={partner.image} alt={partner.name} className="h-10 md:h-12 w-auto object-contain grayscale invert opacity-50 group-hover:grayscale-0 group-hover:invert-0 group-hover:opacity-100 transition-all" />
+                    <img src={partner.image} alt={partner.name} className="h-10 md:h-12 w-auto object-contain transition-all" />
                   ) : (
-                    <i className={`fa-brands ${partner.icon || 'fa-building'} text-3xl md:text-4xl text-slate-600 group-hover:text-emerald-500 transition-colors`}></i>
+                    <i className={`fa-brands ${partner.icon || 'fa-building'} text-3xl md:text-4xl text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)] transition-colors`}></i>
                   )}
-                  <span className="text-xl md:text-2xl font-black text-slate-600 group-hover:text-white transition-colors uppercase tracking-widest">{partner.name}</span>
+                  <span className="text-xl md:text-2xl font-black text-white uppercase tracking-widest">{partner.name}</span>
                 </div>
               ))}
             </div>
@@ -92,7 +104,7 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
         </section>
       )}
 
-      {/* Highlights - Bright & Professional */}
+      {/* Highlights */}
       <section className="py-24 bg-white">
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
@@ -109,11 +121,14 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
         </div>
       </section>
 
-      {/* Moving Notices Board - The "Dark Core" for Contrast */}
+      {/* Announcement Feed Section */}
       {home.sections.notices && notices.list.length > 0 && (
-        <section className="py-24 bg-[#020617] overflow-hidden relative">
+        <section className="py-24 bg-[#020617] overflow-hidden relative border-y-4 border-emerald-600/20">
           <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-emerald-600/5 rounded-full blur-[120px] pointer-events-none"></div>
           
+          <div className="absolute top-0 left-0 w-32 h-32 border-t-4 border-l-4 border-emerald-600/10 pointer-events-none"></div>
+          <div className="absolute bottom-0 right-0 w-32 h-32 border-b-4 border-r-4 border-emerald-600/10 pointer-events-none"></div>
+
           <div className="container mx-auto px-6 relative z-10">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-8">
               <div className="max-w-xl">
@@ -127,10 +142,10 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch border-2 border-emerald-500 p-6 md:p-8 rounded-[4.5rem] bg-emerald-500/[0.02] shadow-[0_0_50px_rgba(16,185,129,0.15)] relative">
               <div className="lg:col-span-7">
                 {spotlightNotice && (
-                  <article key={spotlightNotice.id} className="h-full bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-[3rem] p-8 md:p-14 flex flex-col justify-between group hover:border-emerald-500/30 transition-all shadow-3xl">
+                  <article key={spotlightNotice.id} className="h-full bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-[3rem] p-8 md:p-14 flex flex-col justify-between group hover:border-emerald-400/50 transition-all shadow-3xl">
                     <div className="space-y-12">
                       <div className={`inline-flex items-center gap-3 px-4 py-1.5 rounded-full ${getNoticeTheme(spotlightNotice.category).bg} ${getNoticeTheme(spotlightNotice.category).text} text-[10px] font-black uppercase tracking-widest shadow-lg`}>
                         <i className={`fa-solid ${getNoticeTheme(spotlightNotice.category).icon}`} aria-hidden="true"></i>
@@ -160,7 +175,7 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
               </div>
 
               <div className="lg:col-span-5 h-[500px] md:h-auto relative">
-                <div className="h-full border border-white/5 rounded-[3rem] bg-slate-900/30 overflow-hidden flex flex-col">
+                <div className="h-full border border-white/10 rounded-[3rem] bg-slate-900/40 overflow-hidden flex flex-col">
                   <div className="p-8 border-b border-white/5 flex items-center gap-3 bg-[#020617]/50 backdrop-blur-md">
                     <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
                     <span className="text-[10px] font-black text-white uppercase tracking-[0.4em]">RECENT FEED</span>
@@ -187,26 +202,47 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
         </section>
       )}
 
-      {/* Featured Courses - Light & Modern */}
+      {/* Featured Courses - Dashboard Controlled Top Showcase */}
       {home.sections.featuredCourses && (
         <section className="py-24 bg-white border-t border-slate-100">
           <div className="container mx-auto px-6">
-            <div className="text-center mb-24 max-w-4xl mx-auto">
-              <span className="text-emerald-700 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">Specialized Tracks</span>
-              <h2 className="text-4xl md:text-6xl font-black text-[#020617] mb-8 tracking-tighter leading-tight">{home.sectionLabels.coursesTitle}</h2>
-              <p className="text-slate-500 text-lg md:text-xl font-medium leading-relaxed">{home.sectionLabels.coursesSubtitle}</p>
+            <div className="flex flex-col md:flex-row justify-between items-end mb-24 gap-8">
+              <div className="max-w-3xl">
+                <span className="text-emerald-700 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">Trending Curricula</span>
+                <h2 className="text-4xl md:text-6xl font-black text-[#020617] tracking-tighter leading-tight">{home.sectionLabels.coursesTitle}</h2>
+                <p className="text-slate-500 text-lg md:text-xl font-medium leading-relaxed mt-6">{home.sectionLabels.coursesSubtitle}</p>
+              </div>
+              <Link to="/academics" className="group flex items-center gap-4 px-8 py-4 bg-slate-50 hover:bg-[#020617] text-slate-900 hover:text-white rounded-2xl transition-all border border-slate-200 shadow-sm active:scale-95">
+                <span className="text-[11px] font-black uppercase tracking-widest">BROWSE FULL CATALOG</span>
+                <i className="fa-solid fa-arrow-right-long group-hover:translate-x-1 transition-transform"></i>
+              </Link>
             </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
-              {courses.list.filter(c => c.status === 'Active').slice(0, 3).map(course => (
-                <article key={course.id} className="flex flex-col rounded-[2.5rem] overflow-hidden border border-slate-100 bg-white hover:shadow-4xl transition-all group">
+              {displayCourses.map(course => (
+                <article key={course.id} className="flex flex-col rounded-[2.5rem] overflow-hidden border border-slate-100 bg-white hover:shadow-4xl transition-all group relative">
                   <div className="relative h-64 md:h-72 overflow-hidden">
                     <img src={course.image} alt={course.name} className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110" />
+                    
+                    {/* ENHANCED: Only 'POPULAR PROGRAM' tag remains */}
+                    <div className="absolute top-6 left-6 z-10 flex flex-col gap-2">
+                      <div className="bg-emerald-600 text-white px-4 py-2 rounded-xl shadow-2xl border border-emerald-400/30 flex items-center gap-2">
+                         <i className="fa-solid fa-star text-xs"></i>
+                         <span className="text-[9px] font-black uppercase tracking-widest leading-none">POPULAR PROGRAM</span>
+                      </div>
+                    </div>
                   </div>
+                  
                   <div className="p-8 md:p-12 flex flex-col flex-grow">
-                    <h3 className="text-2xl md:text-3xl font-black text-[#020617] mb-6 tracking-tight group-hover:text-emerald-700 transition-colors">{course.name}</h3>
+                    <div className="flex items-center mb-6">
+                       <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-500/10 px-3 py-1 rounded-lg border border-emerald-500/20">
+                         {course.academicLevel}
+                       </span>
+                    </div>
+                    <h3 className="text-2xl md:text-3xl font-black text-[#020617] mb-6 tracking-tight group-hover:text-emerald-700 transition-colors leading-tight">{course.name}</h3>
                     <p className="text-base md:text-lg text-slate-500 line-clamp-2 mb-12 leading-relaxed flex-grow font-medium">{course.description}</p>
-                    <Link to="/academics" className={btnMidnight + " w-full flex justify-center gap-3"}>
-                      View Details <i className="fa-solid fa-arrow-right-long text-[9px]"></i>
+                    <Link to={`/academics?courseId=${course.id}`} className={btnMidnight + " w-full flex justify-center gap-3 group/btn"}>
+                      Program Overview <i className="fa-solid fa-arrow-right-long text-[9px] group-hover/btn:translate-x-1 transition-transform"></i>
                     </Link>
                   </div>
                 </article>
@@ -216,7 +252,7 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
         </section>
       )}
 
-      {/* CTA Block - High Contrast Action */}
+      {/* CTA Block */}
       {home.ctaBlock.visible && (
         <section className="py-24 md:py-32 bg-emerald-600 overflow-hidden relative">
           <div className="container mx-auto px-6 text-center relative z-10 max-w-5xl">

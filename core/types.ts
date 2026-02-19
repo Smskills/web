@@ -224,6 +224,7 @@ export interface Course {
   price?: string;
   eligibility?: string;
   benefits?: string;
+  isFeatured?: boolean;
 }
 
 export interface Notice {
