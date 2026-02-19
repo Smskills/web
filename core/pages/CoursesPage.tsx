@@ -1,4 +1,3 @@
-
 import React, { useMemo, useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Course } from '../types.ts';
@@ -15,10 +14,6 @@ interface CoursesPageProps {
 
 type SortOption = 'default' | 'name-asc' | 'name-desc' | 'duration';
 
-/**
- * Institutional Academic Catalog Page
- * Ultra-condensed detail view designed to fit content and the next section peak within one screen height.
- */
 const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = false }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [spotlightCourse, setSpotlightCourse] = useState<Course | null>(null);
@@ -45,13 +40,8 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
 
   const displayedCourses = useMemo(() => {
     let result = list.filter(c => {
-      // Level check
       const isLevelMatch = !levelFilter || (c.academicLevel || '').toLowerCase().includes(levelFilter.toLowerCase());
-      
-      // Industry/Sector check
       const isIndustryMatch = !industryFilter || (c.industry || '').toLowerCase() === industryFilter.toLowerCase();
-
-      // Search check
       const isSearchMatch = !searchTerm || 
         (c.name || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
         (c.description || '').toLowerCase().includes(searchTerm.toLowerCase());
@@ -99,211 +89,230 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
     setSpotlightCourse(null);
   };
 
+  /**
+   * Compact "Single Page" Detailed View
+   */
+  const DetailedRectangle: React.FC<{ course: Course, isEmbedded?: boolean }> = ({ course, isEmbedded = false }) => {
+    const benefits = getBenefitsList(course.benefits);
+    
+    return (
+      <div className={`bg-[#f8fafc] text-slate-900 overflow-hidden animate-fade-in relative rounded-[2.5rem] border border-slate-200 ${isEmbedded ? 'p-6 md:p-8 shadow-2xl' : 'py-8'}`}>
+        {!isEmbedded && <div className="absolute top-0 left-0 w-full h-full bg-emerald-500/[0.02] blur-[100px] pointer-events-none"></div>}
+        
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative z-10">
+          {/* Left Column: Image (Tighter aspect ratio for single-page fit) */}
+          <div className="lg:col-span-4">
+            <div className="relative aspect-square md:aspect-[4/4.5] lg:aspect-[3/4] rounded-[2rem] overflow-hidden border-4 border-white shadow-3xl bg-white group">
+              <img src={course.image} alt={course.name} className="w-full h-full object-cover transition-transform duration-[3s] group-hover:scale-110" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
+              
+              <div className="absolute bottom-4 left-4 right-4">
+                 <div className="bg-emerald-600 text-white p-3 rounded-xl shadow-2xl border border-emerald-500/30 backdrop-blur-sm">
+                    <p className="text-[7px] font-black uppercase tracking-widest mb-0.5 opacity-80 leading-none">CREDENTIAL</p>
+                    <p className="text-[10px] font-black uppercase leading-none truncate">{course.certification || course.academicLevel}</p>
+                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Content (Reduced vertical spacing) */}
+          <div className="lg:col-span-8 flex flex-col h-full">
+            <div className="mb-4">
+              <span className="inline-block bg-emerald-100 text-emerald-600 px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest mb-2">
+                {course.academicLevel}
+              </span>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-black tracking-tighter text-slate-900 leading-[0.9] mb-1">
+                {course.name}
+              </h1>
+            </div>
+
+            {/* 4 Metadata Cards (Condensed) */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+               {[
+                 { label: 'MODE', value: course.mode, icon: 'fa-chalkboard-user' },
+                 { label: 'DURATION', value: course.duration, icon: 'fa-clock' },
+                 { label: 'ELIGIBILITY', value: course.eligibility || '12TH PASS', icon: 'fa-id-card' },
+                 { label: 'SECTOR', value: course.industry, icon: 'fa-briefcase' }
+               ].map((spec, i) => (
+                 <div key={i} className="bg-white p-3 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">
+                       <i className={`fa-solid ${spec.icon} text-xs`}></i>
+                    </div>
+                    <div className="overflow-hidden">
+                       <p className="text-[7px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{spec.label}</p>
+                       <p className="text-[9px] font-black text-slate-900 uppercase leading-none truncate">{spec.value}</p>
+                    </div>
+                 </div>
+               ))}
+            </div>
+
+            {/* Description Box (Tighter padding, limited height) */}
+            <div className="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm relative mb-4">
+              <div className="absolute top-4 right-5 opacity-5 pointer-events-none">
+                <i className="fa-solid fa-quote-right text-4xl"></i>
+              </div>
+              <div className="max-h-[120px] overflow-y-auto custom-scrollbar pr-2">
+                <FormattedText text={course.description} className="text-slate-600 text-[13px] leading-relaxed font-medium" />
+              </div>
+            </div>
+               
+            {/* Benefits Checklist (Condensed) */}
+            {course.showBenefits !== false && benefits.length > 0 && (
+              <div className="grid grid-cols-2 gap-y-2 gap-x-4 px-2 mb-6">
+                {benefits.slice(0, 6).map((benefit, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-emerald-100 text-emerald-600 rounded flex items-center justify-center shrink-0">
+                      <i className="fa-solid fa-check text-[8px] font-black"></i>
+                    </div>
+                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-wider truncate">{benefit}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* CTA Bar (Sticky/Pinned look) */}
+            <div className="mt-auto pt-6 flex flex-col sm:flex-row items-center gap-6 border-t border-slate-200/50">
+              <Link 
+                to={`/enroll?course=${encodeURIComponent(course.name)}`}
+                className="w-full sm:w-auto px-10 py-4 bg-[#020617] text-white font-black rounded-xl hover:bg-emerald-600 transition-all text-center uppercase tracking-[0.2em] text-[9px] shadow-xl active:scale-95 flex items-center justify-center gap-3 group/btn"
+              >
+                START ENROLLMENT <i className="fa-solid fa-paper-plane text-[8px] group-hover/btn:translate-x-1 transition-transform"></i>
+              </Link>
+              <div className="flex flex-col items-center sm:items-start leading-none">
+                 <span className="text-[7px] font-black text-slate-400 uppercase tracking-widest mb-0.5">ADMISSION FEE</span>
+                 <span className="text-xl font-black text-emerald-600 tracking-tight leading-none">{course.price || 'Rs. 50,000'}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Determine if we should show the full header/filter view
+  const isSingleView = displayedCourses.length === 1 || spotlightCourse;
+
   return (
     <div className="bg-white font-sans min-h-screen">
       
-      {/* 1. ULTRA-COMPACT PROGRAM SPOTLIGHT VIEW */}
+      {/* 1. DETAIL OVERLAY VIEW (Full Screen Fit) */}
       {spotlightCourse && (
-        <section className="bg-gradient-to-br from-white via-emerald-50/10 to-slate-50 text-slate-900 overflow-hidden animate-fade-in relative border-b border-slate-200 pt-3 pb-8 lg:pt-4 lg:pb-10">
-          <div className="absolute top-0 left-0 w-full h-full bg-emerald-500/[0.01] blur-[80px] pointer-events-none"></div>
-          
-          <div className="container mx-auto px-6 relative z-10">
-            <div className="flex justify-between items-center mb-4 border-b border-slate-200/40 pb-2">
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-                <span className="text-[8px] font-black text-emerald-600 uppercase tracking-[0.3em]">SPOTLIGHT VIEW</span>
-              </div>
+        <section className="bg-white pb-10">
+          <div className="container mx-auto px-6">
+            <div className="flex justify-end mb-4 pt-6">
               <button 
                 onClick={handleCloseSpotlight}
-                className="text-[8px] font-black uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-all flex items-center gap-2 px-2 py-1 bg-white border border-slate-200 rounded-md"
+                className="text-[8px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-emerald-600 transition-all flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg shadow-sm"
               >
-                Close <i className="fa-solid fa-xmark text-[8px]"></i>
+                Back to Catalog <i className="fa-solid fa-xmark"></i>
               </button>
             </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start">
-              <div className="lg:col-span-4 hidden lg:block">
-                <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden border border-slate-200 shadow-2xl bg-white max-h-[380px]">
-                  <img src={spotlightCourse.image} alt={spotlightCourse.name} className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                    <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent animate-sweep"></div>
-                  </div>
-                  <div className="absolute bottom-4 left-4 right-4">
-                     <div className="bg-emerald-600/90 backdrop-blur-md text-white p-3 rounded-xl shadow-2xl border border-emerald-400/20">
-                        <p className="text-[7px] font-black uppercase tracking-widest leading-none mb-0.5 opacity-70">Credential</p>
-                        <p className="text-[10px] font-black uppercase truncate">{spotlightCourse.certification || spotlightCourse.academicLevel}</p>
-                     </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="lg:col-span-8 flex flex-col gap-4">
-                <div className="space-y-1">
-                  <span className="inline-block bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest">
-                    {spotlightCourse.academicLevel}
-                  </span>
-                  <h1 className="text-2xl md:text-4xl font-black tracking-tight text-slate-900 leading-tight">
-                    {spotlightCourse.name}
-                  </h1>
-                </div>
-
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                   {[
-                     { label: 'Delivery', value: spotlightCourse.mode, icon: 'fa-chalkboard-user' },
-                     { label: 'Timeframe', value: spotlightCourse.duration, icon: 'fa-clock' },
-                     { label: 'Entry', value: spotlightCourse.eligibility || '12th Pass', icon: 'fa-id-card' },
-                     { label: 'Sector', value: spotlightCourse.industry || 'Technical', icon: 'fa-briefcase' }
-                   ].map((spec, i) => (
-                     <div key={i} className="p-2 bg-white border border-slate-200 rounded-lg">
-                        <div className="flex items-center gap-1 mb-0.5">
-                           <i className={`fa-solid ${spec.icon} text-emerald-600 text-[7px]`}></i>
-                           <span className="text-[7px] font-black text-slate-400 uppercase tracking-widest">{spec.label}</span>
-                        </div>
-                        <p className="text-[10px] font-black text-slate-900 leading-none uppercase truncate">{spec.value}</p>
-                     </div>
-                   ))}
-                </div>
-
-                <div className="bg-white/60 p-4 rounded-2xl border border-slate-200/50 shadow-sm">
-                  <FormattedText text={spotlightCourse.description} className="text-slate-600 text-[13px] leading-relaxed font-medium" />
-                </div>
-                   
-                {spotlightCourse.showBenefits !== false && getBenefitsList(spotlightCourse.benefits).length > 0 && (
-                  <div className="grid grid-cols-2 gap-y-2 gap-x-4">
-                    {getBenefitsList(spotlightCourse.benefits).slice(0, 4).map((benefit, i) => (
-                      <div key={i} className="flex items-center gap-2">
-                        <div className="w-5 h-5 bg-emerald-600/10 rounded flex items-center justify-center shrink-0">
-                          <i className="fa-solid fa-check text-emerald-600 text-[7px]"></i>
-                        </div>
-                        <span className="text-[9px] font-black text-slate-500 uppercase tracking-wide">{benefit}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                <div className="mt-2 pt-4 flex flex-col sm:flex-row items-center gap-6 border-t border-slate-100">
-                  <Link 
-                    to={`/enroll?course=${encodeURIComponent(spotlightCourse.name)}`}
-                    className="w-full sm:w-auto px-8 py-3 bg-[#020617] text-white font-black rounded-lg hover:bg-emerald-600 transition-all text-center uppercase tracking-widest text-[9px] shadow-lg flex items-center justify-center gap-2 active:scale-95"
-                  >
-                    Start Enrollment <i className="fa-solid fa-paper-plane text-[8px]"></i>
-                  </Link>
-                  <div className="flex flex-col items-center sm:items-start shrink-0">
-                     <span className="text-[7px] font-black text-slate-400 uppercase tracking-widest mb-0.5 leading-none">Admission Fee</span>
-                     <span className="text-lg font-black text-emerald-600 leading-none">{spotlightCourse.price || 'Rs. 50,000 / year'}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <DetailedRectangle course={spotlightCourse} />
           </div>
         </section>
       )}
 
-      {/* 2. CATALOG GRID */}
-      <section className={`bg-white transition-all ${spotlightCourse ? 'py-10' : 'py-20 md:py-24'}`}>
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col xl:flex-row justify-between items-end mb-10 gap-4">
-            <div className="max-w-2xl">
-              <span className="text-emerald-600 font-black uppercase tracking-[0.4em] text-[10px] mb-2 block">
-                {levelFilter || industryFilter ? 'FILTERED VIEW' : 'CATALOG'}
-              </span>
-              <h2 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight">
-                {levelFilter && !industryFilter && `${levelFilter} Programs`}
-                {industryFilter && !levelFilter && `${industryFilter} Programs`}
-                {levelFilter && industryFilter && `${levelFilter} in ${industryFilter}`}
-                {!levelFilter && !industryFilter && 'Available Programs'}
-              </h2>
-              {(levelFilter || industryFilter) && (
-                <button onClick={handleClearFilters} className="text-[9px] font-black text-emerald-600 uppercase tracking-widest mt-2 hover:underline">
-                  Clear all filters <i className="fa-solid fa-xmark ml-1"></i>
-                </button>
+      {/* 2. CATALOG SECTION */}
+      {!spotlightCourse && (
+        <section className={`bg-white transition-all ${isSingleView ? 'py-10' : 'py-20 md:py-24'}`}>
+          <div className="container mx-auto px-6">
+            
+            {/* Header Controls (Smaller if only one result) */}
+            <div className={`flex flex-col xl:flex-row justify-between items-end gap-6 ${isSingleView ? 'mb-8' : 'mb-16'}`}>
+              <div className="max-w-2xl">
+                <span className="text-emerald-600 font-black uppercase tracking-[0.4em] text-[10px] mb-1.5 block leading-none">
+                  {levelFilter || industryFilter ? 'FILTERED VIEW' : 'CATALOG'}
+                </span>
+                <h2 className={`${isSingleView ? 'text-2xl md:text-4xl' : 'text-3xl md:text-5xl'} font-black text-slate-900 tracking-tighter leading-none`}>
+                  {levelFilter && !industryFilter && `${levelFilter} Programs`}
+                  {industryFilter && !levelFilter && `${industryFilter} Programs`}
+                  {levelFilter && industryFilter && `${levelFilter} in ${industryFilter}`}
+                  {!levelFilter && !industryFilter && 'Available Programs'}
+                </h2>
+                {(levelFilter || industryFilter) && (
+                  <button onClick={handleClearFilters} className="text-[8px] font-black text-emerald-600 uppercase tracking-widest mt-3 hover:underline flex items-center gap-2">
+                    <i className="fa-solid fa-circle-xmark"></i> Reset Selection
+                  </button>
+                )}
+              </div>
+
+              {!isSingleView && (
+                <div className="w-full xl:w-auto flex flex-col md:flex-row gap-4 items-end">
+                  <div className="shrink-0 w-full md:w-64">
+                     <div className="relative group">
+                       <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors"></i>
+                       <input 
+                         type="text"
+                         placeholder="Search programs..."
+                         value={searchTerm}
+                         onChange={(e) => setSearchTerm(e.target.value)}
+                         className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest outline-none focus:border-emerald-500 transition-all shadow-inner"
+                       />
+                     </div>
+                  </div>
+                </div>
               )}
             </div>
 
-            {!spotlightCourse && (
-              <div className="w-full xl:w-auto flex flex-col md:flex-row gap-3 items-end">
-                <div className="shrink-0 w-full md:w-56">
-                   <div className="relative group">
-                     <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                     <input 
-                       type="text"
-                       placeholder="Search..."
-                       value={searchTerm}
-                       onChange={(e) => setSearchTerm(e.target.value)}
-                       className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-[10px] font-black uppercase tracking-widest outline-none focus:border-emerald-500 transition-all"
-                     />
-                   </div>
-                </div>
-                <div className="relative shrink-0 w-full md:w-auto">
-                   <select 
-                     value={sortBy}
-                     onChange={(e) => setSortBy(e.target.value as SortOption)}
-                     className="appearance-none bg-slate-50 border border-slate-200 rounded-lg pl-3 pr-8 py-2.5 text-[10px] font-black uppercase tracking-widest outline-none focus:border-emerald-500 transition-all w-full cursor-pointer"
-                   >
-                     <option value="default">Most Recent</option>
-                     <option value="name-asc">Alphabetical</option>
-                     <option value="duration">By Duration</option>
-                   </select>
-                   <i className="fa-solid fa-sort absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] pointer-events-none"></i>
-                </div>
+            {/* Main Grid Logic */}
+            <div className={`grid gap-8 ${displayedCourses.length === 1 ? 'grid-cols-1 max-w-6xl mx-auto' : (displayedCourses.length === 2 ? 'md:grid-cols-2' : (displayedCourses.length === 3 ? 'md:grid-cols-3' : 'md:grid-cols-2'))}`}>
+              {isLoading ? (
+                <CardSkeleton count={displayedCourses.length || 4} />
+              ) : (
+                displayedCourses.map(course => {
+                  // SINGLE COURSE RESULT: High impact fit-to-screen view
+                  if (displayedCourses.length === 1) {
+                    return <DetailedRectangle key={course.id} course={course} isEmbedded={true} />;
+                  }
+
+                  // MULTIPLE RESULTS: Standard Card Layout
+                  return (
+                    <article 
+                      key={course.id} 
+                      className="flex flex-col rounded-[2.5rem] overflow-hidden border border-slate-100 transition-all duration-500 group cursor-pointer relative bg-white hover:shadow-4xl hover:border-emerald-200 shadow-sm"
+                      onClick={() => handleSelectCourse(course.id)}
+                    >
+                      <div className="relative h-52 md:h-60 overflow-hidden">
+                        <img src={course.cardImage || course.image} alt={course.name} className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110" />
+                        <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full shadow-2xl text-[8px] font-black text-emerald-600 tracking-widest uppercase">
+                           {course.duration}
+                        </div>
+                      </div>
+                      <div className="p-6 md:p-8 flex flex-col flex-grow">
+                        <div className="flex gap-2 mb-3">
+                           <span className="text-[7px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-500/5 px-2 py-0.5 rounded-md border border-emerald-500/10">
+                             {course.academicLevel}
+                           </span>
+                        </div>
+                        <h3 className="text-xl font-black text-slate-900 mb-2.5 group-hover:text-emerald-600 transition-colors leading-tight tracking-tight">{course.name}</h3>
+                        <p className="text-slate-500 text-xs leading-relaxed line-clamp-2 mb-6 font-medium flex-grow">
+                           {course.description}
+                        </p>
+                        <div className="pt-4 border-t border-slate-50 flex items-center justify-between text-slate-400">
+                           <span className="text-[8px] font-black uppercase tracking-widest flex items-center gap-2">
+                             <i className="fa-solid fa-briefcase text-emerald-500"></i> {course.industry}
+                           </span>
+                           <span className="text-[8px] font-black text-emerald-600 uppercase tracking-widest flex items-center gap-2 group-hover:translate-x-1 transition-transform">
+                             View Details <i className="fa-solid fa-arrow-right"></i>
+                           </span>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })
+              )}
+            </div>
+
+            {!isLoading && displayedCourses.length === 0 && (
+              <div className="text-center py-24 bg-slate-50 rounded-[3rem] border-2 border-dashed border-slate-200 max-w-2xl mx-auto">
+                 <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-2xl text-slate-200 mx-auto mb-6 shadow-sm"><i className="fa-solid fa-folder-open"></i></div>
+                 <p className="text-slate-400 font-black uppercase tracking-widest text-[9px]">No programs match this selection.</p>
+                 <button onClick={handleClearFilters} className="mt-6 text-emerald-600 font-black text-[9px] uppercase tracking-[0.2em] hover:underline">Reset Catalog</button>
               </div>
             )}
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {isLoading ? (
-              <CardSkeleton count={6} />
-            ) : (
-              displayedCourses.map(course => (
-                <article 
-                  key={course.id} 
-                  className={`flex flex-col rounded-3xl overflow-hidden border transition-all duration-300 group cursor-pointer relative ${
-                    spotlightCourse?.id === course.id 
-                      ? 'border-emerald-500 shadow-xl bg-emerald-50/5' 
-                      : 'border-slate-100 bg-white hover:shadow-lg hover:border-emerald-200'
-                  }`}
-                  onClick={() => handleSelectCourse(course.id)}
-                >
-                  <div className="relative h-44 md:h-48 overflow-hidden">
-                    <img src={course.cardImage || course.image} alt={course.name} className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105" />
-                    {course.isFeatured && (
-                      <div className="absolute top-3 left-3 bg-emerald-600 text-white px-2 py-1 rounded-md shadow-xl text-[6px] font-black uppercase tracking-widest flex items-center gap-1">
-                         <i className="fa-solid fa-star"></i> FEATURED
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-5 flex flex-col flex-grow">
-                    <div className="flex gap-2 mb-3">
-                       <span className="text-[7px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-500/5 px-2 py-0.5 rounded border border-emerald-500/10">
-                         {course.academicLevel}
-                       </span>
-                       <span className="text-[7px] font-black text-slate-500 uppercase tracking-widest bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
-                         {course.industry}
-                       </span>
-                    </div>
-                    <h3 className="text-lg font-black text-slate-900 mb-2 group-hover:text-emerald-600 transition-colors leading-tight">{course.name}</h3>
-                    <p className="text-slate-500 text-[11px] leading-relaxed line-clamp-2 mb-4 font-medium flex-grow">
-                       {course.description}
-                    </p>
-                    <div className="pt-3 border-t border-slate-50 flex items-center justify-between text-slate-400">
-                       <span className="text-[8px] font-black uppercase tracking-widest flex items-center gap-2"><i className="fa-regular fa-clock"></i> {course.duration}</span>
-                       <span className="text-[8px] font-black text-emerald-600 uppercase tracking-widest">Details <i className="fa-solid fa-chevron-right ml-1"></i></span>
-                    </div>
-                  </div>
-                </article>
-              ))
-            )}
-          </div>
-
-          {!isLoading && displayedCourses.length === 0 && (
-            <div className="text-center py-32 bg-slate-50 rounded-[3rem] border-2 border-dashed border-slate-200 max-w-2xl mx-auto">
-               <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center text-3xl text-slate-200 mx-auto mb-6 shadow-sm"><i className="fa-solid fa-folder-open"></i></div>
-               <p className="text-slate-400 font-black uppercase tracking-widest text-xs">No programs match this specific filter.</p>
-               <button onClick={handleClearFilters} className="mt-8 text-emerald-600 font-black text-[10px] uppercase tracking-widest hover:underline">Reset Catalog</button>
-            </div>
-          )}
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 };
