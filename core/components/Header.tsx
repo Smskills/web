@@ -18,7 +18,9 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Defined specific sectors for Certificate Courses as requested
+  /**
+   * Specific sectors for the "Certificate Course" category (11 Sectors)
+   */
   const certificateSectors = useMemo(() => [
     { label: "Apparel", value: "Apparel", icon: "fa-shirt" },
     { label: "Automotive", value: "Automotive", icon: "fa-car" },
@@ -28,26 +30,57 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
     { label: "Food Processing", value: "Food Processing", icon: "fa-utensils" },
     { label: "IT-ITes", value: "IT/ITES", icon: "fa-laptop-code" },
     { label: "Logistics", value: "Logistics", icon: "fa-truck-fast" },
-    { label: "Retails", value: "Retail", icon: "fa-shop" },
+    { label: "Retails", value: "Retail", icon: "fa-bag-shopping" },
     { label: "Telecom", value: "Telecom", icon: "fa-tower-cell" },
     { label: "Tourism & Hospitality", value: "Tourism and Hospitality", icon: "fa-hotel" }
   ], []);
 
-  const categories = useMemo(() => [
-    { label: "Certificate Course", level: "Certificate (NSDC)", isSectorBased: true },
-    { label: "UG Certificate Course", level: "UG Certificate (NSDC)" },
-    { label: "UG Diploma Course", level: "UG Diploma (NSDC)" },
-    { label: "UG Degree Course", level: "UG Degree", aliases: ["B. Voc"] },
-    { label: "Master Course", level: "Master" }
+  /**
+   * Broad vocational sectors for UG Certificate, UG Diploma, and UG Degree (23 Sectors)
+   */
+  const vocationalSectors = useMemo(() => [
+    { label: "Agriculture", value: "Agriculture", icon: "fa-leaf" },
+    { label: "Automotive", value: "Automotive", icon: "fa-car" },
+    { label: "Apparel", value: "Apparel", icon: "fa-shirt" },
+    { label: "Banking, Financial Services & Insurance", value: "Banking, Financial Services & Insurance", icon: "fa-landmark" },
+    { label: "Beauty & Wellness", value: "Beauty & Wellness", icon: "fa-spa" },
+    { label: "Capital Goods", value: "Capital Goods", icon: "fa-gears" },
+    { label: "Construction", value: "Construction", icon: "fa-helmet-safety" },
+    { label: "Electronics & Hardware", value: "Electronics and Hardware", icon: "fa-microchip" },
+    { label: "Food Processing", value: "Food Processing", icon: "fa-utensils" },
+    { label: "Furniture & Fitting", value: "Furniture & Fitting", icon: "fa-couch" },
+    { label: "Green Jobs", value: "Green Jobs", icon: "fa-seedling" },
+    { label: "Healthcare", value: "Healthcare", icon: "fa-hand-holding-medical" },
+    { label: "IT-ITes", value: "IT/ITES", icon: "fa-laptop-code" },
+    { label: "Life Science", value: "Life Science", icon: "fa-dna" },
+    { label: "Logistics", value: "Logistics", icon: "fa-truck-fast" },
+    { label: "Media & Entertainment", value: "Media & Entertainment", icon: "fa-clapperboard" },
+    { label: "Mining", value: "Mining", icon: "fa-mountain-sun" },
+    { label: "Plumbing", value: "Plumbing", icon: "fa-wrench" },
+    { label: "Retail", value: "Retail", icon: "fa-bag-shopping" },
+    { label: "Rubber, Chemical & Petrochemical", value: "Rubber, Chemical & Petrochemical", icon: "fa-flask" },
+    { label: "Telecom", value: "Telecom", icon: "fa-tower-cell" },
+    { label: "Textile & Handloom", value: "Textile & Handloom", icon: "fa-scissors" },
+    { label: "Tourism & Hospitality", value: "Tourism and Hospitality", icon: "fa-hotel" }
   ], []);
+
+  const categories = useMemo(() => [
+    { label: "Certificate Course", level: "Certificate (NSDC)", sectorList: certificateSectors },
+    { label: "UG Certificate Course", level: "UG Certificate (NSDC)", sectorList: vocationalSectors },
+    { label: "UG Diploma Course", level: "UG Diploma (NSDC)", sectorList: vocationalSectors },
+    { label: "UG Degree Course", level: "UG Degree", aliases: ["B. Voc"], sectorList: vocationalSectors },
+    { label: "Master Course", level: "Master", isSectorBased: false }
+  ], [certificateSectors, vocationalSectors]);
 
   const groupedCourses = useMemo(() => {
     const map: Record<string, Course[]> = {};
     categories.forEach(cat => {
-      map[cat.label] = courses.filter(c => 
-        c.academicLevel === cat.level || 
-        (cat.aliases && cat.aliases.includes(c.academicLevel))
-      );
+      if (!cat.sectorList) {
+        map[cat.label] = courses.filter(c => 
+          c.academicLevel === cat.level || 
+          (cat.aliases && cat.aliases.includes(c.academicLevel as any))
+        );
+      }
     });
     return map;
   }, [courses, categories]);
@@ -84,7 +117,6 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
     setIsAcademicsOpen(false);
     setIsMenuOpen(false);
     setActiveCategory(null);
-    // Extract short name for filter e.g. "Certificate" from "Certificate (NSDC)"
     const shortLevel = level.split(' ')[0];
     navigate(`/academics?level=${shortLevel}&industry=${encodeURIComponent(sectorValue)}`);
   };
@@ -169,19 +201,21 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
 
                       {activeCategory === cat.label && (
                         <div className="absolute top-0 left-full w-80 bg-white border border-slate-200 shadow-2xl rounded-xl py-4 ml-1 animate-fade-in-right max-h-[500px] overflow-y-auto custom-scrollbar">
-                          {cat.isSectorBased ? (
+                          {cat.sectorList ? (
                             <>
                               <div className="px-6 pb-2 mb-2 border-b border-slate-50">
-                                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Explore Sectors</span>
+                                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Available Sectors</span>
                               </div>
                               <div className="grid grid-cols-1 gap-1">
-                                {certificateSectors.map(sector => (
+                                {cat.sectorList.map(sector => (
                                   <button
                                     key={sector.label}
                                     onClick={() => handleSectorClick(sector.value, cat.level)}
-                                    className="w-full text-left px-6 py-2.5 text-[10px] font-bold text-slate-600 hover:text-emerald-600 hover:bg-emerald-50 transition-colors flex items-center gap-3"
+                                    className="w-full text-left px-6 py-2.5 text-[10px] font-bold text-slate-600 hover:text-emerald-600 hover:bg-emerald-50 transition-colors flex items-center gap-3 group/sector"
                                   >
-                                    <i className={`fa-solid ${sector.icon} w-4 text-center opacity-40`}></i>
+                                    <div className="w-5 h-5 rounded bg-slate-50 flex items-center justify-center group-hover/sector:bg-emerald-100 transition-colors">
+                                      <i className={`fa-solid ${sector.icon} text-[10px] opacity-40 group-hover/sector:opacity-100 group-hover/sector:text-emerald-600`}></i>
+                                    </div>
                                     {sector.label}
                                   </button>
                                 ))}
@@ -203,7 +237,7 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
                                   </button>
                                 ))
                               ) : (
-                                <div className="px-6 py-4 text-[10px] text-slate-400 italic">No programs available yet</div>
+                                <div className="px-6 py-4 text-[10px] text-slate-400 italic">No programs found</div>
                               )}
                             </>
                           )}
@@ -213,7 +247,7 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
                   ))}
                   <div className="border-t border-slate-100 mt-2 pt-2 px-6">
                     <Link to="/academics" onClick={() => setIsAcademicsOpen(false)} className="text-[10px] font-black uppercase tracking-widest text-emerald-600 hover:underline inline-block py-2">
-                      View Full Catalog <i className="fa-solid fa-arrow-right ml-1"></i>
+                      View All Courses <i className="fa-solid fa-arrow-right ml-1"></i>
                     </Link>
                   </div>
                 </div>
@@ -246,8 +280,8 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
                 <div key={cat.label} className="space-y-2">
                   <span className="font-bold text-[10px] uppercase tracking-widest text-slate-400">{cat.label}</span>
                   <div className="flex flex-col gap-2 pl-2">
-                    {cat.isSectorBased ? (
-                      certificateSectors.slice(0, 5).map(sector => (
+                    {cat.sectorList ? (
+                      cat.sectorList.slice(0, 5).map(sector => (
                         <button key={sector.label} onClick={() => handleSectorClick(sector.value, cat.level)} className="text-left text-[10px] font-bold text-slate-600">
                           {sector.label}
                         </button>
@@ -259,7 +293,7 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
                         </button>
                       ))
                     )}
-                    <Link to="/academics" onClick={() => setIsMenuOpen(false)} className="text-[9px] font-black text-emerald-600 uppercase">Explore All</Link>
+                    <Link to="/academics" onClick={() => setIsMenuOpen(false)} className="text-[9px] font-black text-emerald-600 uppercase">View All</Link>
                   </div>
                 </div>
               ))}
