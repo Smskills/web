@@ -97,6 +97,15 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
     setSearchTerm('');
   };
 
+  // Helper to parse multiline benefits string into a clean array
+  const getBenefitsList = (benefits: string | undefined) => {
+    if (!benefits) return [];
+    return benefits
+      .split('\n')
+      .map(b => b.replace(/^[•\-\*]\s*/, '').trim())
+      .filter(b => b.length > 0);
+  };
+
   return (
     <div className="bg-white font-sans min-h-screen">
       
@@ -189,16 +198,30 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                       />
                    </div>
                    
-                   <div className="grid grid-cols-2 gap-4">
-                      <div className="flex items-center gap-3">
-                         <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600"><i className="fa-solid fa-check text-[10px]"></i></div>
-                         <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Industry Mentor Support</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                         <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600"><i className="fa-solid fa-check text-[10px]"></i></div>
-                         <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">NSDC Standards Compliant</span>
-                      </div>
-                   </div>
+                   {/* DYNAMIC BENEFITS LIST IN SPOTLIGHT */}
+                   {spotlightCourse.showBenefits !== false && getBenefitsList(spotlightCourse.benefits).length > 0 ? (
+                     <div className="grid grid-cols-2 gap-y-4 gap-x-8 mt-4 animate-fade-in-up">
+                        {getBenefitsList(spotlightCourse.benefits).map((benefit, i) => (
+                          <div key={i} className="flex items-center gap-3 group">
+                             <div className="w-7 h-7 bg-emerald-600/10 rounded-lg flex items-center justify-center group-hover:bg-emerald-600 transition-colors">
+                               <i className="fa-solid fa-circle-check text-emerald-600 group-hover:text-white text-[10px]"></i>
+                             </div>
+                             <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{benefit}</span>
+                          </div>
+                        ))}
+                     </div>
+                   ) : (
+                     <div className="grid grid-cols-2 gap-4">
+                        <div className="flex items-center gap-3">
+                           <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600"><i className="fa-solid fa-check text-[10px]"></i></div>
+                           <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Industry Mentor Support</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                           <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600"><i className="fa-solid fa-check text-[10px]"></i></div>
+                           <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">NSDC Standards Compliant</span>
+                        </div>
+                     </div>
+                   )}
                 </div>
 
                 <div className="pt-6 flex flex-col sm:flex-row items-center gap-6">
