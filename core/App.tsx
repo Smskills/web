@@ -33,38 +33,44 @@ const App: React.FC = () => {
   const [isInitializing, setIsInitializing] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('sms_is_auth') === 'true');
   const [content, setContent] = useState<AppState>(INITIAL_CONTENT);
+  const [isServerOnline, setIsServerOnline] = useState(false);
 
-  // Load Content from DB on Mount
+  // Load Content from DB on Mount with Resilient Fallback
   useEffect(() => {
     const fetchContent = async () => {
+      let remoteData = null;
+      
       try {
-        const response = await fetch(`${API_BASE}/config`);
+        const response = await fetch(`${API_BASE}/config`, { signal: AbortSignal.timeout(3000) });
         const result = await response.json();
         
         if (result.success && result.data) {
-          const parsed = result.data;
-          // Merge with initial content to ensure all new fields exist
-          const mergedState: AppState = {
-            ...INITIAL_CONTENT,
-            ...parsed,
-            site: { ...INITIAL_CONTENT.site, ...parsed.site },
-            home: { ...INITIAL_CONTENT.home, ...parsed.home },
-            about: { ...INITIAL_CONTENT.about, ...parsed.about },
-            courses: { ...INITIAL_CONTENT.courses, ...parsed.courses },
-            notices: { ...INITIAL_CONTENT.notices, ...parsed.notices },
-            faqs: { ...INITIAL_CONTENT.faqs, ...parsed.faqs },
-            placements: { ...INITIAL_CONTENT.placements, ...parsed.placements }
-          };
-          setContent(mergedState);
+          remoteData = result.data;
+          setIsServerOnline(true);
         }
       } catch (e) {
-        console.error("Institutional CMS: Failed to sync with database, using local defaults.", e);
-        // Fallback to local storage if DB is down
-        const saved = localStorage.getItem('edu_insta_content');
-        if (saved) setContent(JSON.parse(saved));
-      } finally {
-        setIsInitializing(false);
+        // Server unreachable or timed out - fail silently to local mode
+        setIsServerOnline(false);
       }
+
+      // Merge Logic: DB > LocalStorage > Defaults
+      const savedLocal = localStorage.getItem('edu_insta_content');
+      const baseSource = remoteData || (savedLocal ? JSON.parse(savedLocal) : INITIAL_CONTENT);
+
+      const mergedState: AppState = {
+        ...INITIAL_CONTENT,
+        ...baseSource,
+        site: { ...INITIAL_CONTENT.site, ...baseSource.site },
+        home: { ...INITIAL_CONTENT.home, ...baseSource.home },
+        about: { ...INITIAL_CONTENT.about, ...baseSource.about },
+        courses: { ...INITIAL_CONTENT.courses, ...baseSource.courses },
+        notices: { ...INITIAL_CONTENT.notices, ...baseSource.notices },
+        faqs: { ...INITIAL_CONTENT.faqs, ...baseSource.faqs },
+        placements: { ...INITIAL_CONTENT.placements, ...baseSource.placements }
+      };
+
+      setContent(mergedState);
+      setIsInitializing(false);
     };
 
     fetchContent();
@@ -92,10 +98,16 @@ const App: React.FC = () => {
   }, [content.theme]);
 
   const updateContent = async (newContent: AppState) => {
-    // 1. Update UI state immediately
     setContent(newContent);
     
-    // 2. Persist to Database
+    // Always backup to local storage first
+    try {
+      localStorage.setItem('edu_insta_content', JSON.stringify(newContent));
+    } catch (e) {
+      console.warn("LocalStorage backup failed (likely storage limit hit).");
+    }
+    
+    // Attempt to persist to Database if it was previously online
     try {
       const token = localStorage.getItem('sms_auth_token');
       const response = await fetch(`${API_BASE}/config`, {
@@ -108,14 +120,12 @@ const App: React.FC = () => {
       });
       
       const result = await response.json();
-      
-      // Also backup to local storage
-      localStorage.setItem('edu_insta_content', JSON.stringify(newContent));
-      
+      setIsServerOnline(result.success);
       return result.success;
-    } catch (err: any) {
-      console.error("CMS Save Error (Sync Failed)", err);
-      return false;
+    } catch (err) {
+      // Server down during save
+      setIsServerOnline(false);
+      return true; // Return true because we saved locally
     }
   };
 
@@ -126,7 +136,7 @@ const App: React.FC = () => {
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-6">
            <div className="w-16 h-16 border-4 border-emerald-100 border-t-emerald-600 rounded-full animate-spin"></div>
-           <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Initializing Core Systems</p>
+           <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Optimizing Experience</p>
         </div>
       </div>
     );
@@ -155,7 +165,7 @@ const App: React.FC = () => {
                 path="/admin" 
                 element={
                   isAuthenticated 
-                    ? <AdminDashboard content={content} onUpdate={updateContent} /> 
+                    ? <AdminDashboard content={content} onUpdate={updateContent} serverOnline={isServerOnline} /> 
                     : <Navigate to="/login" replace />
                 } 
               />

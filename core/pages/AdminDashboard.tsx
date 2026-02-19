@@ -26,9 +26,10 @@ import ImageCropper from '../components/ImageCropper.tsx';
 interface AdminDashboardProps {
   content: AppState;
   onUpdate: (newContent: AppState) => Promise<boolean>;
+  serverOnline?: boolean;
 }
 
-const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) => {
+const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate, serverOnline = false }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'site' | 'home' | 'pages' | 'about' | 'academics' | 'notices' | 'gallery' | 'faq' | 'form' | 'contact' | 'footer' | 'placements' | 'legal' | 'career' | 'leads'>('leads');
   const [localContent, setLocalContent] = useState(content);
@@ -67,7 +68,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
   const handleSave = async () => {
     setIsProcessing(true);
     setIsError(false);
-    setStatusMsg('Syncing Database...');
+    setStatusMsg('Synchronizing...');
     
     try {
       const success = await onUpdate(localContent);
@@ -233,16 +234,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
           <div className="flex items-center gap-6">
             <h1 className="text-2xl font-black uppercase tracking-tight text-slate-900 flex items-center gap-3">
               <i className="fa-solid fa-gauge-high text-emerald-600"></i>
-              INSTITUTE ADMIN
+              ADMIN PANEL
             </h1>
 
-            <div className="hidden lg:flex items-center gap-2.5 px-4 py-1.5 bg-emerald-50 border border-emerald-100 rounded-full group">
+            <div className={`flex items-center gap-2.5 px-4 py-1.5 border rounded-full transition-all ${serverOnline ? 'bg-emerald-50 border-emerald-100 text-emerald-600' : 'bg-amber-50 border-amber-100 text-amber-600'}`}>
                <div className="relative">
-                 <i className="fa-solid fa-shield-halved text-emerald-600 text-xs"></i>
-                 <i className="fa-solid fa-lock text-[6px] text-emerald-600 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-0.5"></i>
+                 <i className={`fa-solid ${serverOnline ? 'fa-cloud' : 'fa-hard-drive'} text-xs`}></i>
                </div>
-               <span className="text-[9px] font-black text-emerald-600 uppercase tracking-[0.2em] leading-none">Management Session</span>
-               <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse ml-1 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+               <span className="text-[9px] font-black uppercase tracking-[0.2em] leading-none">
+                 {serverOnline ? 'Cloud Sync Active' : 'Local Storage Mode'}
+               </span>
+               <div className={`w-1.5 h-1.5 rounded-full animate-pulse ml-1 ${serverOnline ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]'}`}></div>
             </div>
 
             {statusMsg && (
@@ -261,7 +263,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
               </button>
               <div className="w-px h-6 bg-slate-200 mx-1"></div>
               <button onClick={handleDiscard} className="px-5 py-2 text-slate-500 hover:text-slate-900 text-[10px] font-black transition-all border border-slate-200 rounded-lg uppercase tracking-widest">DISCARD</button>
-              <button onClick={handleSave} className={`px-8 py-2 rounded-lg text-[10px] font-black transition-all shadow-xl uppercase tracking-widest ${hasUnsavedChanges ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-slate-200 text-slate-400 cursor-default shadow-none'}`}>Save All Changes</button>
+              <button onClick={handleSave} className={`px-8 py-2 rounded-lg text-[10px] font-black transition-all shadow-xl uppercase tracking-widest ${hasUnsavedChanges ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-slate-200 text-slate-400 cursor-default shadow-none'}`}>Save Changes</button>
           </div>
         </div>
       </div>
@@ -315,6 +317,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate }) =>
 
         {/* Content Area - Bright White Card */}
         <div className="flex-grow bg-white rounded-[2.5rem] p-8 md:p-12 border border-slate-200 shadow-2xl shadow-slate-200/50 min-h-[75vh]">
+          {!serverOnline && activeTab === 'leads' && (
+            <div className="mb-8 p-6 bg-amber-50 border border-amber-100 rounded-2xl flex items-center gap-4 text-amber-800">
+               <i className="fa-solid fa-triangle-exclamation text-xl"></i>
+               <p className="text-xs font-bold uppercase tracking-tight">Leads require a connection to the Institutional Backend (MySQL). They cannot be managed in Local Mode.</p>
+            </div>
+          )}
           {activeTab === 'leads' && <LeadsTab leads={localContent.leads || []} onUpdateLeads={(updated) => { setLocalContent(prev => ({ ...prev, leads: updated })); trackChange(); }} />}
           {activeTab === 'site' && <SiteTab data={localContent.site} theme={localContent.theme} updateTheme={(f, v) => updateField('theme', f, v)} updateField={(f, v) => updateField('site', f, v)} onLogoUploadClick={() => triggerGenericUpload('site.logo')} updateNavigation={(idx, f, v) => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, navigation: prev.site.navigation.map((n, i) => i === idx ? { ...n, [f]: v } : n) } })); trackChange(); }} addNavigation={() => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, navigation: [...prev.site.navigation, { label: 'New Link', path: '/' }] } })); trackChange(); }} removeNavigation={(idx) => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, navigation: prev.site.navigation.filter((_, i) => i !== idx) } })); trackChange(); }} />}
           {activeTab === 'home' && <HomeTab data={localContent.home} updateNestedField={(p, f, v) => updateNestedField('home', p, f, v)} updateHomeSubField={(p, f, v) => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, [p]: { ...(prev.home as any)[p], [f]: v } } })); trackChange(); }} onHeroBgClick={() => triggerGenericUpload('home.hero.bgImage')} onShowcaseImgClick={() => triggerGenericUpload('home.bigShowcase.image')} addHighlight={() => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, highlights: [...prev.home.highlights, { icon: 'fa-star', title: 'New', description: '' }] } })); trackChange(); }} updateHighlight={(idx, f, v) => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, highlights: prev.home.highlights.map((h, i) => i === idx ? { ...h, [f]: v } : h) } })); trackChange(); }} deleteHighlight={(idx) => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, highlights: prev.home.highlights.filter((_, i) => i !== idx) } })); trackChange(); }} reorderSections={(idx, dir) => { setLocalContent(prev => { const order = [...prev.home.sectionOrder]; const t = dir === 'up' ? idx - 1 : idx + 1; if (t >= 0 && t < order.length) [order[idx], order[t]] = [order[t], order[idx]]; return { ...prev, home: { ...prev.home, sectionOrder: order } }; }); trackChange(); }} />}
