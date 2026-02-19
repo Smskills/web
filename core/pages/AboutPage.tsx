@@ -14,6 +14,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ content, siteName }) => {
   const {
     beginning = { label: 'Genesis', title: 'Our Story', story: '', image: '' },
     learning = { label: 'Method', title: 'How we teach', description: '', image1: '', image2: '', caption1: '', caption2: '' },
+    founder = { label: 'Leadership', title: 'Our Founder', name: '', role: '', bio: '', image: '', quote: '' },
     faculty = { label: 'Faculty', title: 'Mentors', description: '', members: [] },
     vision = { label: 'DNA', title: 'Vision', content: '', values: [], image: '' },
     achievements = { label: 'Proof', title: 'Milestones', image: '', stats: [], ctaLabel: 'Learn More' },
@@ -50,7 +51,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ content, siteName }) => {
         </div>
       </section>
 
-      {/* Rest of the sections maintained with light vibe... */}
+      {/* Chapter 2: Methodology */}
       <section className="py-24 bg-slate-50 border-y border-slate-100">
         <div className="container mx-auto px-4">
           <div className="text-center mb-20 max-w-3xl mx-auto">
@@ -77,7 +78,89 @@ const AboutPage: React.FC<AboutPageProps> = ({ content, siteName }) => {
         </div>
       </section>
 
-      {/* Chapter 4: Vision & Values (Brightened) */}
+      {/* Founder Section */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-6">
+          <div className="max-w-6xl mx-auto">
+             <div className="flex flex-col lg:flex-row items-center gap-16 md:gap-24">
+                <div className="lg:w-1/2 shrink-0">
+                   <div className="relative group">
+                      <div className="absolute -inset-4 bg-emerald-600/5 rounded-[4rem] group-hover:scale-105 transition-transform duration-700"></div>
+                      <div className="relative aspect-[4/5] rounded-[3.5rem] overflow-hidden shadow-4xl border-8 border-white">
+                         <img 
+                           src={founder.image || 'https://i.pravatar.cc/600?u=founder'} 
+                           alt={founder.name} 
+                           className="w-full h-full object-cover transition-transform duration-[10s] group-hover:scale-110"
+                         />
+                      </div>
+                      {/* Floating Badge */}
+                      <div className="absolute -bottom-6 -right-6 bg-slate-900 text-white p-6 rounded-3xl shadow-3xl border border-slate-800 animate-fade-in-up">
+                         <i className="fa-solid fa-quote-left text-emerald-500 text-2xl mb-2 block"></i>
+                         <p className="text-xs italic font-medium leading-relaxed max-w-[180px]">
+                           "{founder.quote}"
+                         </p>
+                      </div>
+                   </div>
+                </div>
+
+                <div className="lg:w-1/2 space-y-8">
+                   <div>
+                      <span className="text-emerald-600 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">{founder.label}</span>
+                      <h2 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tight leading-none mb-4">{founder.title}</h2>
+                      <div className="flex flex-col">
+                        <span className="text-2xl font-black text-slate-900">{founder.name}</span>
+                        <span className="text-emerald-600 font-black uppercase text-xs tracking-widest mt-1">{founder.role}</span>
+                      </div>
+                   </div>
+
+                   <div className="w-16 h-1.5 bg-emerald-500 rounded-full"></div>
+
+                   <div className="space-y-6">
+                      <p className="text-slate-600 text-lg md:text-xl font-medium leading-relaxed whitespace-pre-line">
+                         {founder.bio}
+                      </p>
+                   </div>
+                </div>
+             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Chapter 3: Faculty & Mentors */}
+      <section className="py-24 bg-slate-50 border-y border-slate-100">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-20">
+            <span className="text-emerald-600 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">{faculty.label}</span>
+            <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">{faculty.title}</h2>
+            <p className="text-slate-500 text-lg font-medium leading-relaxed max-w-2xl mx-auto">{faculty.description}</p>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
+            {(faculty.members || []).map((member) => (
+              <div key={member.id} className="group flex flex-col items-center text-center p-8 bg-white rounded-[3rem] border border-slate-100 hover:border-emerald-200 hover:shadow-4xl transition-all duration-500">
+                <div className="relative w-40 h-40 mb-8">
+                  <div className="absolute -inset-2 bg-gradient-to-br from-emerald-500 to-teal-400 rounded-[2.5rem] opacity-0 group-hover:opacity-100 blur-lg transition-opacity duration-500"></div>
+                  <div className="relative w-full h-full rounded-[2.2rem] overflow-hidden border-4 border-white shadow-2xl">
+                    <img 
+                      src={member.image || 'https://i.pravatar.cc/150?u=' + member.id} 
+                      alt={member.name} 
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                  </div>
+                </div>
+                <h3 className="text-xl font-black text-slate-900 mb-1 group-hover:text-emerald-600 transition-colors uppercase tracking-tight">{member.name}</h3>
+                <p className="text-emerald-600 font-black text-[10px] uppercase tracking-widest mb-6">{member.role}</p>
+                <div className="h-px w-12 bg-slate-200 mb-6 mx-auto group-hover:w-24 group-hover:bg-emerald-200 transition-all duration-500"></div>
+                <p className="text-slate-500 text-sm leading-relaxed font-medium line-clamp-3">
+                  {member.bio}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Chapter 4: Vision & Values */}
       <section className="py-24 bg-emerald-600 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
         <div className="container mx-auto px-4 relative z-10">

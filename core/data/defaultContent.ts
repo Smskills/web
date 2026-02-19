@@ -68,6 +68,15 @@ export const INITIAL_CONTENT: AppState = {
       caption1: "Collaborative project review sessions.",
       caption2: "Practical labs led by industry veterans."
     },
+    founder: {
+      label: "THE VISIONARY",
+      title: "Meet our Founder",
+      name: "Founder Name",
+      role: "Founder & Director",
+      bio: "With over 20 years of industry experience, our founder envisioned S M Skills as a bridge to professional excellence.",
+      image: "https://i.pravatar.cc/300?u=founder",
+      quote: "Vocational skills are the bedrock of modern industrial growth."
+    },
     faculty: {
       label: "CHAPTER 03 — THE GUARDIANS",
       title: "Taught by Practitioners",

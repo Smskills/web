@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { AppState, TeamMember, AchievementStat, ExtraChapter } from '../types.ts';
 
@@ -36,10 +37,10 @@ const AboutTab: React.FC<AboutTabProps> = ({
   updateExtraChapter,
   removeExtraChapter
 }) => {
-  // Defensive check for data and destructuring with robust defaults to prevent rendering crashes
   const {
     beginning = { label: '', title: '', story: '', image: '' },
     learning = { label: '', title: '', description: '', image1: '', image2: '', caption1: '', caption2: '' },
+    founder = { label: '', title: '', name: '', role: '', bio: '', image: '', quote: '' },
     faculty = { label: '', title: '', description: '', members: [] },
     vision = { label: '', title: '', content: '', values: [], image: '' },
     achievements = { label: '', title: '', image: '', stats: [], ctaLabel: '' },
@@ -47,198 +48,148 @@ const AboutTab: React.FC<AboutTabProps> = ({
   } = data || {};
 
   return (
-    <div className="space-y-16 animate-fade-in pb-20">
-      <div className="flex items-center gap-6 mb-8">
-        <h2 className="text-2xl font-black text-white uppercase tracking-tight shrink-0">Story Management</h2>
-        <div className="flex-grow h-px bg-slate-700 opacity-50"></div>
+    <div className="space-y-16 animate-fade-in pb-20 text-slate-900">
+      <div className="flex items-center gap-6 mb-8 border-b border-slate-100 pb-6">
+        <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight shrink-0">Institutional Story</h2>
       </div>
 
       {/* Chapter 1: Beginning */}
-      <div className="space-y-8 bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-700">
-        <h3 className="text-emerald-500 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-1"></i> CHAPTER: THE BEGINNING</h3>
+      <div className="space-y-8 bg-slate-50 p-8 rounded-[2.5rem] border border-slate-200">
+        <h3 className="text-emerald-600 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-feather-pointed"></i> THE GENESIS</h3>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
            <div className="lg:col-span-1 space-y-4">
-              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Visual Story</label>
-              <div onClick={() => triggerUpload('about.beginning.image')} className="aspect-video rounded-2xl bg-slate-800 border-2 border-slate-700 flex items-center justify-center cursor-pointer overflow-hidden group relative">
-                 {beginning.image ? <img src={beginning.image} className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" alt="Genesis" /> : <i className="fa-solid fa-image text-3xl text-slate-700"></i>}
-                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 font-black text-[10px] text-white uppercase">Upload Wide Scene</div>
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Visual Story</label>
+              <div onClick={() => triggerUpload('about.beginning.image')} className="aspect-video rounded-2xl bg-white border-2 border-slate-200 flex items-center justify-center cursor-pointer overflow-hidden group relative shadow-inner">
+                 {beginning.image ? <img src={beginning.image} className="w-full h-full object-cover group-hover:opacity-40 transition-opacity" alt="Genesis" /> : <i className="fa-solid fa-image text-3xl text-slate-200"></i>}
+                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 font-black text-[10px] text-emerald-700 uppercase bg-white/60">Change Scene</div>
               </div>
            </div>
            <div className="lg:col-span-2 space-y-4">
-              <input value={beginning.label} onChange={e => updateChapter('beginning', 'label', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-[10px] text-emerald-500 font-black uppercase tracking-widest" placeholder="Section Tag" />
-              <input value={beginning.title} onChange={e => updateChapter('beginning', 'title', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white font-bold" placeholder="Chapter Title" />
-              <textarea value={beginning.story} onChange={e => updateChapter('beginning', 'story', e.target.value)} rows={4} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-slate-300 resize-none" placeholder="The founding narrative..." />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Section Tag</label>
+                  <input value={beginning.label} onChange={e => updateChapter('beginning', 'label', e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-[10px] text-emerald-600 font-black uppercase tracking-widest shadow-sm outline-none focus:border-emerald-500" placeholder="e.g. CHAPTER 01" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Headline</label>
+                  <input value={beginning.title} onChange={e => updateChapter('beginning', 'title', e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 font-black shadow-sm outline-none focus:border-emerald-500" placeholder="Chapter Title" />
+                </div>
+              </div>
+              <div className="space-y-1">
+                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Story Narrative</label>
+                <textarea value={beginning.story} onChange={e => updateChapter('beginning', 'story', e.target.value)} rows={4} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-600 resize-none shadow-sm outline-none focus:border-emerald-500" placeholder="The founding narrative..." />
+              </div>
            </div>
         </div>
       </div>
 
-      {/* Chapter 2: Learning */}
-      <div className="space-y-8 bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-700">
-        <h3 className="text-emerald-500 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-2"></i> CHAPTER: METHODOLOGY</h3>
-        <div className="space-y-4">
-           <input value={learning.label} onChange={e => updateChapter('learning', 'label', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-[10px] text-emerald-500 font-black uppercase tracking-widest" />
-           <input value={learning.title} onChange={e => updateChapter('learning', 'title', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white font-bold" />
-           <textarea value={learning.description} onChange={e => updateChapter('learning', 'description', e.target.value)} rows={2} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-slate-300 resize-none" />
-        </div>
-        <div className="grid grid-cols-2 gap-6">
-           <div className="space-y-2">
-             <div onClick={() => triggerUpload('about.learning.image1')} className="h-40 rounded-2xl bg-slate-800 border-2 border-slate-700 flex items-center justify-center cursor-pointer overflow-hidden group relative">
-                {learning.image1 ? <img src={learning.image1} className="w-full h-full object-cover" alt="Action 1" /> : <i className="fa-solid fa-plus"></i>}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-[8px] font-black text-white uppercase">Action Photo 1</div>
-             </div>
-             <input value={learning.caption1} onChange={e => updateChapter('learning', 'caption1', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-[10px] text-slate-400" placeholder="Caption 1" />
+      {/* NEW: Founder Section Management */}
+      <div className="space-y-8 bg-slate-50 p-8 rounded-[2.5rem] border border-slate-200">
+        <h3 className="text-emerald-600 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-user-tie"></i> THE FOUNDER</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+           <div className="lg:col-span-1 space-y-4">
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Profile Photo</label>
+              <div onClick={() => triggerUpload('about.founder.image')} className="aspect-[4/5] rounded-[2.5rem] bg-white border-2 border-slate-200 flex items-center justify-center cursor-pointer overflow-hidden group relative shadow-inner max-w-[280px] mx-auto">
+                 {founder.image ? <img src={founder.image} className="w-full h-full object-cover group-hover:opacity-40 transition-opacity" alt="Founder" /> : <i className="fa-solid fa-user text-5xl text-slate-200"></i>}
+                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 font-black text-[10px] text-emerald-700 uppercase bg-white/60">Upload Portrait</div>
+              </div>
            </div>
-           <div className="space-y-2">
-             <div onClick={() => triggerUpload('about.learning.image2')} className="h-40 rounded-2xl bg-slate-800 border-2 border-slate-700 flex items-center justify-center cursor-pointer overflow-hidden group relative">
-                {learning.image2 ? <img src={learning.image2} className="w-full h-full object-cover" alt="Action 2" /> : <i className="fa-solid fa-plus"></i>}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-[8px] font-black text-white uppercase">Action Photo 2</div>
-             </div>
-             <input value={learning.caption2} onChange={e => updateChapter('learning', 'caption2', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-[10px] text-slate-400" placeholder="Caption 2" />
+           <div className="lg:col-span-2 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
+                  <input value={founder.name} onChange={e => updateChapter('founder', 'name', e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 font-black shadow-sm outline-none focus:border-emerald-500" placeholder="Founder Name" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Role/Designation</label>
+                  <input value={founder.role} onChange={e => updateChapter('founder', 'role', e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-[10px] text-emerald-600 font-black uppercase tracking-widest shadow-sm outline-none focus:border-emerald-500" placeholder="e.g. Founder & Director" />
+                </div>
+              </div>
+              <div className="space-y-1">
+                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Short Inspiration Quote</label>
+                <input value={founder.quote} onChange={e => updateChapter('founder', 'quote', e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs italic text-slate-600 shadow-sm outline-none focus:border-emerald-500" placeholder="A brief quote from the founder..." />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Professional Biography</label>
+                <textarea value={founder.bio} onChange={e => updateChapter('founder', 'bio', e.target.value)} rows={5} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-600 resize-none shadow-sm outline-none focus:border-emerald-500" placeholder="Detailed biography and vision..." />
+              </div>
            </div>
         </div>
       </div>
 
-      {/* Chapter 3: Mentors */}
-      <div className="space-y-8 bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-700">
+      {/* Chapter 3: Mentors / Faculty */}
+      <div className="space-y-8 bg-slate-50 p-8 rounded-[2.5rem] border border-slate-200">
         <div className="flex justify-between items-center">
-           <h3 className="text-emerald-500 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-3"></i> CHAPTER: THE MENTORS</h3>
-           <button onClick={addTeamMember} className="bg-emerald-600 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg">ADD FACULTY</button>
+           <div className="flex items-center gap-3">
+             <h3 className="text-emerald-600 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-user-graduate"></i> FACULTY & MENTORS</h3>
+           </div>
+           <button onClick={addTeamMember} className="bg-slate-900 hover:bg-emerald-600 text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg transition-all active:scale-95">Add Faculty Member</button>
         </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
            {(faculty.members || []).map(member => (
-              <div key={member.id} className="bg-slate-800 p-6 rounded-3xl border border-slate-700 relative group">
-                 <button onClick={() => removeTeamMember(member.id)} className="absolute -top-2 -right-2 w-8 h-8 bg-red-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center shadow-xl"><i className="fa-solid fa-trash-can text-[10px]"></i></button>
-                 <div className="flex gap-4">
-                    <div onClick={() => triggerUpload(`about.faculty.members.${member.id}`)} className="w-20 h-20 rounded-xl bg-slate-900 border border-slate-700 overflow-hidden cursor-pointer shrink-0 relative group/p">
+              <div key={member.id} className="bg-white p-6 rounded-3xl border border-slate-200 relative group hover:border-emerald-300 transition-all shadow-sm">
+                 <button onClick={() => removeTeamMember(member.id)} className="absolute -top-2 -right-2 w-8 h-8 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center shadow-xl hover:bg-red-600 z-20"><i className="fa-solid fa-trash-can text-[10px]"></i></button>
+                 
+                 <div className="flex gap-6">
+                    <div onClick={() => triggerUpload(`about.faculty.members.${member.id}`)} className="w-24 h-24 rounded-2xl bg-slate-100 border border-slate-200 overflow-hidden cursor-pointer shrink-0 relative group/p shadow-inner">
                        <img src={member.image} className="w-full h-full object-cover" alt={member.name} />
-                       <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/p:opacity-100 flex items-center justify-center text-[6px] font-black text-white uppercase text-center">Update Portrait</div>
+                       <div className="absolute inset-0 bg-white/60 opacity-0 group-hover/p:opacity-100 flex items-center justify-center text-[7px] font-black text-emerald-700 uppercase text-center p-2 leading-tight">Update Photo</div>
                     </div>
-                    <div className="flex-grow space-y-2">
-                       <input value={member.name} onChange={e => updateTeamMember(member.id, 'name', e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-white font-bold" placeholder="Full Name" />
-                       <input value={member.role} onChange={e => updateTeamMember(member.id, 'role', e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-[10px] text-emerald-400 font-black uppercase" placeholder="Job Role" />
+                    <div className="flex-grow space-y-4">
+                       <div className="space-y-1">
+                         <label className="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
+                         <input value={member.name} onChange={e => updateTeamMember(member.id, 'name', e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 font-black outline-none focus:border-emerald-500" placeholder="Name" />
+                       </div>
+                       <div className="space-y-1">
+                         <label className="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">Role / Designation</label>
+                         <input value={member.role} onChange={e => updateTeamMember(member.id, 'role', e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-[10px] text-emerald-600 font-black uppercase outline-none focus:border-emerald-500" placeholder="Job Title" />
+                       </div>
                     </div>
                  </div>
-                 <textarea value={member.bio} onChange={e => updateTeamMember(member.id, 'bio', e.target.value)} rows={2} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-[11px] text-slate-400 mt-4 resize-none" placeholder="Short bio..." />
+                 <div className="mt-4 space-y-1">
+                    <label className="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">Professional Bio</label>
+                    <textarea value={member.bio} onChange={e => updateTeamMember(member.id, 'bio', e.target.value)} rows={3} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-[11px] text-slate-600 resize-none shadow-inner outline-none focus:border-emerald-500" placeholder="Experience details..." />
+                 </div>
               </div>
            ))}
         </div>
+
+        {(!faculty.members || faculty.members.length === 0) && (
+           <div className="py-12 text-center bg-white rounded-3xl border-2 border-dashed border-slate-200">
+              <p className="text-slate-400 font-black text-[10px] uppercase tracking-widest">No faculty members listed yet.</p>
+           </div>
+        )}
       </div>
 
       {/* Chapter 4: Vision & Values */}
-      <div className="space-y-8 bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-700">
-        <h3 className="text-emerald-500 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-4"></i> CHAPTER: VISION & VALUES</h3>
+      <div className="space-y-8 bg-slate-50 p-8 rounded-[2.5rem] border border-slate-200">
+        <h3 className="text-emerald-600 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-eye"></i> VISION & DNA</h3>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
            <div className="space-y-4">
-              <input value={vision.title} onChange={e => updateChapter('vision', 'title', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white font-bold" />
-              <textarea value={vision.content} onChange={e => updateChapter('vision', 'content', e.target.value)} rows={4} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-slate-300 resize-none" />
+              <div className="space-y-1">
+                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Headline</label>
+                <input value={vision.title} onChange={e => updateChapter('vision', 'title', e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 font-black shadow-sm outline-none focus:border-emerald-500" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Mission Statement</label>
+                <textarea value={vision.content} onChange={e => updateChapter('vision', 'content', e.target.value)} rows={4} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-600 resize-none shadow-sm outline-none focus:border-emerald-500" />
+              </div>
            </div>
            <div className="space-y-4">
               <div className="flex justify-between items-center">
-                 <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Institutional Values</span>
-                 <button onClick={addValue} className="text-xs text-emerald-500 font-black">+ ADD VALUE</button>
+                 <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Core Values</span>
+                 <button onClick={addValue} className="text-[9px] font-black text-emerald-600 hover:text-emerald-700 uppercase tracking-widest">+ Add New</button>
               </div>
               <div className="space-y-2">
                  {(vision.values || []).map((v, idx) => (
-                    <div key={idx} className="flex gap-2">
-                       <input value={v} onChange={e => updateValues(idx, e.target.value)} className="flex-grow bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-xs text-white" />
-                       <button onClick={() => removeValue(idx)} className="text-red-500 p-2 hover:bg-red-500/10 rounded-lg transition-colors"><i className="fa-solid fa-xmark"></i></button>
+                    <div key={idx} className="flex gap-2 group">
+                       <input value={v} onChange={e => updateValues(idx, e.target.value)} className="flex-grow bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-900 font-bold shadow-sm outline-none focus:border-emerald-500" />
+                       <button onClick={() => removeValue(idx)} className="w-9 h-9 flex items-center justify-center text-red-500 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"><i className="fa-solid fa-xmark"></i></button>
                     </div>
                  ))}
               </div>
            </div>
-        </div>
-      </div>
-
-      {/* Chapter 5: Achievements */}
-      <div className="space-y-8 bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-700">
-        <div className="flex justify-between items-center">
-           <h3 className="text-emerald-500 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-5"></i> CHAPTER: ACHIEVEMENTS</h3>
-           <button onClick={addStat} className="bg-emerald-600 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg">ADD STAT</button>
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-           <div className="space-y-6">
-              <input value={achievements.title} onChange={e => updateChapter('achievements', 'title', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white font-bold" />
-              <div onClick={() => triggerUpload('about.achievements.image')} className="aspect-video rounded-3xl bg-slate-800 border-2 border-slate-700 flex items-center justify-center cursor-pointer overflow-hidden group relative">
-                 {achievements.image ? <img src={achievements.image} className="w-full h-full object-cover" alt="Proof" /> : <i className="fa-solid fa-image"></i>}
-                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center font-black text-[10px] text-white uppercase">Upload Image</div>
-              </div>
-           </div>
-           <div className="space-y-4">
-              <div className="space-y-4">
-                 {(achievements.stats || []).map((stat) => (
-                    <div key={stat.id} className="grid grid-cols-12 gap-4 p-4 bg-slate-800 rounded-2xl border border-slate-700 group/stat relative">
-                       <button onClick={() => removeStat(stat.id)} className="absolute -top-2 -right-2 w-6 h-6 bg-red-600 text-white rounded-full opacity-0 group-hover/stat:opacity-100 transition-all flex items-center justify-center shadow-xl z-10"><i className="fa-solid fa-xmark text-[10px]"></i></button>
-                       <div className="col-span-4">
-                         <label className="text-[8px] font-black text-slate-500 uppercase mb-1 block">Value</label>
-                         <input value={stat.value} onChange={e => updateStats(stat.id, 'value', e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white font-black" placeholder="94%" />
-                       </div>
-                       <div className="col-span-8">
-                         <label className="text-[8px] font-black text-slate-500 uppercase mb-1 block">Label</label>
-                         <input value={stat.label} onChange={e => updateStats(stat.id, 'label', e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-[10px] text-slate-500 uppercase font-black" placeholder="Placement Rate" />
-                       </div>
-                    </div>
-                 ))}
-              </div>
-           </div>
-        </div>
-      </div>
-
-      {/* Extra Chapters Builder */}
-      <div className="space-y-8 bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-700">
-        <div className="flex justify-between items-center border-b border-slate-700 pb-6">
-           <div>
-             <h3 className="text-emerald-500 font-black text-xl flex items-center gap-3">
-               <i className="fa-solid fa-folder-plus"></i> EXTRA CHAPTERS
-             </h3>
-             <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-1">Append custom chapters to the story</p>
-           </div>
-           <button 
-             onClick={addExtraChapter}
-             className="bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-3 rounded-full text-[10px] font-black shadow-xl transition-all active:scale-95"
-           >
-             <i className="fa-solid fa-plus mr-2"></i> ADD NEW CHAPTER
-           </button>
-        </div>
-
-        <div className="space-y-10">
-          {(extraChapters || []).map((ch) => (
-            <div key={ch.id} className="bg-slate-800/50 p-8 rounded-3xl border border-slate-700 hover:border-emerald-500/30 transition-all group relative">
-              <button 
-                onClick={() => removeExtraChapter(ch.id)} 
-                className="absolute -top-3 -right-3 w-10 h-10 bg-red-600 text-white rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-xl"
-              >
-                <i className="fa-solid fa-trash text-sm"></i>
-              </button>
-              
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                <div className="lg:col-span-3">
-                  <div 
-                    onClick={() => triggerUpload(`about.extraChapters.${ch.id}`)}
-                    className="aspect-square bg-slate-900 rounded-2xl overflow-hidden cursor-pointer group/img border border-slate-700 relative"
-                  >
-                    {ch.image ? <img src={ch.image} className="w-full h-full object-cover group-hover/img:opacity-40" alt="Chapter" /> : <div className="w-full h-full flex items-center justify-center text-slate-700 text-3xl"><i className="fa-solid fa-image"></i></div>}
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/img:opacity-100 bg-black/40 text-white font-black text-[10px] uppercase">Upload Feature Image</div>
-                  </div>
-                </div>
-                <div className="lg:col-span-9 space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <label className="text-[9px] font-black text-slate-600 uppercase">Label (Chapter Num)</label>
-                      <input value={ch.label} onChange={e => updateExtraChapter(ch.id, 'label', e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-[10px] text-emerald-500 font-black uppercase" />
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-[9px] font-black text-slate-600 uppercase">Headline</label>
-                      <input value={ch.title} onChange={e => updateExtraChapter(ch.id, 'title', e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-white font-bold" />
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-[9px] font-black text-slate-600 uppercase">Chapter Narrative</label>
-                    <textarea value={ch.story} onChange={e => updateExtraChapter(ch.id, 'story', e.target.value)} rows={4} className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-xs text-slate-300 font-medium resize-none" placeholder="Narrative story..." />
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
         </div>
       </div>
     </div>

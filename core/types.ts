@@ -22,7 +22,6 @@ export interface CustomPage {
   showHeader: boolean;
 }
 
-// Fix: Added missing PlacementStat interface for tracking placement data.
 export interface PlacementStat {
   id: string;
   label: string;
@@ -30,7 +29,6 @@ export interface PlacementStat {
   icon: string;
 }
 
-// Fix: Added missing StudentReview interface for student placement stories.
 export interface StudentReview {
   id: string;
   name: string;
@@ -43,7 +41,6 @@ export interface StudentReview {
   role?: string;
 }
 
-// Fix: Added missing IndustryPartner interface for corporate partner tracking.
 export interface IndustryPartner {
   id: string;
   name: string;
@@ -51,14 +48,12 @@ export interface IndustryPartner {
   image?: string;
 }
 
-// Fix: Added missing LegalSection interface for modular legal page content.
 export interface LegalSection {
   id: string;
   title: string;
   content: string;
 }
 
-// Fix: Added missing CareerService interface for career guidance features.
 export interface CareerService {
   id: string;
   title: string;
@@ -187,6 +182,15 @@ export interface AboutState {
     caption1: string;
     caption2: string;
   };
+  founder: {
+    label: string;
+    title: string;
+    name: string;
+    role: string;
+    bio: string;
+    image: string;
+    quote: string;
+  };
   faculty: {
     label: string;
     title: string;
@@ -221,7 +225,7 @@ export interface Course {
   description: string;
   status: 'Active' | 'Inactive';
   image: string;
-  cardImage?: string; // Cropped thumbnail for small cards
+  cardImage?: string; 
   price?: string;
   eligibility?: string;
   benefits?: string;
