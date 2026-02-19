@@ -100,20 +100,22 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
   return (
     <div className="bg-white font-sans min-h-screen">
       
-      {/* 1. SINGLE-SCREEN FRONT COVER SPOTLIGHT */}
+      {/* 1. SINGLE-SCREEN FRONT COVER SPOTLIGHT - UPDATED TO PREMIUM LIGHT THEME */}
       {spotlightCourse && (
-        <section className="bg-[#0b1121] text-white overflow-hidden animate-fade-in relative min-h-[calc(100vh-130px)] lg:h-[calc(100vh-130px)] flex flex-col justify-center border-b border-white/5">
-          <div className="absolute top-0 left-0 w-full h-full bg-emerald-500/5 blur-[120px] pointer-events-none"></div>
+        <section className="bg-gradient-to-br from-white via-emerald-50/40 to-slate-100 text-slate-900 overflow-hidden animate-fade-in relative min-h-[calc(100vh-130px)] lg:h-[calc(100vh-130px)] flex flex-col justify-center border-b border-slate-200">
+          {/* Subtle decorative glow */}
+          <div className="absolute top-0 left-0 w-full h-full bg-emerald-500/[0.03] blur-[120px] pointer-events-none"></div>
           
           <div className="container mx-auto px-6 py-8 relative z-10">
-            <div className="flex justify-between items-center mb-10 border-b border-white/10 pb-4 shrink-0">
+            {/* Top Bar for Spotlight */}
+            <div className="flex justify-between items-center mb-10 border-b border-slate-200/60 pb-4 shrink-0">
               <div className="flex items-center gap-3">
-                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(16,185,129,0.6)]"></span>
-                <span className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.4em]">PROGRAM SPOTLIGHT</span>
+                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(16,185,129,0.4)]"></span>
+                <span className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.4em]">PROGRAM SPOTLIGHT</span>
               </div>
               <button 
                 onClick={handleCloseSpotlight}
-                className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-all flex items-center gap-2 group"
+                className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-all flex items-center gap-2 group px-4 py-2 bg-white/50 rounded-xl border border-slate-200"
               >
                 Close View <i className="fa-solid fa-xmark text-xs transition-transform group-hover:rotate-90"></i>
               </button>
@@ -122,7 +124,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-20 items-center">
               <div className="lg:col-span-5 hidden lg:block">
                 {/* POSTER CONTAINER WITH ALWAYS SHINING EFFECT */}
-                <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden border border-white/10 shadow-4xl group bg-slate-900 h-[550px]">
+                <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden border border-slate-200 shadow-4xl group bg-white h-[550px]">
                   <img 
                     src={spotlightCourse.image} 
                     alt={spotlightCourse.name} 
@@ -131,10 +133,10 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                   
                   {/* PERSISTENT SHINE OVERLAY */}
                   <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-[3rem]">
-                    <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shine-sweep"></div>
+                    <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shine-sweep"></div>
                   </div>
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0b1121]/80 via-transparent to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent"></div>
                   
                   <div className="absolute top-8 left-8">
                      <div className="bg-emerald-600 text-white p-4 rounded-2xl shadow-2xl border border-emerald-400/30 flex items-center gap-4">
@@ -150,16 +152,17 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
 
               <div className="lg:col-span-7 space-y-8">
                 <div className="space-y-4">
-                  <div className="inline-flex items-center gap-3 bg-emerald-500/10 px-4 py-2 rounded-xl border border-emerald-500/20">
-                    <span className="text-emerald-400 font-black text-[10px] uppercase tracking-[0.3em]">
+                  <div className="inline-flex items-center gap-3 bg-emerald-600/10 px-4 py-2 rounded-xl border border-emerald-600/10">
+                    <span className="text-emerald-700 font-black text-[10px] uppercase tracking-[0.3em]">
                       {spotlightCourse.academicLevel}
                     </span>
                   </div>
-                  <h1 className="text-4xl md:text-6xl xl:text-7xl font-black tracking-tighter leading-tight text-white">
+                  <h1 className="text-4xl md:text-6xl xl:text-7xl font-black tracking-tighter leading-[1.1] text-slate-900">
                     {spotlightCourse.name}
                   </h1>
                 </div>
 
+                {/* Specs Grid */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                    {[
                      { label: 'Certificate', value: spotlightCourse.certification || spotlightCourse.academicLevel, icon: 'fa-certificate' },
@@ -167,33 +170,33 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                      { label: 'Duration', value: spotlightCourse.duration, icon: 'fa-clock' },
                      { label: 'Eligibility', value: spotlightCourse.eligibility || '12th Pass', icon: 'fa-id-card' }
                    ].map((spec, i) => (
-                     <div key={i} className="p-4 bg-white/[0.03] border border-white/10 rounded-2xl group hover:bg-white/[0.06] transition-all">
+                     <div key={i} className="p-4 bg-white border border-slate-200 rounded-2xl group hover:border-emerald-500/30 hover:shadow-xl transition-all">
                         <div className="flex items-center gap-2 mb-3">
-                           <i className={`fa-solid ${spec.icon} text-emerald-500 text-[10px]`}></i>
-                           <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{spec.label}</span>
+                           <i className={`fa-solid ${spec.icon} text-emerald-600 text-[10px]`}></i>
+                           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{spec.label}</span>
                         </div>
-                        <p className="text-sm font-black text-white leading-tight uppercase truncate">{spec.value}</p>
+                        <p className="text-sm font-black text-slate-900 leading-tight uppercase truncate">{spec.value}</p>
                      </div>
                    ))}
                 </div>
 
                 <div className="space-y-6">
-                   <div className="bg-white/[0.02] p-6 rounded-[2rem] border border-white/5 relative">
-                      <div className="absolute top-4 right-6 text-white/5 text-4xl"><i className="fa-solid fa-quote-right"></i></div>
+                   <div className="bg-white/60 p-6 rounded-[2rem] border border-slate-200/60 relative backdrop-blur-sm">
+                      <div className="absolute top-4 right-6 text-slate-100 text-4xl"><i className="fa-solid fa-quote-right"></i></div>
                       <FormattedText 
                         text={spotlightCourse.description} 
-                        className="text-slate-400 text-base md:text-lg leading-relaxed font-medium"
+                        className="text-slate-600 text-base md:text-lg leading-relaxed font-medium"
                       />
                    </div>
                    
                    <div className="grid grid-cols-2 gap-4">
                       <div className="flex items-center gap-3">
-                         <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500"><i className="fa-solid fa-check text-[10px]"></i></div>
-                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Industry Mentor Support</span>
+                         <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600"><i className="fa-solid fa-check text-[10px]"></i></div>
+                         <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Industry Mentor Support</span>
                       </div>
                       <div className="flex items-center gap-3">
-                         <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500"><i className="fa-solid fa-check text-[10px]"></i></div>
-                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">NSDC Standards Compliant</span>
+                         <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600"><i className="fa-solid fa-check text-[10px]"></i></div>
+                         <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">NSDC Standards Compliant</span>
                       </div>
                    </div>
                 </div>
@@ -201,13 +204,13 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                 <div className="pt-6 flex flex-col sm:flex-row items-center gap-6">
                   <Link 
                     to={`/enroll?course=${encodeURIComponent(spotlightCourse.name)}`}
-                    className="w-full sm:w-auto px-12 py-5 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-500 hover:scale-[1.02] transition-all text-center uppercase tracking-widest text-xs shadow-2xl active:scale-95 shadow-emerald-600/20"
+                    className="w-full sm:w-auto px-12 py-5 bg-[#020617] text-white font-black rounded-2xl hover:bg-emerald-600 hover:scale-[1.02] transition-all text-center uppercase tracking-widest text-xs shadow-2xl active:scale-95 shadow-slate-900/20"
                   >
                     Start Your Application <i className="fa-solid fa-paper-plane ml-3 text-[10px]"></i>
                   </Link>
-                  <div className="flex items-center gap-3">
-                     <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Fees:</span>
-                     <span className="text-xl font-black text-emerald-400">{spotlightCourse.price || 'Scholarship'}</span>
+                  <div className="flex flex-col items-start">
+                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Standard Fees</span>
+                     <span className="text-2xl font-black text-emerald-600">{spotlightCourse.price || 'Scholarship'}</span>
                   </div>
                 </div>
               </div>
