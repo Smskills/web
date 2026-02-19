@@ -37,11 +37,15 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
   const btnPrimary = "px-10 py-5 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-500 focus-visible:ring-4 focus-visible:ring-emerald-500/30 transition-all shadow-2xl shadow-emerald-600/20 active:scale-95 text-[11px] uppercase tracking-widest text-center min-h-[56px] flex items-center justify-center";
   const btnMidnight = "px-10 py-5 bg-[#020617] text-white font-black rounded-2xl hover:bg-emerald-600 focus-visible:ring-4 focus-visible:ring-slate-900/20 transition-all shadow-2xl active:scale-95 text-[11px] uppercase tracking-widest text-center min-h-[56px] flex items-center justify-center";
 
-  // --- Logic for Vocational Tracks Showcase ---
+  // Logic for Featured Tracks
   const featuredPrograms = courses.list.filter(c => c.status === 'Active' && c.isFeatured);
   const displayCourses = featuredPrograms.length > 0 
-    ? featuredPrograms.slice(0, 6) 
+    ? featuredPrograms.slice(0, 3) 
     : courses.list.filter(c => c.status === 'Active').slice(0, 3);
+
+  // Logic for the "Other Courses" teaser block
+  const remainingCourses = courses.list.filter(c => c.status === 'Active').length - displayCourses.length;
+  const teaserThumbnails = courses.list.filter(c => c.status === 'Active' && !displayCourses.find(d => d.id === c.id)).slice(0, 4);
 
   return (
     <div className="space-y-0 overflow-x-hidden bg-white font-sans">
@@ -202,27 +206,20 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
         </section>
       )}
 
-      {/* Featured Courses - Dashboard Controlled Top Showcase */}
+      {/* Featured Courses Showcase */}
       {home.sections.featuredCourses && (
         <section className="py-24 bg-white border-t border-slate-100">
           <div className="container mx-auto px-6">
-            <div className="flex flex-col md:flex-row justify-between items-end mb-24 gap-8">
-              <div className="max-w-3xl">
-                <span className="text-emerald-700 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">Trending Curricula</span>
+            <div className="text-center mb-24 max-w-4xl mx-auto">
+                <span className="text-emerald-700 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">Institutional Tracks</span>
                 <h2 className="text-4xl md:text-6xl font-black text-[#020617] tracking-tighter leading-tight">{home.sectionLabels.coursesTitle}</h2>
                 <p className="text-slate-500 text-lg md:text-xl font-medium leading-relaxed mt-6">{home.sectionLabels.coursesSubtitle}</p>
-              </div>
-              <Link to="/academics" className="group flex items-center gap-4 px-8 py-4 bg-slate-50 hover:bg-[#020617] text-slate-900 hover:text-white rounded-2xl transition-all border border-slate-200 shadow-sm active:scale-95">
-                <span className="text-[11px] font-black uppercase tracking-widest">BROWSE FULL CATALOG</span>
-                <i className="fa-solid fa-arrow-right-long group-hover:translate-x-1 transition-transform"></i>
-              </Link>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
               {displayCourses.map(course => (
                 <article key={course.id} className="flex flex-col rounded-[2.5rem] overflow-hidden border border-slate-100 bg-white hover:shadow-4xl transition-all group relative">
                   <div className="relative h-64 md:h-72 overflow-hidden">
-                    {/* Fixed: Use cardImage for Featured section to respect custom cropping */}
                     <img src={course.cardImage || course.image} alt={course.name} className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110" />
                     
                     <div className="absolute top-6 left-6 z-10 flex flex-col gap-2">
@@ -248,6 +245,43 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
                 </article>
               ))}
             </div>
+
+            {/* Catalog Teaser Section - Mimics requested image style */}
+            {remainingCourses > 0 && (
+              <div className="mt-16 pt-16 border-t border-slate-100 flex flex-col items-center">
+                 <div className="flex flex-col md:flex-row items-center justify-between gap-12 w-full bg-slate-50 p-10 md:p-14 rounded-[3.5rem] shadow-sm border border-slate-100">
+                    <div className="flex flex-col md:flex-row items-center gap-10">
+                       <div className="flex -space-x-5">
+                          {teaserThumbnails.map((c, i) => (
+                             <div key={i} className="w-16 h-16 rounded-3xl border-4 border-white overflow-hidden shadow-xl transform group-hover:translate-y-[-5px] transition-transform">
+                                <img src={c.image} className="w-full h-full object-cover" alt="" />
+                             </div>
+                          ))}
+                          <div className="w-16 h-16 rounded-3xl border-4 border-white bg-emerald-600 flex items-center justify-center text-white text-[11px] font-black shadow-xl">
+                             +{remainingCourses}
+                          </div>
+                       </div>
+                       <div className="text-center md:text-left">
+                          <p className="text-slate-900 font-black text-2xl tracking-tight">Expand Your Potential</p>
+                          <p className="text-slate-500 text-sm font-medium mt-1 uppercase tracking-widest">Browse our complete institutional catalog</p>
+                       </div>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row items-center gap-8 shrink-0">
+                       <Link 
+                          to="/academics"
+                          className="px-12 py-5 bg-[#020617] text-white font-black rounded-2xl hover:bg-emerald-600 hover:scale-[1.02] transition-all text-center uppercase tracking-widest text-[11px] shadow-4xl active:scale-95 flex items-center gap-3"
+                       >
+                          START YOUR APPLICATION <i className="fa-solid fa-paper-plane text-[9px]"></i>
+                       </Link>
+                       <div className="flex flex-col items-center md:items-start">
+                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 leading-none">STANDARD FEES</span>
+                          <span className="text-2xl font-black text-emerald-600 leading-none">Rs. 50,000 <span className="text-[10px] text-slate-400 font-bold">/ AVG</span></span>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+            )}
           </div>
         </section>
       )}
