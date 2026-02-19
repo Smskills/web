@@ -11,6 +11,7 @@ interface ImageCropperProps {
 /**
  * Institutional Image Cropper
  * Provides a high-fidelity interface for framing catalog thumbnails (4:3 aspect ratio).
+ * Resolution is optimized for modern high-DPI displays.
  */
 const ImageCropper: React.FC<ImageCropperProps> = ({ 
   imageSrc, 
@@ -26,18 +27,27 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
+  // Use a higher resolution for the internal canvas to ensure the crop is sharp
+  const INTERNAL_WIDTH = 1200;
+  const INTERNAL_HEIGHT = 1200 / aspectRatio;
+
   // Draw preview on canvas
   useEffect(() => {
     if (!isReady || !canvasRef.current || !imgRef.current) return;
 
-    const ctx = canvasRef.current.getContext('2d');
+    const ctx = canvasRef.current.getContext('2d', { alpha: false });
     if (!ctx) return;
 
     const canvas = canvasRef.current;
     const img = imgRef.current;
 
+    // Set smoothing for better quality during zoom
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+
     // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Calculate dimensions to fill canvas
     const iw = img.naturalWidth;
@@ -54,12 +64,9 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
 
     ctx.drawImage(img, dx, dy, sw, sh);
 
-    // Draw overlay mask (Instagram style)
-    ctx.fillStyle = 'rgba(2, 6, 23, 0.4)';
-    // We want the whole canvas to be our crop area, so we don't need a hole for now
-    // but we can add grid lines
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-    ctx.lineWidth = 1;
+    // Draw grid lines for composition (Rule of Thirds)
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+    ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(cw/3, 0); ctx.lineTo(cw/3, ch);
     ctx.moveTo(2*cw/3, 0); ctx.lineTo(2*cw/3, ch);
@@ -86,24 +93,25 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
 
   const handleSave = () => {
     if (!canvasRef.current) return;
-    const croppedData = canvasRef.current.toDataURL('image/webp', 0.8);
+    // Export with high quality to prevent low-res artifacts
+    const croppedData = canvasRef.current.toDataURL('image/webp', 0.95);
     onCrop(croppedData);
   };
 
   return (
     <div className="fixed inset-0 z-[300] flex items-center justify-center bg-slate-950/90 backdrop-blur-xl p-4 md:p-8 animate-fade-in">
-      <div className="bg-white w-full max-w-2xl rounded-[2.5rem] overflow-hidden shadow-4xl flex flex-col border border-white/20">
+      <div className="bg-white w-full max-w-3xl rounded-[2.5rem] overflow-hidden shadow-4xl flex flex-col border border-white/20">
         <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
            <div>
-             <h2 className="text-xl font-black text-slate-900 tracking-tight leading-none">Frame Card View</h2>
-             <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-2">Position the face or key subject in the center</p>
+             <h2 className="text-xl font-black text-slate-900 tracking-tight leading-none uppercase">Frame Program Card</h2>
+             <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-2">Reposition the subject for the catalog grid</p>
            </div>
            <button onClick={onCancel} className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all">
              <i className="fa-solid fa-xmark"></i>
            </button>
         </div>
 
-        <div className="relative bg-slate-900 p-4 md:p-8 flex flex-col items-center gap-8 overflow-hidden">
+        <div className="relative bg-slate-950 p-4 md:p-12 flex flex-col items-center gap-8 overflow-hidden">
           <img 
             src={imageSrc} 
             ref={imgRef} 
@@ -115,24 +123,25 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
           <div className="relative group shadow-2xl">
             <canvas 
               ref={canvasRef}
-              width={400}
-              height={300}
+              width={INTERNAL_WIDTH}
+              height={INTERNAL_HEIGHT}
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
-              className="rounded-3xl cursor-move border-4 border-white/10 group-hover:border-emerald-500/50 transition-colors"
+              style={{ width: '100%', maxWidth: '600px', height: 'auto' }}
+              className="rounded-3xl cursor-move border-4 border-white/10 group-hover:border-emerald-500/50 transition-all"
             />
             <div className="absolute inset-x-0 -bottom-4 flex justify-center">
-               <div className="bg-[#020617] text-white px-4 py-1 rounded-full text-[8px] font-black uppercase tracking-widest shadow-xl border border-white/10">
-                 Drag to reposition subject
+               <div className="bg-[#10b981] text-white px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-widest shadow-2xl border border-white/20 flex items-center gap-2">
+                 <i className="fa-solid fa-arrows-up-down-left-right"></i> Drag to Compose
                </div>
             </div>
           </div>
 
-          <div className="w-full max-w-xs space-y-4">
+          <div className="w-full max-w-sm space-y-4 bg-slate-900/50 p-6 rounded-2xl border border-white/5">
              <div className="flex justify-between items-center">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Zoom Control</span>
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Scaling Factor</span>
                 <span className="text-[10px] font-black text-emerald-500">{(zoom * 100).toFixed(0)}%</span>
              </div>
              <input 
@@ -147,18 +156,18 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
           </div>
         </div>
 
-        <div className="p-8 flex gap-4 bg-slate-50/50">
+        <div className="p-8 flex gap-4 bg-slate-50/50 border-t border-slate-100">
           <button 
             onClick={onCancel}
-            className="flex-grow py-4 border-2 border-slate-200 text-slate-500 font-black rounded-2xl hover:bg-slate-100 transition-all uppercase tracking-widest text-[10px]"
+            className="flex-grow py-4 border-2 border-slate-200 text-slate-500 font-black rounded-2xl hover:bg-slate-100 transition-all uppercase tracking-widest text-[11px]"
           >
-            Discard Changes
+            Cancel
           </button>
           <button 
             onClick={handleSave}
-            className="flex-grow py-4 bg-[#020617] text-white font-black rounded-2xl hover:bg-emerald-600 transition-all uppercase tracking-widest text-[10px] shadow-2xl shadow-slate-900/20"
+            className="flex-grow py-4 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-500 transition-all uppercase tracking-widest text-[11px] shadow-xl shadow-emerald-600/20"
           >
-            Apply Framing <i className="fa-solid fa-check ml-2"></i>
+            Apply High-Res Framing <i className="fa-solid fa-check ml-2"></i>
           </button>
         </div>
       </div>
