@@ -114,6 +114,22 @@ const ProgramEditor: React.FC<ProgramEditorProps> = ({
             </div>
           </div>
 
+          <div className="space-y-3">
+            <div className="flex items-center justify-between px-1">
+               <label className="text-[9px] font-black text-emerald-600 uppercase tracking-widest">Program Benefits (List items line by line)</label>
+               <div className="flex items-center gap-2">
+                  <span className="text-[9px] font-black text-slate-400 uppercase">Visible:</span>
+                  <button 
+                    onClick={() => updateCourseItem(course.id, 'showBenefits', !course.showBenefits)}
+                    className={`w-10 h-5 rounded-full transition-all relative ${course.showBenefits ? 'bg-emerald-600' : 'bg-slate-300'}`}
+                  >
+                    <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${course.showBenefits ? 'right-1' : 'left-1'}`}></div>
+                  </button>
+               </div>
+            </div>
+            <textarea value={course.benefits || ''} onChange={e => updateCourseItem(course.id, 'benefits', e.target.value)} className="w-full bg-slate-50 border border-slate-200 p-3 rounded text-sm text-slate-600 resize-none outline-none focus:ring-1 focus:ring-emerald-500 shadow-inner" rows={3} placeholder="Key outcomes or perks..." />
+          </div>
+
           <div className="space-y-1">
             <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Program Description</label>
             <textarea value={course.description} onChange={e => updateCourseItem(course.id, 'description', e.target.value)} className="w-full bg-slate-50 border border-slate-200 p-3 rounded text-sm text-slate-600 resize-none outline-none focus:ring-1 focus:ring-emerald-500 shadow-inner" rows={3} placeholder="Detailed course summary..." />

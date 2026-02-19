@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Course } from '../../types';
@@ -12,6 +13,14 @@ const CourseModal: React.FC<CourseModalProps> = ({ course, onClose }) => {
     if (!val) return "";
     return val.replace(/\s+(Certificate|Certification)$/i, "").trim();
   };
+
+  // Helper to parse multiline benefits string into a clean array
+  const benefitsList = (course.benefits || '')
+    .split('\n')
+    .map(b => b.replace(/^[•\-\*]\s*/, '').trim()) // Remove common bullet point chars
+    .filter(b => b.length > 0);
+
+  const shouldShowBenefits = course.showBenefits !== false && benefitsList.length > 0;
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-fade-in">
@@ -30,7 +39,7 @@ const CourseModal: React.FC<CourseModalProps> = ({ course, onClose }) => {
           </div>
 
           <div className="w-full md:w-[64%] flex flex-col bg-white overflow-hidden">
-            <div className="p-6 md:p-8 flex flex-col h-full">
+            <div className="p-6 md:p-8 flex flex-col h-full overflow-y-auto custom-scrollbar">
                <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-5 tracking-tight leading-tight">
                  {course.name}
                </h2>
@@ -47,7 +56,7 @@ const CourseModal: React.FC<CourseModalProps> = ({ course, onClose }) => {
                      <div className="w-8 h-8 bg-white text-blue-600 rounded-lg flex items-center justify-center shrink-0 shadow-sm border border-slate-50"><i className="fa-solid fa-chalkboard-user text-xs"></i></div>
                      <div className="flex flex-col">
                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Mode</span>
-                        <span className="text-xs font-black text-slate-800">Hybrid Track (Online + Offline)</span>
+                        <span className="text-xs font-black text-slate-800">{course.mode} Track</span>
                      </div>
                   </div>
                   <div className="flex items-center gap-3 p-3 bg-slate-50/80 rounded-xl border border-slate-100/50">
@@ -66,47 +75,33 @@ const CourseModal: React.FC<CourseModalProps> = ({ course, onClose }) => {
                   </div>
                </div>
                
-               <div className="mb-6">
+               <div className="mb-8">
                   <span className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.3em] mb-2 block">Program Summary</span>
-                  <p className="text-slate-600 text-sm leading-relaxed font-medium line-clamp-3">
+                  <p className="text-slate-600 text-sm leading-relaxed font-medium">
                     {course.description}
                   </p>
                </div>
 
-               <div className="border-t border-slate-100 pt-6 mb-4">
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4 block">Institutional Benefits</span>
-                  <div className="grid grid-cols-2 gap-y-3 gap-x-6">
-                     <div className="flex items-center gap-3 group">
-                        <div className="w-7 h-7 bg-emerald-50 rounded-lg flex items-center justify-center group-hover:bg-emerald-500 transition-colors">
-                          <i className="fa-solid fa-building-columns text-emerald-600 group-hover:text-white text-[10px]"></i>
-                        </div>
-                        <span className="text-xs font-bold text-slate-700 tracking-tight">Industry Internship</span>
-                     </div>
-                     <div className="flex items-center gap-3 group">
-                        <div className="w-7 h-7 bg-emerald-50 rounded-lg flex items-center justify-center group-hover:bg-emerald-500 transition-colors">
-                          <i className="fa-solid fa-flask text-emerald-600 group-hover:text-white text-[10px]"></i>
-                        </div>
-                        <span className="text-xs font-bold text-slate-700 tracking-tight">Hands-on Lab Training</span>
-                     </div>
-                     <div className="flex items-center gap-3 group">
-                        <div className="w-7 h-7 bg-emerald-50 rounded-lg flex items-center justify-center group-hover:bg-emerald-500 transition-colors">
-                          <i className="fa-solid fa-briefcase text-emerald-600 group-hover:text-white text-[10px]"></i>
-                        </div>
-                        <span className="text-xs font-bold text-slate-700 tracking-tight">Placement Assistance</span>
-                     </div>
-                     <div className="flex items-center gap-3 group">
-                        <div className="w-7 h-7 bg-emerald-50 rounded-lg flex items-center justify-center group-hover:bg-emerald-500 transition-colors">
-                          <i className="fa-solid fa-coins text-emerald-600 group-hover:text-white text-[10px]"></i>
-                        </div>
-                        <span className="text-xs font-bold text-slate-700 tracking-tight">Stipend Opportunities</span>
-                     </div>
-                  </div>
-               </div>
+               {shouldShowBenefits && (
+                 <div className="border-t border-slate-100 pt-6 mb-4 animate-fade-in-up">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4 block">Institutional Benefits</span>
+                    <div className="grid grid-cols-2 gap-y-3 gap-x-6">
+                       {benefitsList.map((benefit, i) => (
+                         <div key={i} className="flex items-center gap-3 group">
+                            <div className="w-7 h-7 bg-emerald-50 rounded-lg flex items-center justify-center group-hover:bg-emerald-500 transition-colors">
+                              <i className="fa-solid fa-circle-check text-emerald-600 group-hover:text-white text-[10px]"></i>
+                            </div>
+                            <span className="text-xs font-bold text-slate-700 tracking-tight">{benefit}</span>
+                         </div>
+                       ))}
+                    </div>
+                 </div>
+               )}
 
-               <div className="mt-auto pt-5 flex items-center justify-between gap-4 border-t border-slate-50">
+               <div className="mt-auto pt-5 flex items-center justify-between gap-4 border-t border-slate-50 sticky bottom-0 bg-white/95 backdrop-blur-md">
                   <div>
                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Fee Structure</p>
-                     <p className="text-2xl font-black text-[#059669] tracking-tight">{course.price || 'Rs. 50,000'}</p>
+                     <p className="text-2xl font-black text-[#059669] tracking-tight">{course.price || 'Scholarship'}</p>
                   </div>
                   <Link 
                     to={`/enroll?course=${encodeURIComponent(course.name)}`}

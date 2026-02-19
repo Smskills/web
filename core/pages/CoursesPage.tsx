@@ -121,12 +121,19 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-20 items-center">
               <div className="lg:col-span-5 hidden lg:block">
+                {/* POSTER CONTAINER WITH ALWAYS SHINING EFFECT */}
                 <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden border border-white/10 shadow-4xl group bg-slate-900 h-[550px]">
                   <img 
                     src={spotlightCourse.image} 
                     alt={spotlightCourse.name} 
-                    className="w-full h-full object-cover transition-transform duration-[10s] group-hover:scale-105 opacity-80 group-hover:opacity-100"
+                    className="w-full h-full object-cover transition-transform duration-[10s] group-hover:scale-105 opacity-100"
                   />
+                  
+                  {/* PERSISTENT SHINE OVERLAY */}
+                  <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-[3rem]">
+                    <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shine-sweep"></div>
+                  </div>
+
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0b1121]/80 via-transparent to-transparent"></div>
                   
                   <div className="absolute top-8 left-8">

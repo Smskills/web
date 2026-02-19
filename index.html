@@ -17,6 +17,16 @@
         ::-webkit-scrollbar-thumb:hover { background: #10b981; }
         html { scroll-behavior: smooth; }
         body { overflow-y: scroll; }
+
+        @keyframes shine-sweep {
+            0% { transform: translateX(-250%) skewX(-25deg); opacity: 0; }
+            15% { opacity: 1; }
+            30% { transform: translateX(250%) skewX(-25deg); opacity: 0; }
+            100% { transform: translateX(250%) skewX(-25deg); opacity: 0; }
+        }
+        .animate-shine-sweep {
+            animation: shine-sweep 4s infinite;
+        }
     </style>
 <script type="importmap">
 {

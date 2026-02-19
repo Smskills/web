@@ -224,6 +224,7 @@ export interface Course {
   price?: string;
   eligibility?: string;
   benefits?: string;
+  showBenefits?: boolean;
   isFeatured?: boolean;
 }
 

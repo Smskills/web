@@ -63,7 +63,8 @@ export const generateCourses = (): Course[] => {
           price: "Rs. 50,000 / year",
           certification: `${level} (Government Verified)`,
           eligibility: "12th Pass",
-          benefits: "• Industry Internship\n• Hands-on Lab Training\n• Placement Assistance\n• Stipend Opportunities"
+          benefits: "Industry Internship\nHands-on Lab Training\nPlacement Assistance\nStipend Opportunities",
+          showBenefits: true
         });
       });
     });
