@@ -107,20 +107,20 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
       )}
       
       {/* 2. MAIN HEADER NAVIGATION */}
-      <div className="container mx-auto px-6 h-24 flex items-center justify-between">
+      <div className="container mx-auto px-6 h-28 flex items-center justify-between">
         {/* LEFT SECTION: LOGO & BRAND INFO */}
         <div className="flex items-center gap-8">
-          <Link to="/" className="flex items-center gap-4 group focus:outline-none rounded-xl" aria-label="Institute Home">
+          <Link to="/" className="flex items-center gap-5 group focus:outline-none rounded-xl" aria-label="Institute Home">
             <img 
               src={config.logo || "https://lwfiles.mycourse.app/62a6cd5-public/6efdd5e.png"} 
               alt="Logo" 
-              className="h-16 w-auto object-contain transition-transform group-hover:scale-105" 
+              className="h-20 w-auto object-contain transition-transform group-hover:scale-105" 
             />
-            <div className="hidden md:flex flex-col leading-tight border-l border-slate-200 pl-4">
-              <span className="font-black text-xl text-emerald-600 tracking-tighter uppercase whitespace-nowrap transition-colors">
+            <div className="hidden md:flex flex-col leading-tight border-l-2 border-slate-100 pl-5">
+              <span className="font-black text-2xl text-emerald-600 tracking-tighter uppercase whitespace-nowrap transition-colors">
                 {config.name}
               </span>
-              <span className="text-[9px] text-emerald-600 font-bold uppercase tracking-[0.2em] mt-0.5 opacity-80">
+              <span className="text-[10px] text-emerald-600 font-bold uppercase tracking-[0.25em] mt-1 opacity-80">
                 {config.tagline}
               </span>
             </div>
@@ -202,7 +202,7 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
             <NavLink to="/contact" className={navLinkClasses}>CONTACT</NavLink>
 
             {/* ENROLL NOW FIRST */}
-            <Link to="/enroll" className="bg-[#064e3b] text-white px-8 py-3 rounded-md text-[10px] font-black uppercase tracking-[0.2em] hover:bg-[#065f46] transition-all shadow-lg active:scale-95">
+            <Link to="/enroll" className="bg-[#064e3b] text-white px-8 py-3.5 rounded-md text-[10px] font-black uppercase tracking-[0.2em] hover:bg-[#065f46] transition-all shadow-lg active:scale-95">
               ENROLL NOW
             </Link>
 
@@ -214,10 +214,10 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
           </nav>
 
           <button 
-            className="lg:hidden w-10 h-10 flex items-center justify-center text-slate-900 bg-slate-50 border border-slate-200 rounded-lg active:scale-90 transition-transform"
+            className="lg:hidden w-12 h-12 flex items-center justify-center text-slate-900 bg-slate-50 border border-slate-200 rounded-lg active:scale-90 transition-transform"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            <i className={`fa-solid ${isMenuOpen ? 'fa-xmark' : 'fa-bars-staggered'} text-xl`}></i>
+            <i className={`fa-solid ${isMenuOpen ? 'fa-xmark' : 'fa-bars-staggered'} text-2xl`}></i>
           </button>
         </div>
       </div>
