@@ -222,6 +222,7 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
               {displayCourses.map(course => (
                 <article key={course.id} className="flex flex-col rounded-[2.5rem] overflow-hidden border border-slate-100 bg-white hover:shadow-4xl transition-all group relative">
                   <div className="relative h-64 md:h-72 overflow-hidden">
+                    {/* Fixed: Use cardImage for Featured section to respect custom cropping */}
                     <img src={course.cardImage || course.image} alt={course.name} className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110" />
                     
                     <div className="absolute top-6 left-6 z-10 flex flex-col gap-2">

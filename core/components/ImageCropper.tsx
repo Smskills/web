@@ -45,7 +45,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
 
-    // Clear canvas
+    // Clear canvas with black background
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -64,16 +64,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
 
     ctx.drawImage(img, dx, dy, sw, sh);
 
-    // Draw grid lines for composition (Rule of Thirds)
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(cw/3, 0); ctx.lineTo(cw/3, ch);
-    ctx.moveTo(2*cw/3, 0); ctx.lineTo(2*cw/3, ch);
-    ctx.moveTo(0, ch/3); ctx.lineTo(cw, ch/3);
-    ctx.moveTo(0, 2*ch/3); ctx.lineTo(cw, 2*ch/3);
-    ctx.stroke();
-
+    // NOTE: Grid lines removed from canvas to prevent them being saved into the final image output.
   }, [isReady, zoom, offset]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -93,7 +84,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
 
   const handleSave = () => {
     if (!canvasRef.current) return;
-    // Export with high quality to prevent low-res artifacts
+    // Export with high quality (0.95) to prevent low-res artifacts
     const croppedData = canvasRef.current.toDataURL('image/webp', 0.95);
     onCrop(croppedData);
   };
@@ -121,6 +112,19 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
           />
           
           <div className="relative group shadow-2xl">
+            {/* Visual Grid Guide Overlay (Pure CSS, not on canvas) */}
+            <div className="absolute inset-0 z-10 pointer-events-none grid grid-cols-3 grid-rows-3 rounded-3xl overflow-hidden border-4 border-transparent group-hover:border-emerald-500/30 transition-all duration-500">
+               <div className="border-r border-b border-white/20"></div>
+               <div className="border-r border-b border-white/20"></div>
+               <div className="border-b border-white/20"></div>
+               <div className="border-r border-b border-white/20"></div>
+               <div className="border-r border-b border-white/20"></div>
+               <div className="border-b border-white/20"></div>
+               <div className="border-r border-white/20"></div>
+               <div className="border-r border-white/20"></div>
+               <div></div>
+            </div>
+
             <canvas 
               ref={canvasRef}
               width={INTERNAL_WIDTH}
@@ -130,9 +134,9 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
               style={{ width: '100%', maxWidth: '600px', height: 'auto' }}
-              className="rounded-3xl cursor-move border-4 border-white/10 group-hover:border-emerald-500/50 transition-all"
+              className="rounded-3xl cursor-move border-4 border-white/10 group-hover:border-emerald-500/50 transition-all bg-black"
             />
-            <div className="absolute inset-x-0 -bottom-4 flex justify-center">
+            <div className="absolute inset-x-0 -bottom-4 flex justify-center z-20">
                <div className="bg-[#10b981] text-white px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-widest shadow-2xl border border-white/20 flex items-center gap-2">
                  <i className="fa-solid fa-arrows-up-down-left-right"></i> Drag to Compose
                </div>
