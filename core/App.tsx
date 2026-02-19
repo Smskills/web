@@ -27,98 +27,110 @@ import LoginPage from './pages/LoginPage.tsx';
 import ForgotPasswordPage from './pages/ForgotPasswordPage.tsx';
 import ResetPasswordPage from './pages/ResetPasswordPage.tsx';
 
+const API_BASE = 'http://localhost:5000/api';
+
 const App: React.FC = () => {
   const [isInitializing, setIsInitializing] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('sms_is_auth') === 'true');
+  const [content, setContent] = useState<AppState>(INITIAL_CONTENT);
 
-  const [content, setContent] = useState<AppState>(() => {
-    const saved = localStorage.getItem('edu_insta_content');
-    if (!saved) return INITIAL_CONTENT;
-    
-    try {
-      const parsed = JSON.parse(saved);
-      const mergedState: AppState = {
-        ...INITIAL_CONTENT,
-        ...parsed,
-        site: { 
-          ...INITIAL_CONTENT.site, 
-          ...parsed.site,
-          contact: { ...INITIAL_CONTENT.site.contact, ...(parsed.site?.contact || {}) },
-          footer: { ...INITIAL_CONTENT.site.footer, ...(parsed.site?.footer || {}) }
-        },
-        home: { 
-          ...INITIAL_CONTENT.home, 
-          ...parsed.home,
-          sectionLabels: { ...INITIAL_CONTENT.home.sectionLabels, ...(parsed.home?.sectionLabels || {}) },
-          ctaBlock: { ...INITIAL_CONTENT.home.ctaBlock, ...(parsed.home?.ctaBlock || {}) },
-          sections: { ...INITIAL_CONTENT.home.sections, ...(parsed.home?.sections || {}) },
-          bigShowcase: { ...INITIAL_CONTENT.home.bigShowcase, ...(parsed.home?.bigShowcase || {}) }
-        },
-        enrollmentForm: {
-          ...INITIAL_CONTENT.enrollmentForm,
-          ...(parsed.enrollmentForm || {}),
-          fields: parsed.enrollmentForm?.fields || INITIAL_CONTENT.enrollmentForm.fields
-        },
-        about: { ...INITIAL_CONTENT.about, ...parsed.about },
-        placements: { ...INITIAL_CONTENT.placements, ...(parsed.placements || {}) },
-        legal: { ...INITIAL_CONTENT.legal, ...(parsed.legal || {}) },
-        career: { ...INITIAL_CONTENT.career, ...(parsed.career || {}) },
-        courses: { ...INITIAL_CONTENT.courses, ...(parsed.courses || {}) },
-        notices: { ...INITIAL_CONTENT.notices, ...(parsed.notices || {}) },
-        faqs: { ...INITIAL_CONTENT.faqs, ...(parsed.faqs || {}) },
-        leads: parsed.leads || []
-      };
+  // Load Content from DB on Mount
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/config`);
+        const result = await response.json();
+        
+        if (result.success && result.data) {
+          const parsed = result.data;
+          // Merge with initial content to ensure all new fields exist
+          const mergedState: AppState = {
+            ...INITIAL_CONTENT,
+            ...parsed,
+            site: { ...INITIAL_CONTENT.site, ...parsed.site },
+            home: { ...INITIAL_CONTENT.home, ...parsed.home },
+            about: { ...INITIAL_CONTENT.about, ...parsed.about },
+            courses: { ...INITIAL_CONTENT.courses, ...parsed.courses },
+            notices: { ...INITIAL_CONTENT.notices, ...parsed.notices },
+            faqs: { ...INITIAL_CONTENT.faqs, ...parsed.faqs },
+            placements: { ...INITIAL_CONTENT.placements, ...parsed.placements }
+          };
+          setContent(mergedState);
+        }
+      } catch (e) {
+        console.error("Institutional CMS: Failed to sync with database, using local defaults.", e);
+        // Fallback to local storage if DB is down
+        const saved = localStorage.getItem('edu_insta_content');
+        if (saved) setContent(JSON.parse(saved));
+      } finally {
+        setIsInitializing(false);
+      }
+    };
 
-      return mergedState;
-    } catch (e) {
-      console.error("Educational CMS: Error restoring state.", e);
-      return INITIAL_CONTENT;
-    }
-  });
+    fetchContent();
+  }, []);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsInitializing(false), 800);
-    
     const handleAuthChange = () => {
       setIsAuthenticated(localStorage.getItem('sms_is_auth') === 'true');
     };
-
     window.addEventListener('authChange', handleAuthChange);
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('authChange', handleAuthChange);
-    };
+    return () => window.removeEventListener('authChange', handleAuthChange);
   }, []);
 
   const brandingStyles = useMemo(() => {
-    const primary = "#059669";
-    const midnight = "#020617";
-    const accent = "#10b981";
+    const primary = content.theme.primary || "#059669";
     const radius = content.theme.radius;
     const borderRadius = radius === 'none' ? '0' : radius === 'small' ? '0.5rem' : radius === 'medium' ? '1rem' : radius === 'large' ? '2.5rem' : '9999px';
     
     return `
       :root {
         --brand-primary: ${primary};
-        --brand-midnight: ${midnight};
-        --brand-accent: ${accent};
         --brand-radius: ${borderRadius};
       }
     `;
   }, [content.theme]);
 
   const updateContent = async (newContent: AppState) => {
+    // 1. Update UI state immediately
     setContent(newContent);
+    
+    // 2. Persist to Database
     try {
+      const token = localStorage.getItem('sms_auth_token');
+      const response = await fetch(`${API_BASE}/config`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(newContent)
+      });
+      
+      const result = await response.json();
+      
+      // Also backup to local storage
       localStorage.setItem('edu_insta_content', JSON.stringify(newContent));
-      return true;
+      
+      return result.success;
     } catch (err: any) {
-      console.error("CMS Save Error", err);
+      console.error("CMS Save Error (Sync Failed)", err);
       return false;
     }
   };
 
   const headerHeightClass = content.site.admissionAlert?.enabled ? 'pt-36 md:pt-40' : 'pt-24 md:pt-32';
+
+  if (isInitializing) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="flex flex-col items-center gap-6">
+           <div className="w-16 h-16 border-4 border-emerald-100 border-t-emerald-600 rounded-full animate-spin"></div>
+           <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Initializing Core Systems</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <HashRouter>
@@ -136,13 +148,9 @@ const App: React.FC = () => {
               <Route path="/gallery" element={<GalleryPage content={content} />} />
               <Route path="/faq" element={<FAQPage faqsState={content.faqs} contact={content.site.contact} />} />
               <Route path="/contact" element={<ContactPage config={content.site.contact} social={content.site.social} content={content} />} />
-              
-              {/* AUTHENTICATION ROUTES */}
               <Route path="/login" element={<LoginPage siteConfig={content.site} />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage siteConfig={content.site} />} />
               <Route path="/reset-password" element={<ResetPasswordPage siteConfig={content.site} />} />
-              
-              {/* PROTECTED ADMIN ROUTE */}
               <Route 
                 path="/admin" 
                 element={
@@ -151,7 +159,6 @@ const App: React.FC = () => {
                     : <Navigate to="/login" replace />
                 } 
               />
-              
               <Route path="/enroll" element={<EnrollmentPage content={content} />} />
               <Route path="/privacy-policy" element={<PrivacyPolicyPage siteName={content.site.name} data={content.legal.privacy} />} />
               <Route path="/terms-of-service" element={<TermsOfServicePage data={content.legal.terms} />} />

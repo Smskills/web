@@ -10,8 +10,7 @@ interface ImageCropperProps {
 
 /**
  * Institutional Image Cropper
- * Provides a high-fidelity interface for framing catalog thumbnails (4:3 aspect ratio).
- * Resolution is optimized for modern high-DPI displays.
+ * Optimized for card thumbnails to prevent localStorage quota issues.
  */
 const ImageCropper: React.FC<ImageCropperProps> = ({ 
   imageSrc, 
@@ -27,9 +26,9 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
-  // Use a higher resolution for the internal canvas to ensure the crop is sharp
-  const INTERNAL_WIDTH = 1200;
-  const INTERNAL_HEIGHT = 1200 / aspectRatio;
+  // Use a balanced resolution (800px) that is crisp but doesn't create massive base64 strings
+  const INTERNAL_WIDTH = 800;
+  const INTERNAL_HEIGHT = 800 / aspectRatio;
 
   // Draw preview on canvas
   useEffect(() => {
@@ -41,15 +40,13 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
     const canvas = canvasRef.current;
     const img = imgRef.current;
 
-    // Set smoothing for better quality during zoom
     ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = 'high';
+    ctx.imageSmoothingQuality = 'medium';
 
-    // Clear canvas with black background
+    // Clear canvas
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Calculate dimensions to fill canvas
     const iw = img.naturalWidth;
     const ih = img.naturalHeight;
     const cw = canvas.width;
@@ -63,8 +60,6 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
     const dy = (ch - sh) / 2 + offset.y;
 
     ctx.drawImage(img, dx, dy, sw, sh);
-
-    // NOTE: Grid lines removed from canvas to prevent them being saved into the final image output.
   }, [isReady, zoom, offset]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -84,8 +79,8 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
 
   const handleSave = () => {
     if (!canvasRef.current) return;
-    // Export with high quality (0.95) to prevent low-res artifacts
-    const croppedData = canvasRef.current.toDataURL('image/webp', 0.95);
+    // Export with high quality (0.8) - balanced for size
+    const croppedData = canvasRef.current.toDataURL('image/webp', 0.8);
     onCrop(croppedData);
   };
 
@@ -112,7 +107,6 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
           />
           
           <div className="relative group shadow-2xl">
-            {/* Visual Grid Guide Overlay (Pure CSS, not on canvas) */}
             <div className="absolute inset-0 z-10 pointer-events-none grid grid-cols-3 grid-rows-3 rounded-3xl overflow-hidden border-4 border-transparent group-hover:border-emerald-500/30 transition-all duration-500">
                <div className="border-r border-b border-white/20"></div>
                <div className="border-r border-b border-white/20"></div>
@@ -171,7 +165,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
             onClick={handleSave}
             className="flex-grow py-4 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-500 transition-all uppercase tracking-widest text-[11px] shadow-xl shadow-emerald-600/20"
           >
-            Apply High-Res Framing <i className="fa-solid fa-check ml-2"></i>
+            Apply Framing <i className="fa-solid fa-check ml-2"></i>
           </button>
         </div>
       </div>
