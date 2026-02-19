@@ -26,6 +26,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
   const [searchTerm, setSearchTerm] = useState('');
   
   const levelFilter = searchParams.get('level');
+  const industryFilter = searchParams.get('industry');
   const courseIdParam = searchParams.get('courseId');
 
   const list = coursesState?.list || INITIAL_CONTENT.courses.list;
@@ -44,12 +45,18 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
 
   const displayedCourses = useMemo(() => {
     let result = list.filter(c => {
+      // Level check
       const isLevelMatch = !levelFilter || (c.academicLevel || '').toLowerCase().includes(levelFilter.toLowerCase());
+      
+      // Industry/Sector check
+      const isIndustryMatch = !industryFilter || (c.industry || '').toLowerCase() === industryFilter.toLowerCase();
+
+      // Search check
       const isSearchMatch = !searchTerm || 
         (c.name || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
         (c.description || '').toLowerCase().includes(searchTerm.toLowerCase());
       
-      return c.status === 'Active' && isLevelMatch && isSearchMatch;
+      return c.status === 'Active' && isLevelMatch && isIndustryMatch && isSearchMatch;
     });
 
     switch (sortBy) {
@@ -65,7 +72,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
         break;
     }
     return result;
-  }, [list, levelFilter, sortBy, searchTerm]);
+  }, [list, levelFilter, industryFilter, sortBy, searchTerm]);
 
   const handleCloseSpotlight = () => {
     const newParams = new URLSearchParams(searchParams);
@@ -85,6 +92,13 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
     return benefits.split('\n').map(b => b.replace(/^[•\-\*]\s*/, '').trim()).filter(b => b.length > 0);
   };
 
+  const handleClearFilters = () => {
+    setSearchParams({});
+    setSortBy('default');
+    setSearchTerm('');
+    setSpotlightCourse(null);
+  };
+
   return (
     <div className="bg-white font-sans min-h-screen">
       
@@ -94,7 +108,6 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
           <div className="absolute top-0 left-0 w-full h-full bg-emerald-500/[0.01] blur-[80px] pointer-events-none"></div>
           
           <div className="container mx-auto px-6 relative z-10">
-            {/* Header Control - Shaved Margin */}
             <div className="flex justify-between items-center mb-4 border-b border-slate-200/40 pb-2">
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
@@ -110,7 +123,6 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start">
               <div className="lg:col-span-4 hidden lg:block">
-                {/* Poster - Heavily restricted height for fold visibility */}
                 <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden border border-slate-200 shadow-2xl bg-white max-h-[380px]">
                   <img src={spotlightCourse.image} alt={spotlightCourse.name} className="w-full h-full object-cover" />
                   <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -135,13 +147,12 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                   </h1>
                 </div>
 
-                {/* Specs Grid - Compact */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                    {[
                      { label: 'Delivery', value: spotlightCourse.mode, icon: 'fa-chalkboard-user' },
                      { label: 'Timeframe', value: spotlightCourse.duration, icon: 'fa-clock' },
                      { label: 'Entry', value: spotlightCourse.eligibility || '12th Pass', icon: 'fa-id-card' },
-                     { label: 'Protocol', value: 'NSDC Verified', icon: 'fa-shield-check' }
+                     { label: 'Sector', value: spotlightCourse.industry || 'Technical', icon: 'fa-briefcase' }
                    ].map((spec, i) => (
                      <div key={i} className="p-2 bg-white border border-slate-200 rounded-lg">
                         <div className="flex items-center gap-1 mb-0.5">
@@ -153,12 +164,10 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                    ))}
                 </div>
 
-                {/* Description Box - Tight padding */}
                 <div className="bg-white/60 p-4 rounded-2xl border border-slate-200/50 shadow-sm">
                   <FormattedText text={spotlightCourse.description} className="text-slate-600 text-[13px] leading-relaxed font-medium" />
                 </div>
                    
-                {/* Benefits - One line if possible or tight grid */}
                 {spotlightCourse.showBenefits !== false && getBenefitsList(spotlightCourse.benefits).length > 0 && (
                   <div className="grid grid-cols-2 gap-y-2 gap-x-4">
                     {getBenefitsList(spotlightCourse.benefits).slice(0, 4).map((benefit, i) => (
@@ -172,7 +181,6 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                   </div>
                 )}
 
-                {/* Final CTA Bar - Minimal spacing to pull next section up */}
                 <div className="mt-2 pt-4 flex flex-col sm:flex-row items-center gap-6 border-t border-slate-100">
                   <Link 
                     to={`/enroll?course=${encodeURIComponent(spotlightCourse.name)}`}
@@ -191,16 +199,27 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
         </section>
       )}
 
-      {/* 2. CATALOG GRID - TIGHT PADDING WHEN SPOTLIGHT ACTIVE */}
+      {/* 2. CATALOG GRID */}
       <section className={`bg-white transition-all ${spotlightCourse ? 'py-10' : 'py-20 md:py-24'}`}>
         <div className="container mx-auto px-6">
           <div className="flex flex-col xl:flex-row justify-between items-end mb-10 gap-4">
             <div className="max-w-2xl">
-              <span className="text-emerald-600 font-black uppercase tracking-[0.4em] text-[10px] mb-2 block">CATALOG</span>
-              <h2 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight">Available Programs</h2>
+              <span className="text-emerald-600 font-black uppercase tracking-[0.4em] text-[10px] mb-2 block">
+                {levelFilter || industryFilter ? 'FILTERED VIEW' : 'CATALOG'}
+              </span>
+              <h2 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight">
+                {levelFilter && !industryFilter && `${levelFilter} Programs`}
+                {industryFilter && !levelFilter && `${industryFilter} Programs`}
+                {levelFilter && industryFilter && `${levelFilter} in ${industryFilter}`}
+                {!levelFilter && !industryFilter && 'Available Programs'}
+              </h2>
+              {(levelFilter || industryFilter) && (
+                <button onClick={handleClearFilters} className="text-[9px] font-black text-emerald-600 uppercase tracking-widest mt-2 hover:underline">
+                  Clear all filters <i className="fa-solid fa-xmark ml-1"></i>
+                </button>
+              )}
             </div>
 
-            {/* Filter Toolbar - Minimized */}
             {!spotlightCourse && (
               <div className="w-full xl:w-auto flex flex-col md:flex-row gap-3 items-end">
                 <div className="shrink-0 w-full md:w-56">
@@ -223,6 +242,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                    >
                      <option value="default">Most Recent</option>
                      <option value="name-asc">Alphabetical</option>
+                     <option value="duration">By Duration</option>
                    </select>
                    <i className="fa-solid fa-sort absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] pointer-events-none"></i>
                 </div>
@@ -253,9 +273,14 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                     )}
                   </div>
                   <div className="p-5 flex flex-col flex-grow">
-                    <span className="text-[7px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-500/5 px-2 py-0.5 rounded border border-emerald-500/10 w-fit mb-3">
-                      {course.academicLevel}
-                    </span>
+                    <div className="flex gap-2 mb-3">
+                       <span className="text-[7px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-500/5 px-2 py-0.5 rounded border border-emerald-500/10">
+                         {course.academicLevel}
+                       </span>
+                       <span className="text-[7px] font-black text-slate-500 uppercase tracking-widest bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                         {course.industry}
+                       </span>
+                    </div>
                     <h3 className="text-lg font-black text-slate-900 mb-2 group-hover:text-emerald-600 transition-colors leading-tight">{course.name}</h3>
                     <p className="text-slate-500 text-[11px] leading-relaxed line-clamp-2 mb-4 font-medium flex-grow">
                        {course.description}
@@ -269,6 +294,14 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
               ))
             )}
           </div>
+
+          {!isLoading && displayedCourses.length === 0 && (
+            <div className="text-center py-32 bg-slate-50 rounded-[3rem] border-2 border-dashed border-slate-200 max-w-2xl mx-auto">
+               <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center text-3xl text-slate-200 mx-auto mb-6 shadow-sm"><i className="fa-solid fa-folder-open"></i></div>
+               <p className="text-slate-400 font-black uppercase tracking-widest text-xs">No programs match this specific filter.</p>
+               <button onClick={handleClearFilters} className="mt-8 text-emerald-600 font-black text-[10px] uppercase tracking-widest hover:underline">Reset Catalog</button>
+            </div>
+          )}
         </div>
       </section>
     </div>
