@@ -111,11 +111,11 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
       
       {/* 1. SINGLE-SCREEN FRONT COVER SPOTLIGHT - UPDATED TO PREMIUM LIGHT THEME */}
       {spotlightCourse && (
-        <section className="bg-gradient-to-br from-white via-emerald-50/40 to-slate-100 text-slate-900 overflow-hidden animate-fade-in relative min-h-[calc(100vh-130px)] lg:h-[calc(100vh-130px)] flex flex-col justify-center border-b border-slate-200">
+        <section className="bg-gradient-to-br from-white via-emerald-50/40 to-slate-100 text-slate-900 overflow-hidden animate-fade-in relative min-h-[calc(100vh-130px)] flex flex-col justify-center border-b border-slate-200 py-12 lg:py-20">
           {/* Subtle decorative glow */}
           <div className="absolute top-0 left-0 w-full h-full bg-emerald-500/[0.03] blur-[120px] pointer-events-none"></div>
           
-          <div className="container mx-auto px-6 py-8 relative z-10">
+          <div className="container mx-auto px-6 relative z-10">
             {/* Top Bar for Spotlight */}
             <div className="flex justify-between items-center mb-10 border-b border-slate-200/60 pb-4 shrink-0">
               <div className="flex items-center gap-3">
@@ -159,7 +159,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                 </div>
               </div>
 
-              <div className="lg:col-span-7 space-y-8">
+              <div className="lg:col-span-7 space-y-8 flex flex-col justify-center">
                 <div className="space-y-4">
                   <div className="inline-flex items-center gap-3 bg-emerald-600/10 px-4 py-2 rounded-xl border border-emerald-600/10">
                     <span className="text-emerald-700 font-black text-[10px] uppercase tracking-[0.3em]">
@@ -224,7 +224,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                    )}
                 </div>
 
-                <div className="pt-6 flex flex-col sm:flex-row items-center gap-6">
+                <div className="pt-6 flex flex-col sm:flex-row items-center gap-6 shrink-0">
                   <Link 
                     to={`/enroll?course=${encodeURIComponent(spotlightCourse.name)}`}
                     className="w-full sm:w-auto px-12 py-5 bg-[#020617] text-white font-black rounded-2xl hover:bg-emerald-600 hover:scale-[1.02] transition-all text-center uppercase tracking-widest text-xs shadow-2xl active:scale-95 shadow-slate-900/20"
