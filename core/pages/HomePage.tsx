@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { AppState, Notice } from '../types';
+import CourseCard from './Courses/CourseCard.tsx';
 
 interface HomePageProps {
   content: AppState;
@@ -211,32 +212,9 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
                 <h2 className="text-3xl md:text-5xl font-black text-[#020617] tracking-tighter leading-tight">{home.sectionLabels.coursesTitle}</h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            <div className={`grid gap-8 ${displayCourses.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-2'} grid-cols-1`}>
               {displayCourses.map(course => (
-                <article key={course.id} className="flex flex-col rounded-[2rem] overflow-hidden border border-slate-100 bg-white hover:shadow-4xl transition-all group relative">
-                  <div className="relative h-60 md:h-64 overflow-hidden">
-                    <img src={course.cardImage || course.image} alt={course.name} className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110" />
-                    <div className="absolute top-4 left-4 z-10">
-                      <div className="bg-emerald-600 text-white px-3 py-1 rounded-lg shadow-2xl border border-emerald-400/30 flex items-center gap-2">
-                         <i className="fa-solid fa-star text-[8px]"></i>
-                         <span className="text-[8px] font-black uppercase tracking-widest leading-none">POPULAR</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="p-6 md:p-8 flex flex-col flex-grow">
-                    <div className="flex items-center mb-4">
-                       <span className="text-[8px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
-                         {course.academicLevel}
-                       </span>
-                    </div>
-                    <h3 className="text-xl md:text-2xl font-black text-[#020617] mb-4 tracking-tight group-hover:text-emerald-700 transition-colors leading-tight">{course.name}</h3>
-                    <p className="text-sm text-slate-500 line-clamp-2 mb-8 leading-relaxed flex-grow font-medium">{course.description}</p>
-                    <Link to={`/academics?courseId=${course.id}`} className={btnMidnight + " w-full !py-3 !px-4 flex justify-center gap-2 group/btn"}>
-                      OVERVIEW <i className="fa-solid fa-arrow-right-long text-[8px] group-hover/btn:translate-x-1 transition-transform"></i>
-                    </Link>
-                  </div>
-                </article>
+                <CourseCard key={course.id} course={course} />
               ))}
             </div>
 

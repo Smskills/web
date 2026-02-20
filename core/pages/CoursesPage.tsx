@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Course } from '../types.ts';
+import CourseCard from './Courses/CourseCard.tsx';
 import { CardSkeleton } from '../components/Skeleton.tsx';
 import FormattedText from '../components/FormattedText.tsx';
 import { INITIAL_CONTENT } from '../data/defaultContent.ts';
@@ -255,7 +256,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
             </div>
 
             {/* Main Grid Logic */}
-            <div className={`grid gap-8 ${displayedCourses.length === 1 ? 'grid-cols-1 max-w-6xl mx-auto' : (displayedCourses.length === 2 ? 'md:grid-cols-2' : (displayedCourses.length === 3 ? 'md:grid-cols-3' : 'md:grid-cols-2'))}`}>
+            <div className={`grid gap-8 ${displayedCourses.length === 1 ? 'grid-cols-1 max-w-6xl mx-auto' : (displayedCourses.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-2')} grid-cols-1`}>
               {isLoading ? (
                 <CardSkeleton count={displayedCourses.length || 4} />
               ) : (
@@ -266,39 +267,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                   }
 
                   // MULTIPLE RESULTS: Standard Card Layout
-                  return (
-                    <article 
-                      key={course.id} 
-                      className="flex flex-col rounded-[2.5rem] overflow-hidden border border-slate-100 transition-all duration-500 group cursor-pointer relative bg-white hover:shadow-4xl hover:border-emerald-200 shadow-sm"
-                      onClick={() => handleSelectCourse(course.id)}
-                    >
-                      <div className="relative h-52 md:h-60 overflow-hidden">
-                        <img src={course.cardImage || course.image} alt={course.name} className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110" />
-                        <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full shadow-2xl text-[8px] font-black text-emerald-600 tracking-widest uppercase">
-                           {course.duration}
-                        </div>
-                      </div>
-                      <div className="p-6 md:p-8 flex flex-col flex-grow">
-                        <div className="flex gap-2 mb-3">
-                           <span className="text-[7px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-500/5 px-2 py-0.5 rounded-md border border-emerald-500/10">
-                             {course.academicLevel}
-                           </span>
-                        </div>
-                        <h3 className="text-xl font-black text-slate-900 mb-2.5 group-hover:text-emerald-600 transition-colors leading-tight tracking-tight">{course.name}</h3>
-                        <p className="text-slate-500 text-xs leading-relaxed line-clamp-2 mb-6 font-medium flex-grow">
-                           {course.description}
-                        </p>
-                        <div className="pt-4 border-t border-slate-50 flex items-center justify-between text-slate-400">
-                           <span className="text-[8px] font-black uppercase tracking-widest flex items-center gap-2">
-                             <i className="fa-solid fa-briefcase text-emerald-500"></i> {course.industry}
-                           </span>
-                           <span className="text-[8px] font-black text-emerald-600 uppercase tracking-widest flex items-center gap-2 group-hover:translate-x-1 transition-transform">
-                             View Details <i className="fa-solid fa-arrow-right"></i>
-                           </span>
-                        </div>
-                      </div>
-                    </article>
-                  );
+                  return <CourseCard key={course.id} course={course} />;
                 })
               )}
             </div>
