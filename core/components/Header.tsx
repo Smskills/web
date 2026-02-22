@@ -117,8 +117,8 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
     setIsAcademicsOpen(false);
     setIsMenuOpen(false);
     setActiveCategory(null);
-    const shortLevel = level.split(' ')[0];
-    navigate(`/academics?level=${shortLevel}&industry=${encodeURIComponent(sectorValue)}`);
+    const cleanLevel = level.replace(' (NSDC)', '');
+    navigate(`/academics?level=${encodeURIComponent(cleanLevel)}&industry=${encodeURIComponent(sectorValue)}`);
   };
 
   const navLinkClasses = ({ isActive }: { isActive: boolean }) => 

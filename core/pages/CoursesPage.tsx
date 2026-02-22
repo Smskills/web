@@ -41,7 +41,11 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
 
   const displayedCourses = useMemo(() => {
     let result = list.filter(c => {
-      const isLevelMatch = !levelFilter || (c.academicLevel || '').toLowerCase().includes(levelFilter.toLowerCase());
+      const isLevelMatch = !levelFilter || (
+        (c.academicLevel || '').toLowerCase() === levelFilter.toLowerCase() ||
+        (c.academicLevel || '').toLowerCase().startsWith(levelFilter.toLowerCase() + ' ') ||
+        (levelFilter.toLowerCase() === 'ug degree' && (c.academicLevel || '').toLowerCase() === 'b. voc')
+      );
       const isIndustryMatch = !industryFilter || (c.industry || '').toLowerCase() === industryFilter.toLowerCase();
       const isSearchMatch = !searchTerm || 
         (c.name || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
