@@ -91,7 +91,7 @@ const CoursesTab: React.FC<CoursesTabProps> = ({
                     <select value={course.mode} onChange={e => updateCourseItem(course.id, 'mode', e.target.value)} className="w-full bg-slate-800 p-2 rounded text-sm text-white outline-none focus:ring-1 focus:ring-emerald-500">
                       <option value="Online">Online</option>
                       <option value="Offline">Offline</option>
-                      <option value="Hybrid">Hybrid</option>
+                      <option value="Hybrid">Hybrid (Online + Offline)</option>
                     </select>
                   </div>
                 </div>

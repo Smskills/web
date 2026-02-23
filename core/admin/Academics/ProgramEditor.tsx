@@ -110,7 +110,7 @@ const ProgramEditor: React.FC<ProgramEditorProps> = ({
               <select value={course.mode} onChange={e => updateCourseItem(course.id, 'mode', e.target.value)} className="w-full bg-slate-50 border border-slate-200 p-2 rounded text-sm text-slate-900 outline-none focus:ring-1 focus:ring-emerald-500">
                 <option value="Online">Online</option>
                 <option value="Offline">Offline</option>
-                <option value="Hybrid">Hybrid</option>
+                <option value="Hybrid">Hybrid (Online + Offline)</option>
               </select>
             </div>
             <div className="space-y-1">

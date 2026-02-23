@@ -38,7 +38,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
           <h3 className="text-2xl font-black text-slate-900 mb-2 group-hover:text-emerald-600 transition-colors leading-tight tracking-tight">{course.name}</h3>
           <div className="flex flex-wrap gap-2 mb-4">
              {[
-               { label: 'MODE', value: course.mode, icon: 'fa-chalkboard-user' },
+               { label: 'MODE', value: course.mode === 'Hybrid' ? 'Hybrid (Online + Offline)' : course.mode, icon: 'fa-chalkboard-user' },
                { label: 'DURATION', value: course.duration, icon: 'fa-clock' },
                { label: 'SECTOR', value: course.industry, icon: 'fa-briefcase' },
                { label: 'ELIGIBILITY', value: course.eligibility || '12TH PASS', icon: 'fa-id-card' }
@@ -82,7 +82,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
             to={`/enroll?course=${encodeURIComponent(course.name)}`}
             className="w-full sm:w-auto px-6 py-3 bg-[#020617] text-white font-black rounded-xl hover:bg-emerald-600 transition-all text-center uppercase tracking-[0.2em] text-[8px] shadow-xl active:scale-95 flex items-center justify-center gap-2 group/btn"
           >
-            ENROLL NOW <i className="fa-solid fa-arrow-right text-[8px] group-hover/btn:translate-x-1 transition-transform"></i>
+            FOR MORE ENQUIRY <i className="fa-solid fa-arrow-right text-[8px] group-hover/btn:translate-x-1 transition-transform"></i>
           </Link>
         </div>
       </div>

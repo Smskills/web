@@ -270,7 +270,7 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
             <NavLink to="/gallery" className={navLinkClasses}>GALLERY</NavLink>
             <NavLink to="/contact" className={navLinkClasses}>CONTACT</NavLink>
 
-            <Link to="/enroll" className="bg-[#064e3b] text-white px-8 py-3.5 rounded-md text-[10px] font-black uppercase tracking-[0.2em] hover:bg-[#065f46] transition-all shadow-lg active:scale-95">ENROLL NOW</Link>
+            <Link to="/enroll" className="bg-[#064e3b] text-white px-8 py-3.5 rounded-md text-[10px] font-black uppercase tracking-[0.2em] hover:bg-[#065f46] transition-all shadow-lg active:scale-95">ENQUIRY</Link>
             <Link to="/admin" className={adminBtnClass}><i className={`fa-solid ${isAuthenticated ? 'fa-gauge-high' : 'fa-lock'}`}></i>{isAuthenticated ? "DASHBOARD" : "LOGIN"}</Link>
           </nav>
 
@@ -317,7 +317,7 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
             <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="font-black text-xs uppercase tracking-widest text-emerald-600 flex items-center gap-2"><i className={`fa-solid ${isAuthenticated ? 'fa-gauge-high' : 'fa-lock'}`}></i>{isAuthenticated ? "DASHBOARD" : "LOGIN"}</Link>
           </div>
           <div className="flex flex-col gap-3 pt-6 border-t border-slate-100">
-            <Link to="/enroll" onClick={() => setIsMenuOpen(false)} className="bg-[#064e3b] text-white py-4 rounded-xl text-center font-black text-xs uppercase tracking-widest shadow-xl">ENROLL NOW</Link>
+            <Link to="/enroll" onClick={() => setIsMenuOpen(false)} className="bg-[#064e3b] text-white py-4 rounded-xl text-center font-black text-xs uppercase tracking-widest shadow-xl">ENQUIRY</Link>
           </div>
         </div>
       )}

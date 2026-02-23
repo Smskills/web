@@ -56,7 +56,7 @@ const CourseModal: React.FC<CourseModalProps> = ({ course, onClose }) => {
                      <div className="w-8 h-8 bg-white text-blue-600 rounded-lg flex items-center justify-center shrink-0 shadow-sm border border-slate-50"><i className="fa-solid fa-chalkboard-user text-xs"></i></div>
                      <div className="flex flex-col">
                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Mode</span>
-                        <span className="text-xs font-black text-slate-800">{course.mode} Track</span>
+                        <span className="text-xs font-black text-slate-800">{course.mode === 'Hybrid' ? 'Hybrid (Online + Offline)' : course.mode} Track</span>
                      </div>
                   </div>
                   <div className="flex items-center gap-3 p-3 bg-slate-50/80 rounded-xl border border-slate-100/50">
@@ -107,7 +107,7 @@ const CourseModal: React.FC<CourseModalProps> = ({ course, onClose }) => {
                     to={`/enroll?course=${encodeURIComponent(course.name)}`}
                     className="px-8 py-4 bg-slate-900 text-white font-black rounded-xl hover:bg-emerald-600 transition-all shadow-xl text-[11px] uppercase tracking-[0.2em] active:scale-95 text-center"
                   >
-                    Enroll Now
+                    FOR MORE ENQUIRY
                   </Link>
                </div>
             </div>

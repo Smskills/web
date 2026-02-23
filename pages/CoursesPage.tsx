@@ -79,7 +79,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ courses, isLoading = false })
                      </span>
                      <span className="w-1.5 h-1.5 bg-slate-200 rounded-full"></span>
                      <span className="flex items-center gap-3 text-[10px] font-black text-emerald-600 uppercase tracking-widest">
-                       <i className="fa-solid fa-wifi"></i> {course.mode}
+                       <i className="fa-solid fa-wifi"></i> {course.mode === 'Hybrid' ? 'Hybrid (Online + Offline)' : course.mode}
                      </span>
                   </div>
                   <h3 className="text-3xl font-black text-slate-900 mb-6 group-hover:text-emerald-600 transition-colors tracking-tight leading-tight">{course.name}</h3>
@@ -91,7 +91,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ courses, isLoading = false })
                     to={`/enroll?course=${encodeURIComponent(course.name)}`}
                     className={btnSecondary}
                   >
-                    <i className="fa-solid fa-graduation-cap"></i> Begin Application
+                    <i className="fa-solid fa-graduation-cap"></i> FOR MORE ENQUIRY
                   </Link>
                 </div>
               </div>

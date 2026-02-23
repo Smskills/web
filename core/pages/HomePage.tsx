@@ -244,7 +244,7 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
                           to="/academics"
                           className="px-8 py-4 bg-[#020617] text-white font-black rounded-xl hover:bg-emerald-600 hover:scale-[1.02] transition-all text-center uppercase tracking-widest text-[10px] shadow-4xl active:scale-95 flex items-center gap-3"
                        >
-                          START APPLICATION <i className="fa-solid fa-paper-plane text-[8px]"></i>
+                          FOR MORE ENQUIRY <i className="fa-solid fa-paper-plane text-[8px]"></i>
                        </Link>
                        <div className="flex flex-col items-center md:items-start leading-none">
                           <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">STANDARD FEES</span>

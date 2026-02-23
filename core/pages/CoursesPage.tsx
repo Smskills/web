@@ -134,7 +134,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
             {/* 4 Metadata Cards (Condensed) */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                {[
-                 { label: 'MODE', value: course.mode, icon: 'fa-chalkboard-user' },
+                 { label: 'MODE', value: course.mode === 'Hybrid' ? 'Hybrid (Online + Offline)' : course.mode, icon: 'fa-chalkboard-user' },
                  { label: 'DURATION', value: course.duration, icon: 'fa-clock' },
                  { label: 'ELIGIBILITY', value: course.eligibility || '12TH PASS', icon: 'fa-id-card' },
                  { label: 'SECTOR', value: course.industry, icon: 'fa-briefcase' }
@@ -181,7 +181,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
                 to={`/enroll?course=${encodeURIComponent(course.name)}`}
                 className="w-full sm:w-auto px-10 py-4 bg-[#020617] text-white font-black rounded-xl hover:bg-emerald-600 transition-all text-center uppercase tracking-[0.2em] text-[9px] shadow-xl active:scale-95 flex items-center justify-center gap-3 group/btn"
               >
-                START ENROLLMENT <i className="fa-solid fa-paper-plane text-[8px] group-hover/btn:translate-x-1 transition-transform"></i>
+                FOR MORE ENQUIRY <i className="fa-solid fa-paper-plane text-[8px] group-hover/btn:translate-x-1 transition-transform"></i>
               </Link>
               <div className="flex flex-col items-center sm:items-start leading-none">
                  <span className="text-[7px] font-black text-slate-400 uppercase tracking-widest mb-0.5">ADMISSION FEE</span>
