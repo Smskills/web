@@ -64,13 +64,25 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
     { label: "Tourism & Hospitality", value: "Tourism and Hospitality", icon: "fa-hotel" }
   ], []);
 
+  /**
+   * Sectors for Master Course (6 Sectors)
+   */
+  const masterSectors = useMemo(() => [
+    { label: "Automotive", value: "Automotive", icon: "fa-car" },
+    { label: "BFSI (Banking, Financial Services & Insurance)", value: "Banking, Financial Services & Insurance", icon: "fa-landmark" },
+    { label: "Electronics & Hardware", value: "Electronics and Hardware", icon: "fa-microchip" },
+    { label: "IT-ITeS", value: "IT/ITES", icon: "fa-laptop-code" },
+    { label: "Retail", value: "Retail", icon: "fa-bag-shopping" },
+    { label: "Tourism & Hospitality", value: "Tourism and Hospitality", icon: "fa-hotel" }
+  ], []);
+
   const categories = useMemo(() => [
     { label: "Certificate Course", level: "Certificate (NSDC)", sectorList: certificateSectors },
     { label: "UG Certificate Course", level: "UG Certificate (NSDC)", sectorList: vocationalSectors },
-    { label: "UG Diploma Course", level: "UG Diploma (NSDC)", sectorList: vocationalSectors },
+    { label: "UG Diploma Course", level: "UG Diploma", sectorList: vocationalSectors },
     { label: "UG Degree Course", level: "UG Degree", aliases: ["B. Voc"], sectorList: vocationalSectors },
-    { label: "Master Course", level: "Master", isSectorBased: false }
-  ], [certificateSectors, vocationalSectors]);
+    { label: "Master Course", level: "Master", sectorList: masterSectors }
+  ], [certificateSectors, vocationalSectors, masterSectors]);
 
   const groupedCourses = useMemo(() => {
     const map: Record<string, Course[]> = {};

@@ -117,31 +117,47 @@ const vocationalSpecialties: Record<string, string[]> = {
   "Tourism and Hospitality": ["Travel and Tourism", "Hotel Management"]
 };
 
+/**
+ * Master specialties for M.Voc programs.
+ */
+const masterSpecialties: Record<string, string[]> = {
+  "Automotive": ["Automobile Production"],
+  "Banking, Financial Services & Insurance": ["Banking, Financial Services and Insurance"],
+  "Electronics and Hardware": ["Electronics Manufacturing"],
+  "IT/ITES": ["Application of Computer"],
+  "Retail": ["Retail Management"],
+  "Tourism and Hospitality": ["Travel and Tourism"]
+};
+
 export const generateCourses = (): Course[] => {
   const list: Course[] = [];
   let idCounter = 1;
 
-  const academicLevels: Array<'Certificate (NSDC)' | 'UG Certificate (NSDC)' | 'UG Diploma (NSDC)' | 'UG Degree' | 'Master' | 'Short Term'> = [
+  const academicLevels: Array<'Certificate (NSDC)' | 'UG Certificate (NSDC)' | 'UG Diploma' | 'UG Degree' | 'Master' | 'Short Term'> = [
     'Certificate (NSDC)',
     'UG Certificate (NSDC)', 
-    'UG Diploma (NSDC)', 
+    'UG Diploma', 
     'UG Degree',
     'Master',
     'Short Term'
   ];
 
   academicLevels.forEach(level => {
-    const isJobRoleLevel = level === 'Certificate (NSDC)' || level === 'Short Term';
-    const specialtiesMap = isJobRoleLevel ? jobRoleSpecialties : vocationalSpecialties;
+    let specialtiesMap = vocationalSpecialties;
+    if (level === 'Certificate (NSDC)' || level === 'Short Term') {
+      specialtiesMap = jobRoleSpecialties;
+    } else if (level === 'Master') {
+      specialtiesMap = masterSpecialties;
+    }
 
     Object.entries(specialtiesMap).forEach(([industry, specialties]) => {
       specialties.forEach(specName => {
         let duration = "1 Year";
-        if (level === 'UG Diploma (NSDC)') duration = "2 Years";
+        if (level === 'UG Diploma') duration = "2 Years";
         if (level === 'UG Degree') duration = "3 Years";
         if (level === 'Master') duration = "2 Years";
         if (level === 'Short Term') duration = "3-6 Months";
-        if (level === 'Certificate (NSDC)') duration = "6 Months";
+        if (level === 'Certificate (NSDC)') duration = "3 Months";
 
         let displayName = "";
         if (level === 'Certificate (NSDC)') {
@@ -150,10 +166,12 @@ export const generateCourses = (): Course[] => {
           displayName = `Short Term Course in ${specName}`;
         } else if (level === 'UG Certificate (NSDC)') {
           displayName = `UG Certificate in ${specName}`;
-        } else if (level === 'UG Diploma (NSDC)') {
+        } else if (level === 'UG Diploma') {
           displayName = `UG Diploma in ${specName}`;
         } else if (level === 'UG Degree') {
           displayName = `UG Degree in ${specName}`;
+        } else if (level === 'Master') {
+          displayName = `M.Voc in ${specName}`;
         } else {
           displayName = `${level} in ${specName}`;
         }
@@ -168,7 +186,7 @@ export const generateCourses = (): Course[] => {
           status: 'Active',
           image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800",
           description: `Comprehensive academic track in ${specName} aligned with ${industry} industry standards.`,
-          price: "Rs. 50,000 / year",
+          price: level === 'Certificate (NSDC)' ? "Rs. 12,000" : "Rs. 50,000 / year",
           certification: `${level} (Government Verified)`,
           eligibility: "12th Pass",
           benefits: "Industry Internship\nHands-on Lab Training\nPlacement Assistance\nStipend Opportunities",

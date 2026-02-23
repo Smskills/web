@@ -95,7 +95,7 @@ const ProgramEditor: React.FC<ProgramEditorProps> = ({
               <select value={course.academicLevel} onChange={e => updateCourseItem(course.id, 'academicLevel', e.target.value)} className="w-full bg-slate-50 border border-slate-200 p-2 rounded text-sm text-slate-900 outline-none focus:ring-1 focus:ring-emerald-500">
                 <option value="Certificate (NSDC)">Certificate (NSDC)</option>
                 <option value="UG Certificate (NSDC)">UG Certificate (NSDC)</option>
-                <option value="UG Diploma (NSDC)">UG Diploma (NSDC)</option>
+                <option value="UG Diploma">UG Diploma</option>
                 <option value="UG Degree">UG Degree</option>
                 <option value="Master">Master</option>
                 <option value="Short Term">Short Term</option>

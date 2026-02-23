@@ -45,7 +45,10 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
              ].map((spec, i) => (
                <div key={i} className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100">
                   <i className={`fa-solid ${spec.icon} text-[10px] text-emerald-600`}></i>
-                  <span className="text-[8px] font-black text-slate-900 uppercase tracking-widest">{spec.value}</span>
+                  <span className="text-[8px] font-black text-slate-900 uppercase tracking-widest">
+                    <span className="text-slate-400 mr-1">{spec.label}:</span>
+                    {spec.value}
+                  </span>
                </div>
              ))}
           </div>
