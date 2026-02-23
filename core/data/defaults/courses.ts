@@ -4,8 +4,11 @@ import { Course, PageMeta } from '../../types';
 /**
  * Institutional standard specialties based on NSDC vocational sectors.
  */
-const sectorSpecialties: Record<string, string[]> = {
-  "Agriculture": ["Agriculture"],
+/**
+ * Job Role based specialties for Certificate and Short Term courses.
+ */
+const jobRoleSpecialties: Record<string, string[]> = {
+  "Apparel": ["Fashion Designer", "Self Employed Tailor"],
   "Automotive": [
     "Automotive Showroom Host", 
     "Automotive Telecaller", 
@@ -18,19 +21,92 @@ const sectorSpecialties: Record<string, string[]> = {
     "Automotive Accessory Fitter", 
     "Sales Consultant (Pre-owned Vehicles)"
   ],
-  "Apparel": ["Fashion Designer", "Self Employed Tailor"],
-  "Banking, Financial Services & Insurance": ["Banking, financial Services & Insurance", "Account & Taxation"],
+  "Beauty & Wellness": [
+    "Assistant Beauty Therapist",
+    "Beauty Therapist",
+    "Hair Dresser & Stylist",
+    "Assistant Spa Therapist",
+    "Pedicurist and Manicurist",
+    "Bridal Makeup Artist",
+    "Professional Makeup Artist"
+  ],
+  "Banking, Financial Services & Insurance": [
+    "Debt Recovery Agent",
+    "Accounts Executive",
+    "Business Correspondence and Business Facilitator (BFBCBF)"
+  ],
+  "Electronics and Hardware": [
+    "Field Technician Computing and Peripherals",
+    "Field Technician Networking and Storage",
+    "Solar Panel Installation Technician",
+    "Field Technician Other Home Appliances",
+    "DTH Set Top Box Installation & Service Technician",
+    "Multi Skill Technician"
+  ],
+  "Food Processing": [
+    "Pickle Making Technician",
+    "Assistant Baking Technician",
+    "Baking Assistant",
+    "Certification in Food Production"
+  ],
+  "IT/ITES": [
+    "Junior Software Developer",
+    "IT Helpdesk Attendant",
+    "Domestic Biometric Data Operator",
+    "Domestic Data Entry Operator",
+    "Digital Mitra"
+  ],
+  "Logistics": [
+    "Courier Delivery Executive",
+    "Consignment Booking Assistant"
+  ],
+  "Retail": [
+    "Retail Sales Assistant",
+    "Salesperson (Distribution)",
+    "Retail Cashier",
+    "Retail Sales Associate",
+    "Retail Trainee Associate"
+  ],
+  "Telecom": [
+    "Call Center Executive",
+    "Customer Service Representative (Meet and Greet)"
+  ],
+  "Tourism and Hospitality": [
+    "Guest Service Executive (Housekeeping)",
+    "Guest Service Associate (Housekeeping)",
+    "Pantry Assistant",
+    "Guest Service Associate (Front Office)",
+    "Food and Beverage Service Assistant",
+    "Travel Consultant",
+    "Tour Guide",
+    "Counter Sales Executive (Tourism and Hospitality)",
+    "Food Delivery Associate",
+    "Front Office Assistant",
+    "Front Office Executive",
+    "Transport Coordinator – Tourism and Hospitality",
+    "Tour Escort"
+  ]
+};
+
+/**
+ * Vocational specialties for UG Certificate, UG Diploma, and B.Voc Degree programs.
+ */
+const vocationalSpecialties: Record<string, string[]> = {
+  "Agriculture": ["Agriculture"],
+  "Automotive": ["Automobile Servicing", "Automobile Production (Welding)", "Automobile Production (Machining)"],
+  "Apparel": ["Fashion Designing"],
+  "Banking, Financial Services & Insurance": ["Banking, Financial Services and Insurance", "Account and Taxation"],
   "Beauty & Wellness": ["Therapeutic Yoga"],
   "Capital Goods": ["Production", "Manufacturing"],
-  "Construction": ["Construction Technology"],
-  "Electronics and Hardware": ["Refrigeration & Air Conditioning", "Electronics Manufacturing Services", "Computer Hardware & Networking", "Electrical & Electronic Assembly"],
-  "Food Processing": ["Food processing"],
+  "Construction": ["Construction Technology", "Refrigeration & Air Conditioning"],
+  "Electronics and Hardware": ["Electronics Manufacturing Services", "Computer Hardware and Networking", "Electrical and Electronic Assembly"],
+  "Food Processing": ["Food Processing"],
   "Furniture & Fitting": ["Interior Designing"],
   "Green Jobs": ["Renewable Energy"],
-  "Healthcare": ["Patient Care Management", "Medical Laboratory Technician", "Radiology & Imaging Technology", "Operation Theatre Technology", "Nursing Care", "Central Sterile Supply Department", "Dialysis Technology", "Hospital Administration"],
+  "Healthcare": ["Patient Care Management", "Medical Laboratory Technician", "Radiology and Imaging Technology", "Operation Theatre Technology", "Nursing Care", "Central Sterile Supply Department", "Dialysis Technology", "Hospital Administration"],
   "IT/ITES": ["Application Development", "Information Technology"],
   "Life Science": ["Life Sciences"],
-  "Logistics": ["Logistic Operations Management"],
+  "Logistics": ["Logistics Operations Management"],
   "Media & Entertainment": ["Multimedia"],
   "Mining": ["Mining"],
   "Plumbing": ["Plumbing Skills"],
@@ -38,40 +114,49 @@ const sectorSpecialties: Record<string, string[]> = {
   "Rubber, Chemical & Petrochemical": ["Plastic Technology", "Polymer Technology"],
   "Telecom": ["Telecommunication"],
   "Textile & Handloom": ["Textile Technology"],
-  "Tourism and Hospitality": ["Hotel Management", "Travel & Tourism"]
+  "Tourism and Hospitality": ["Travel and Tourism", "Hotel Management"]
 };
 
 export const generateCourses = (): Course[] => {
   const list: Course[] = [];
   let idCounter = 1;
 
-  const academicLevels: Array<'Certificate (NSDC)' | 'UG Certificate (NSDC)' | 'UG Diploma (NSDC)' | 'B. Voc' | 'UG Degree' | 'Master' | 'Short Term'> = [
+  const academicLevels: Array<'Certificate (NSDC)' | 'UG Certificate (NSDC)' | 'UG Diploma (NSDC)' | 'UG Degree' | 'Master' | 'Short Term'> = [
     'Certificate (NSDC)',
     'UG Certificate (NSDC)', 
     'UG Diploma (NSDC)', 
-    'B. Voc', 
     'UG Degree',
     'Master',
     'Short Term'
   ];
 
   academicLevels.forEach(level => {
-    Object.entries(sectorSpecialties).forEach(([industry, specialties]) => {
-      specialties.forEach(specName => {
-        // Logic to filter: Automotive and Apparel specific courses are primarily Certificate/Short Term
-        if ((industry === 'Automotive' || industry === 'Apparel') && 
-            !['Certificate (NSDC)', 'UG Certificate (NSDC)', 'Short Term', 'UG Diploma (NSDC)'].includes(level)) {
-          return;
-        }
+    const isJobRoleLevel = level === 'Certificate (NSDC)' || level === 'Short Term';
+    const specialtiesMap = isJobRoleLevel ? jobRoleSpecialties : vocationalSpecialties;
 
+    Object.entries(specialtiesMap).forEach(([industry, specialties]) => {
+      specialties.forEach(specName => {
         let duration = "1 Year";
         if (level === 'UG Diploma (NSDC)') duration = "2 Years";
-        if (level === 'B. Voc' || level === 'UG Degree') duration = "3 Years";
+        if (level === 'UG Degree') duration = "3 Years";
         if (level === 'Master') duration = "2 Years";
         if (level === 'Short Term') duration = "3-6 Months";
         if (level === 'Certificate (NSDC)') duration = "6 Months";
 
-        const displayName = level === 'Certificate (NSDC)' ? `Certificate in ${specName}` : `${level} in ${specName}`;
+        let displayName = "";
+        if (level === 'Certificate (NSDC)') {
+          displayName = `Certificate in ${specName}`;
+        } else if (level === 'Short Term') {
+          displayName = `Short Term Course in ${specName}`;
+        } else if (level === 'UG Certificate (NSDC)') {
+          displayName = `UG Certificate in ${specName}`;
+        } else if (level === 'UG Diploma (NSDC)') {
+          displayName = `UG Diploma in ${specName}`;
+        } else if (level === 'UG Degree') {
+          displayName = `UG Degree in ${specName}`;
+        } else {
+          displayName = `${level} in ${specName}`;
+        }
 
         list.push({
           id: `c-${idCounter++}`,
