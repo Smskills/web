@@ -127,7 +127,7 @@ const AboutTab: React.FC<AboutTabProps> = ({
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-           {(faculty.members || []).map(member => (
+           {(Array.isArray(faculty.members) ? faculty.members : Object.values(faculty.members || {})).map(member => (
               <div key={member.id} className="bg-white p-6 rounded-3xl border border-slate-200 relative group hover:border-emerald-300 transition-all shadow-sm">
                  <button onClick={() => removeTeamMember(member.id)} className="absolute -top-2 -right-2 w-8 h-8 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center shadow-xl hover:bg-red-600 z-20"><i className="fa-solid fa-trash-can text-[10px]"></i></button>
                  

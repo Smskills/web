@@ -144,6 +144,49 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate, serv
           }
           
           const url = urls[0];
+          
+          // Special handling for About Faculty Members
+          if (pathParts[0] === 'about' && pathParts[1] === 'faculty' && pathParts[2] === 'members') {
+            const memberId = pathParts[3];
+            if (next.about && next.about.faculty && Array.isArray(next.about.faculty.members)) {
+              next.about = { 
+                ...next.about, 
+                faculty: { 
+                  ...next.about.faculty, 
+                  members: next.about.faculty.members.map((m: any) => m.id === memberId ? { ...m, image: url } : m) 
+                } 
+              };
+              return next;
+            } else if (next.about && next.about.faculty && typeof next.about.faculty.members === 'object') {
+              // Recovery attempt if it's an object
+              const membersArray = Object.values(next.about.faculty.members || {});
+              next.about = {
+                ...next.about,
+                faculty: {
+                  ...next.about.faculty,
+                  members: membersArray.map((m: any) => m.id === memberId ? { ...m, image: url } : m)
+                }
+              };
+              return next;
+            }
+          }
+
+          // Special handling for About Extra Chapters
+          if (pathParts[0] === 'about' && pathParts[1] === 'extraChapters') {
+            const chapterId = pathParts[2];
+            const chapters = Array.isArray(next.about.extraChapters) 
+              ? next.about.extraChapters 
+              : Object.values(next.about.extraChapters || {});
+            
+            if (next.about) {
+              next.about = { 
+                ...next.about, 
+                extraChapters: chapters.map((c: any) => c.id === chapterId ? { ...c, image: url } : c) 
+              };
+              return next;
+            }
+          }
+
           if (pathParts[0] === 'courses' && activeCourseId.current) {
             next.courses = { ...next.courses, list: next.courses.list.map((c: any) => c.id === activeCourseId.current ? { ...c, image: url } : c) };
             return next;
@@ -170,7 +213,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate, serv
           let current: any = next;
           for (let i = 0; i < pathParts.length - 1; i++) {
             const key = pathParts[i];
-            current[key] = { ...current[key] };
+            if (Array.isArray(current[key])) {
+              current[key] = [...current[key]];
+            } else {
+              current[key] = { ...current[key] };
+            }
             current = current[key];
           }
           current[pathParts[pathParts.length - 1]] = url;

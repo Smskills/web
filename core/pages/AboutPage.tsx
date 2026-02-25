@@ -136,7 +136,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ content, siteName }) => {
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
-            {(faculty.members || []).map((member) => (
+            {(Array.isArray(faculty.members) ? faculty.members : Object.values(faculty.members || {})).map((member) => (
               <div key={member.id} className="group flex flex-col items-center text-center p-8 bg-white rounded-[3rem] border border-slate-100 hover:border-emerald-200 hover:shadow-4xl transition-all duration-500">
                 <div className="relative w-40 h-40 mb-8">
                   <div className="absolute -inset-2 bg-gradient-to-br from-emerald-500 to-teal-400 rounded-[2.5rem] opacity-0 group-hover:opacity-100 blur-lg transition-opacity duration-500"></div>
