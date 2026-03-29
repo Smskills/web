@@ -1,6 +1,6 @@
 // @ts-ignore
 import nodemailer from 'nodemailer';
-import { ENV } from '../config/env';
+import { ENV } from '../config/env.ts';
 
 export class EmailService {
   private static getTransporter() {

@@ -2,8 +2,8 @@
 import { Request, Response, NextFunction } from 'express';
 // @ts-ignore
 import jwt from 'jsonwebtoken';
-import { ENV } from '../config/env';
-import { sendResponse } from '../utils/response';
+import { ENV } from '../config/env.ts';
+import { sendResponse } from '../utils/response.ts';
 
 /**
  * Institutional Authentication Middleware

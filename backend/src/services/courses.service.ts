@@ -1,5 +1,5 @@
-import { CoursesRepository } from '../repositories/courses.repo';
-import { mapToCamelCase } from '../utils/mapper';
+import { CoursesRepository } from '../repositories/courses.repo.ts';
+import { mapToCamelCase } from '../utils/mapper.ts';
 
 export class CoursesService {
   static async fetchActivePrograms() {
