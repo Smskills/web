@@ -1,10 +1,10 @@
 import { CoursesRepository } from '../repositories/courses.repo';
+import { mapToCamelCase } from '../utils/mapper';
 
 export class CoursesService {
   static async fetchActivePrograms() {
-    // Logic: Fetch and perhaps format or filter further based on complex rules
     const courses = await CoursesRepository.getAll();
-    return courses;
+    return mapToCamelCase(courses);
   }
 
   static async fetchCourseDetails(id: string) {
@@ -14,6 +14,6 @@ export class CoursesService {
       error.statusCode = 404;
       throw error;
     }
-    return course;
+    return mapToCamelCase(course);
   }
 }

@@ -77,7 +77,7 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
     const course = courseField ? formData[courseField.id] : 'N/A';
 
     try {
-      const response = await fetch('http://localhost:5000/api/leads', {
+      const response = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

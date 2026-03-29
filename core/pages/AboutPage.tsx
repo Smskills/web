@@ -79,14 +79,14 @@ const AboutPage: React.FC<AboutPageProps> = ({ content, siteName }) => {
       </section>
 
       {/* Founder Section */}
-      <section className="py-24 bg-white">
+      <section className="py-16 bg-white">
         <div className="container mx-auto px-6">
-          <div className="max-w-6xl mx-auto">
-             <div className="flex flex-col lg:flex-row items-center gap-16 md:gap-24">
-                <div className="lg:w-1/2 shrink-0">
+          <div className="max-w-5xl mx-auto">
+             <div className="flex flex-col lg:flex-row items-center gap-12 md:gap-20">
+                <div className="lg:w-5/12 shrink-0">
                    <div className="relative group">
-                      <div className="absolute -inset-4 bg-emerald-600/5 rounded-[4rem] group-hover:scale-105 transition-transform duration-700"></div>
-                      <div className="relative aspect-[4/5] rounded-[3.5rem] overflow-hidden shadow-4xl border-8 border-white">
+                      <div className="absolute -inset-4 bg-emerald-600/5 rounded-[3rem] group-hover:scale-105 transition-transform duration-700"></div>
+                      <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-3xl border-4 border-white">
                          <img 
                            src={founder.image || 'https://i.pravatar.cc/600?u=founder'} 
                            alt={founder.name} 
@@ -94,29 +94,29 @@ const AboutPage: React.FC<AboutPageProps> = ({ content, siteName }) => {
                          />
                       </div>
                       {/* Floating Badge */}
-                      <div className="absolute -bottom-6 -right-6 bg-slate-900 text-white p-6 rounded-3xl shadow-3xl border border-slate-800 animate-fade-in-up">
-                         <i className="fa-solid fa-quote-left text-emerald-500 text-2xl mb-2 block"></i>
-                         <p className="text-xs italic font-medium leading-relaxed max-w-[180px]">
+                      <div className="absolute -bottom-4 -right-4 bg-slate-900 text-white p-4 rounded-2xl shadow-2xl border border-slate-800 animate-fade-in-up">
+                         <i className="fa-solid fa-quote-left text-emerald-500 text-xl mb-1 block"></i>
+                         <p className="text-[10px] italic font-medium leading-relaxed max-w-[150px]">
                            "{founder.quote}"
                          </p>
                       </div>
                    </div>
                 </div>
 
-                <div className="lg:w-1/2 space-y-8">
+                <div className="lg:w-7/12 space-y-6">
                    <div>
-                      <span className="text-emerald-600 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">{founder.label}</span>
-                      <h2 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tight leading-none mb-4">{founder.title}</h2>
+                      <span className="text-emerald-600 font-black uppercase tracking-[0.4em] text-[10px] mb-3 block">{founder.label}</span>
+                      <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight leading-none mb-4">{founder.title}</h2>
                       <div className="flex flex-col">
-                        <span className="text-2xl font-black text-slate-900">{founder.name}</span>
-                        <span className="text-emerald-600 font-black uppercase text-xs tracking-widest mt-1">{founder.role}</span>
+                        <span className="text-xl font-black text-slate-900">{founder.name}</span>
+                        <span className="text-emerald-600 font-black uppercase text-[10px] tracking-widest mt-1">{founder.role}</span>
                       </div>
                    </div>
 
-                   <div className="w-16 h-1.5 bg-emerald-500 rounded-full"></div>
+                   <div className="w-12 h-1 bg-emerald-500 rounded-full"></div>
 
-                   <div className="space-y-6">
-                      <p className="text-slate-600 text-lg md:text-xl font-medium leading-relaxed whitespace-pre-line">
+                   <div className="space-y-4">
+                      <p className="text-slate-600 text-base md:text-lg font-medium leading-relaxed whitespace-pre-line">
                          {founder.bio}
                       </p>
                    </div>

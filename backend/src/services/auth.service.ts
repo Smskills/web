@@ -1,6 +1,6 @@
 
 // @ts-ignore
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 // @ts-ignore
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';

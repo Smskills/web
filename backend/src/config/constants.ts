@@ -5,7 +5,7 @@ import process from 'node:process';
 export const CONSTANTS = {
   UPLOADS: {
     // Fix: access cwd() from the correctly typed node:process module to identify current directory in Node.js
-    ROOT: path.join(process.cwd(), 'src', 'uploads'),
+    ROOT: path.join(process.cwd(), 'uploads'),
     COURSES: 'courses',
     GALLERY: 'gallery',
     PROFILES: 'profiles'

@@ -16,23 +16,29 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   credentials: true
-}) as any);
+}));
 
-app.use(helmet({ crossOriginResourcePolicy: false }) as any);
+app.use(helmet({ crossOriginResourcePolicy: false }));
 
-if (ENV.NODE_ENV === 'development') app.use(morgan('dev') as any);
+if (ENV.NODE_ENV === 'development') app.use(morgan('dev'));
 
 // 2. Request Parsing
-app.use(express.json({ limit: ENV.UPLOAD_LIMIT }) as any);
-app.use(express.urlencoded({ extended: true, limit: ENV.UPLOAD_LIMIT }) as any);
+app.use(express.json({ limit: ENV.UPLOAD_LIMIT }));
+app.use(express.urlencoded({ extended: true, limit: ENV.UPLOAD_LIMIT }));
 
 // 3. Static File Access
-app.use('/uploads', express.static(CONSTANTS.UPLOADS.ROOT) as any);
+app.use('/uploads', express.static(CONSTANTS.UPLOADS.ROOT));
 
 // 4. API Core Routing
-app.use('/api', apiRoutes);
+const apiMiddleware = (apiRoutes as any).default || apiRoutes;
+if (apiMiddleware && typeof apiMiddleware === 'function') {
+  app.use('/api', apiMiddleware);
+}
 
 // 5. Global Error Handler (MUST be last)
-app.use(errorHandler);
+const errorMiddleware = (errorHandler as any).default || errorHandler;
+if (errorMiddleware && typeof errorMiddleware === 'function') {
+  app.use(errorMiddleware);
+}
 
 export default app;

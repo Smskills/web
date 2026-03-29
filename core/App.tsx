@@ -27,7 +27,7 @@ import LoginPage from './pages/LoginPage.tsx';
 import ForgotPasswordPage from './pages/ForgotPasswordPage.tsx';
 import ResetPasswordPage from './pages/ResetPasswordPage.tsx';
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = '/api';
 
 const App: React.FC = () => {
   const [isInitializing, setIsInitializing] = useState(true);

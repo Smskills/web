@@ -1,9 +1,8 @@
-
-import { Router } from 'express';
+import express from 'express';
 import { ConfigController } from '../controllers/config.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
 
-const router = Router();
+const router = express.Router();
 
 // Publicly readable so visitors see the correct branding
 router.get('/', ConfigController.getConfig);

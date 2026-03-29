@@ -42,7 +42,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
     const message = messageField ? formData[messageField.id] : 'Website Inquiry';
 
     try {
-      const response = await fetch('http://localhost:5000/api/leads', {
+      const response = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -35,8 +35,8 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
   const spotlightNotice = notices.list[0];
   const tickerNotices = notices.list.length > 1 ? notices.list.slice(1) : notices.list;
 
-  const btnPrimary = "px-10 py-5 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-500 focus-visible:ring-4 focus-visible:ring-emerald-500/30 transition-all shadow-2xl shadow-emerald-600/20 active:scale-95 text-[11px] uppercase tracking-widest text-center min-h-[56px] flex items-center justify-center";
-  const btnMidnight = "px-10 py-5 bg-[#020617] text-white font-black rounded-2xl hover:bg-emerald-600 focus-visible:ring-4 focus-visible:ring-slate-900/20 transition-all shadow-2xl active:scale-95 text-[11px] uppercase tracking-widest text-center min-h-[56px] flex items-center justify-center";
+  const btnPrimary = "px-10 py-5 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-500 hover:scale-105 hover:shadow-[0_20px_40px_rgba(16,185,129,0.3)] focus-visible:ring-4 focus-visible:ring-emerald-500/30 transition-all shadow-2xl shadow-emerald-600/20 active:scale-95 text-[11px] uppercase tracking-widest text-center min-h-[56px] flex items-center justify-center";
+  const btnMidnight = "px-10 py-5 bg-[#020617] text-white font-black rounded-2xl hover:bg-slate-800 hover:scale-105 hover:shadow-[0_20px_40px_rgba(2,6,23,0.3)] focus-visible:ring-4 focus-visible:ring-slate-900/20 transition-all shadow-2xl active:scale-95 text-[11px] uppercase tracking-widest text-center min-h-[56px] flex items-center justify-center border border-white/10";
 
   // Logic for Featured Tracks
   const featuredPrograms = courses.list.filter(c => c.status === 'Active' && c.isFeatured);
@@ -53,34 +53,54 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
       <style>{`
         @keyframes marqueeVertical { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
         @keyframes marqueeHorizontal { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .animate-marquee-vertical { animation: marqueeVertical 25s linear infinite; }
         .animate-marquee-horizontal { animation: marqueeHorizontal 30s linear infinite; }
+        .animate-fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        .animate-fade-in { animation: fadeIn 1s ease both; }
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
         .animate-marquee-vertical:hover, .animate-marquee-horizontal:hover { animation-play-state: paused; }
       `}</style>
 
-      {/* Hero Section - Reduced Height to show more below */}
+      {/* Hero Section - Refined Bright Theme */}
       {home.hero.visible && (
-        <section className="relative min-h-[70vh] flex items-center overflow-hidden bg-slate-100">
+        <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-slate-100">
           <div 
             className="absolute inset-0 bg-cover bg-center scale-105"
             style={{ 
               backgroundImage: `url(${home.hero.bgImage})`,
-              filter: 'blur(4px)'
+              filter: 'blur(2px)'
             }}
           />
-          <div className="absolute inset-0 bg-white/50 backdrop-brightness-110"></div>
+          {/* Subtle bright gradient overlay (white left → transparent right) */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/70 to-transparent"></div>
           
-          <div className="container mx-auto px-6 py-16 text-center max-w-5xl relative z-10">
-            <span className="text-emerald-800 font-black uppercase tracking-[0.4em] text-[10px] md:text-[11px] mb-6 block animate-fade-in-up">The Future of Vocational Excellence</span>
-            <h1 className="text-4xl sm:text-6xl md:text-7xl font-black mb-8 leading-[1] md:leading-[0.95] tracking-tighter text-[#020617] animate-fade-in-up">
-              {home.hero.title}
-            </h1>
-            <p className="text-base md:text-xl text-slate-800 mb-10 leading-relaxed max-w-3xl mx-auto font-bold animate-fade-in-up delay-100">
-              {home.hero.subtitle}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center animate-fade-in-up delay-200">
-              <Link to="/academics" className={btnPrimary}>{home.hero.ctaText}</Link>
-              <Link to="/about" className={btnMidnight}>Institutional Tour</Link>
+          <div className="container mx-auto px-6 py-24 relative z-10 max-w-7xl">
+            <div className="max-w-4xl text-left">
+              <span className="text-emerald-800 font-black uppercase tracking-[0.4em] text-[10px] md:text-[11px] mb-6 block animate-fade-in-up">
+                The Future of Vocational Excellence
+              </span>
+              <h1 className="text-5xl sm:text-7xl md:text-8xl font-black mb-12 leading-[1] md:leading-[0.9] tracking-tighter text-[#020617] animate-fade-in-up">
+                {home.hero.title}
+              </h1>
+              <p className="text-lg md:text-2xl text-slate-700 mb-12 leading-relaxed font-bold animate-fade-in-up delay-100">
+                {home.hero.subtitle}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-6 animate-fade-in-up delay-200">
+                <Link to="/academics" className={btnPrimary}>{home.hero.ctaText}</Link>
+                <Link to="/about" className={btnMidnight}>Institutional Tour</Link>
+              </div>
+
+              {/* Trust Badge */}
+              <div className="mt-12 flex items-center gap-4 animate-fade-in delay-300">
+                <div className="h-px w-8 bg-emerald-600/30"></div>
+                <span className="text-[10px] font-black text-emerald-700/80 uppercase tracking-[0.2em] whitespace-nowrap">
+                  NSDC Certified | Placement Support | Since 2024
+                </span>
+              </div>
             </div>
           </div>
         </section>

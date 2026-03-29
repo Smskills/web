@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import pool from '../config/database';
 import { sendResponse } from '../utils/response';
 import { EmailService } from '../services/email.service'; 
+import { mapToCamelCase } from '../utils/mapper';
 
 export class LeadsController {
   /**
@@ -54,7 +55,7 @@ export class LeadsController {
   static async getAllLeads(req: Request, res: Response, next: NextFunction) {
     try {
       const [rows] = await pool.execute('SELECT * FROM leads ORDER BY created_at DESC');
-      return sendResponse(res, 200, true, 'Leads retrieved', rows);
+      return sendResponse(res, 200, true, 'Leads retrieved', mapToCamelCase(rows));
     } catch (error) {
       next(error);
     }

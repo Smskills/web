@@ -1,9 +1,8 @@
-
-import { Router } from 'express';
+import express from 'express';
 import { LeadsController } from '../controllers/leads.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
 
-const router = Router();
+const router = express.Router();
 
 /**
  * Public: Submit a new enquiry or enrollment
