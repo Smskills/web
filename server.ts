@@ -17,20 +17,18 @@ async function startServer() {
   try {
     console.log('🚀 Starting Unified Server...');
     
-    // 1. Start listening immediately
-    const server = app.listen(PORT, '0.0.0.0', () => {
-      console.log(`🚀 SERVER LISTENING: http://0.0.0.0:${PORT}`);
-      console.log(`📡 Health check: http://0.0.0.0:${PORT}/ping`);
-    });
-
     // 2. Mount Backend API
     try {
       console.log('📦 Loading Backend from ./backend/src/app.ts...');
       const backendModule = await import('./backend/src/app.ts');
       const backendApp = backendModule.default || backendModule;
+      
       if (typeof backendApp === 'function') {
-        app.use(backendApp);
-        console.log('✅ Backend mounted successfully');
+        // Mount backend specifically on /api and /uploads
+        // backend/src/app.ts handles the routes internally
+        app.use('/api', backendApp);
+        app.use('/uploads', backendApp);
+        console.log('✅ Backend mounted on /api and /uploads');
       } else {
         console.warn('⚠️ Backend module loaded but is not a function/middleware');
       }
@@ -48,9 +46,16 @@ async function startServer() {
       app.use(vite.middlewares);
       console.log('✅ Vite mounted');
     } else {
-      app.use(express.static(path.join(__dirname, 'dist')));
-      app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'dist', 'index.html')));
+      const distPath = path.join(__dirname, 'dist');
+      app.use(express.static(distPath));
+      app.get('*', (req, res) => res.sendFile(path.join(distPath, 'index.html')));
     }
+
+    // 4. Start listening AFTER mounting everything
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`🚀 SERVER LISTENING: http://0.0.0.0:${PORT}`);
+      console.log(`📡 Health check: http://0.0.0.0:${PORT}/ping`);
+    });
 
   } catch (error) {
     console.error('❌ Startup Error:', error);

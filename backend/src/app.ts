@@ -32,7 +32,9 @@ app.use('/uploads', express.static(CONSTANTS.UPLOADS.ROOT));
 // 4. API Core Routing
 const apiMiddleware = (apiRoutes as any).default || apiRoutes;
 if (apiMiddleware && typeof apiMiddleware === 'function') {
-  app.use('/api', apiMiddleware);
+  // Mount the API routes directly at the root of this app/router
+  // server.ts will mount this app at /api
+  app.use('/', apiMiddleware);
 }
 
 // 5. Global Error Handler (MUST be last)
