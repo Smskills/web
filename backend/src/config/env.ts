@@ -1,17 +1,12 @@
 
 import dotenv from 'dotenv';
 import process from 'node:process';
-import path from 'path';
-import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Load .env from root (two levels up from backend/src/config)
-dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
+// Load .env from root (default behavior for dotenv when run from root)
+dotenv.config();
 
 export const ENV = {
-  PORT: process.env.PORT || 5000,
+  PORT: process.env.PORT || 3000,
   NODE_ENV: process.env.NODE_ENV || 'development',
   DB: {
     HOST: process.env.DB_HOST || 'localhost',
