@@ -1,9 +1,9 @@
 
 import express from 'express';
-import courseRoutes from './courses.routes';
-import authRoutes from './auth.routes';
-import leadsRoutes from './leads.routes';
-import configRoutes from './config.routes';
+import courseRoutes from './courses.routes.ts';
+import authRoutes from './auth.routes.ts';
+import leadsRoutes from './leads.routes.ts';
+import configRoutes from './config.routes.ts';
 
 const router = express.Router();
 

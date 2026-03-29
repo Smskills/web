@@ -4,10 +4,10 @@ import bcrypt from 'bcryptjs';
 // @ts-ignore
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import pool from '../config/database';
-import { UsersRepository } from '../repositories/users.repo';
-import { ENV } from '../config/env';
-import { EmailService } from './email.service';
+import pool from '../config/database.ts';
+import { UsersRepository } from '../repositories/users.repo.ts';
+import { ENV } from '../config/env.ts';
+import { EmailService } from './email.service.ts';
 
 export class AuthService {
   static async login(identifier: string, plainPassword: string) {

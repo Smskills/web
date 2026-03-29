@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import pool from '../config/database';
-import { sendResponse } from '../utils/response';
-import { EmailService } from '../services/email.service'; 
-import { mapToCamelCase } from '../utils/mapper';
+import pool from '../config/database.ts';
+import { sendResponse } from '../utils/response.ts';
+import { EmailService } from '../services/email.service.ts'; 
+import { mapToCamelCase } from '../utils/mapper.ts';
 
 export class LeadsController {
   /**

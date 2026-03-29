@@ -1,9 +1,9 @@
 
 import { Request, Response, NextFunction } from 'express';
-import pool from '../config/database';
-import { sendResponse } from '../utils/response';
-import { GenericRepository } from '../repositories/generic.repo';
-import { mapToCamelCase } from '../utils/mapper';
+import pool from '../config/database.ts';
+import { sendResponse } from '../utils/response.ts';
+import { GenericRepository } from '../repositories/generic.repo.ts';
+import { mapToCamelCase } from '../utils/mapper.ts';
 
 export class ConfigController {
   /**
