@@ -21,16 +21,9 @@ router.get('/health', (req, res) => {
 /**
  * Core Institutional Modules
  */
-const authMiddlewareRouter = (authRoutes as any).default || authRoutes;
-if (authMiddlewareRouter) router.use('/auth', authMiddlewareRouter);
-
-const configMiddlewareRouter = (configRoutes as any).default || configRoutes;
-if (configMiddlewareRouter) router.use('/config', configMiddlewareRouter);
-
-const courseMiddlewareRouter = (courseRoutes as any).default || courseRoutes;
-if (courseMiddlewareRouter) router.use('/courses', courseMiddlewareRouter);
-
-const leadsMiddlewareRouter = (leadsRoutes as any).default || leadsRoutes;
-if (leadsMiddlewareRouter) router.use('/leads', leadsMiddlewareRouter);
+router.use('/auth', authRoutes);
+router.use('/config', configRoutes);
+router.use('/courses', courseRoutes);
+router.use('/leads', leadsRoutes);
 
 export default router;

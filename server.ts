@@ -3,7 +3,6 @@ import express from 'express';
 import { createServer as createViteServer } from 'vite';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import backendApp from './backend/src/app.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,13 +19,15 @@ async function startServer() {
     
     // 2. Mount Backend API
     try {
-      console.log('📦 Mounting Backend...');
+      console.log('📦 Loading Backend...');
+      // Use dynamic import to break potential module cycles
+      const backendModule = await import('./backend/src/app.ts');
+      const backendApp = backendModule.default || backendModule;
+
       if (typeof backendApp === 'function') {
-        // Mount backend specifically on /api and /uploads
-        // backend/src/app.ts handles the routes internally
-        app.use('/api', backendApp);
-        app.use('/uploads', backendApp);
-        console.log('✅ Backend mounted on /api and /uploads');
+        // Mount backend at root; it internally handles /api and /uploads
+        app.use(backendApp);
+        console.log('✅ Backend mounted');
       } else {
         console.warn('⚠️ Backend module loaded but is not a function/middleware');
       }

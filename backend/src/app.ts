@@ -30,17 +30,10 @@ app.use(express.urlencoded({ extended: true, limit: ENV.UPLOAD_LIMIT }));
 app.use('/uploads', express.static(CONSTANTS.UPLOADS.ROOT));
 
 // 4. API Core Routing
-const apiMiddleware = (apiRoutes as any).default || apiRoutes;
-if (apiMiddleware && typeof apiMiddleware === 'function') {
-  // Mount the API routes directly at the root of this app/router
-  // server.ts will mount this app at /api
-  app.use('/', apiMiddleware);
-}
+// Mount the API routes at /api
+app.use('/api', apiRoutes);
 
 // 5. Global Error Handler (MUST be last)
-const errorMiddleware = (errorHandler as any).default || errorHandler;
-if (errorMiddleware && typeof errorMiddleware === 'function') {
-  app.use(errorMiddleware);
-}
+app.use(errorHandler);
 
 export default app;
