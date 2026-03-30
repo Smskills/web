@@ -21,7 +21,7 @@ async function startServer() {
     try {
       console.log('📦 Loading Backend...');
       // Use dynamic import to break potential module cycles
-      const backendModule = await import('./backend/src/app.js');
+      const backendModule = await import('./backend/src/app.ts');
       const backendApp = backendModule.default || backendModule;
 
       if (typeof backendApp === 'function') {
