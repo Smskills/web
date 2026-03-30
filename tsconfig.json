@@ -13,16 +13,7 @@
     "types": [
       "node"
     ],
-    "moduleResolution": "NodeNext",
-    "isolatedModules": true,
-    "moduleDetection": "force",
-    "allowJs": true,
-    "jsx": "react-jsx",
-    "paths": {
-      "@/*": [
-        "./*"
-      ]
-    },
+    "moduleResolution": "Bundler",
     "allowImportingTsExtensions": true,
     "noEmit": true
   }
