@@ -27,12 +27,17 @@ async function startServer() {
       if (typeof backendApp === 'function') {
         // Mount backend at root; it internally handles /api and /uploads
         app.use(backendApp);
-        console.log('✅ Backend mounted');
+        console.log('✅ Backend mounted successfully');
       } else {
         console.warn('⚠️ Backend module loaded but is not a function/middleware');
+        console.log('Backend module type:', typeof backendApp);
+        console.log('Backend module keys:', Object.keys(backendModule));
       }
-    } catch (err) {
-      console.error('❌ Backend failed to mount:', err);
+    } catch (err: any) {
+      console.error('❌ Backend failed to mount!');
+      console.error('Error Name:', err.name);
+      console.error('Error Message:', err.message);
+      console.error('Error Stack:', err.stack);
     }
 
     // 3. Mount Vite
