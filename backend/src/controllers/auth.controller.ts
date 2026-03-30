@@ -1,7 +1,7 @@
 
 import { Request, Response, NextFunction } from 'express';
-import { AuthService } from '../services/auth.service.ts';
-import { sendResponse } from '../utils/response.ts';
+import { AuthService } from '../services/auth.service.js';
+import { sendResponse } from '../utils/response.js';
 
 export class AuthController {
   static async login(req: Request, res: Response, next: NextFunction) {

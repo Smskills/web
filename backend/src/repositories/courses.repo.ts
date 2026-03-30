@@ -1,4 +1,4 @@
-import pool from '../config/database.ts';
+import pool from '../config/database.js';
 
 export class CoursesRepository {
   static async getAll() {

@@ -1,4 +1,4 @@
-import pool from '../config/database.ts';
+import pool from '../config/database.js';
 
 export class GenericRepository {
   static async getAll(table: string) {
