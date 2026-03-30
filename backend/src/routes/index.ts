@@ -4,6 +4,7 @@ import courseRoutes from './courses.routes.js';
 import authRoutes from './auth.routes.js';
 import leadsRoutes from './leads.routes.js';
 import configRoutes from './config.routes.js';
+import coursesRoutes from "./courses.routes.js";
 
 const router = express.Router();
 
