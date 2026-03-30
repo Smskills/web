@@ -1,16 +1,6 @@
 
-import mysql from 'mysql2/promise';
-import { ENV } from './env.ts';
+import { mockPool } from './mockDb.ts';
 
-const pool = mysql.createPool({
-  host: ENV.DB.HOST,
-  user: ENV.DB.USER,
-  password: ENV.DB.PASSWORD,
-  database: ENV.DB.NAME,
-  port: ENV.DB.PORT,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-});
+const pool = mockPool;
 
 export default pool;
