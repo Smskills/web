@@ -5,14 +5,12 @@ import { ENV } from './env.ts';
 const pool = mysql.createPool({
   host: ENV.DB.HOST,
   user: ENV.DB.USER,
-  password: ENV.DB.PASS,
+  password: ENV.DB.PASSWORD,
   database: ENV.DB.NAME,
   port: ENV.DB.PORT,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0
 });
 
 export default pool;

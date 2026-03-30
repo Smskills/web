@@ -1,34 +1,32 @@
 
-// @ts-ignore
 import bcrypt from 'bcryptjs';
-// @ts-ignore
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import pool from '../config/database.js';
-import { UsersRepository } from '../repositories/users.repo.js';
-import { ENV } from '../config/env.js';
-import { EmailService } from './email.service.js';
+import { UsersRepository } from '../repositories/users.repo.ts';
+import { ENV } from '../config/env.ts';
+import { EmailService } from './email.service.ts';
 
 export class AuthService {
-  static async login(identifier: string, plainPassword: string) {
-    const user = await UsersRepository.findByIdentifier(identifier);
+  static async login(identifier: string, password: string) {
+    // Identifier can be email or username
+    let user = await UsersRepository.findByEmail(identifier);
     if (!user) {
-      const err: any = new Error('Unauthorized access');
-      err.statusCode = 401;
-      throw err;
+      user = await UsersRepository.findByUsername(identifier);
     }
 
-    const isMatch = await bcrypt.compare(plainPassword, user.password);
-    if (!isMatch) {
-      const err: any = new Error('Invalid credentials');
-      err.statusCode = 401;
-      throw err;
+    if (!user) {
+      throw new Error('Invalid credentials');
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new Error('Invalid credentials');
     }
 
     const token = jwt.sign(
       { id: user.id, username: user.username, role: user.role },
-      ENV.JWT_SECRET,
-      { expiresIn: '8h' }
+      ENV.JWT.SECRET,
+      { expiresIn: ENV.JWT.EXPIRES_IN }
     );
 
     return {
@@ -37,52 +35,41 @@ export class AuthService {
         id: user.id,
         username: user.username,
         email: user.email,
-        role: user.role
-      }
+        role: user.role,
+      },
     };
   }
 
-  static async requestPasswordReset(email: string) {
-    const user = await UsersRepository.findByIdentifier(email);
-    
+  static async forgotPassword(email: string) {
+    const user = await UsersRepository.findByEmail(email);
     if (!user) {
-      console.log(`⚠️ Password Reset: Email "${email}" not found in database.`);
-      return; 
+      // Don't reveal if user exists for security
+      return true;
     }
 
-    const token = crypto.randomBytes(32).toString('hex');
-    const expiry = new Date(Date.now() + 3600000); 
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hour
 
+    await UsersRepository.updateResetToken(user.id, resetToken, resetTokenExpiry);
+    
     try {
-      await pool.execute(
-        'UPDATE users SET reset_token = ?, reset_token_expiry = ? WHERE id = ?',
-        [token, expiry, user.id]
-      );
-      await EmailService.sendPasswordResetLink(email, token, user.username);
-    } catch (error) {
-      console.error("❌ Recovery Error:", error);
-      throw new Error("System failed to process recovery request.");
+      await EmailService.sendPasswordReset(email, resetToken);
+    } catch (err) {
+      console.error('📧 Forgot Password Email Failed:', err);
     }
+    
+    return true;
   }
 
-  static async resetPassword(token: string, plainPassword: string) {
-    const [rows]: any = await pool.execute(
-      'SELECT id FROM users WHERE reset_token = ? AND reset_token_expiry > NOW() LIMIT 1',
-      [token]
-    );
-
-    if (rows.length === 0) {
-      const err: any = new Error('Recovery link is invalid or expired.');
-      err.statusCode = 400;
-      throw err;
+  static async resetPassword(token: string, newPassword: string) {
+    const user = await UsersRepository.findByResetToken(token);
+    if (!user) {
+      throw new Error('Invalid or expired reset token');
     }
 
-    const userId = rows[0].id;
-    const hashedPassword = await bcrypt.hash(plainPassword, 12);
-
-    await pool.execute(
-      'UPDATE users SET password = ?, reset_token = NULL, reset_token_expiry = NULL WHERE id = ?',
-      [hashedPassword, userId]
-    );
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    await UsersRepository.updatePassword(user.id, passwordHash);
+    
+    return true;
   }
 }

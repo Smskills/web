@@ -1,29 +1,29 @@
-
-import express from 'express';
-import courseRoutes from './courses.routes.ts';
-import authRoutes from './auth.routes.ts';
-import leadsRoutes from './leads.routes.ts';
+import { Router } from 'express';
 import configRoutes from './config.routes.ts';
+import leadsRoutes from './leads.routes.ts';
+import authRoutes from './auth.routes.ts';
+import coursesRoutes from './courses.routes.ts';
+import { createGenericRouter } from './generic.routes.ts';
 
-const router = express.Router();
+const router = Router();
 
-/**
- * Institutional Backend Health Gateway
- */
-router.get('/health', (req, res) => {
-  res.status(200).json({ 
-    status: 'online', 
-    timestamp: new Date().toISOString(),
-    version: '1.2.0'
-  });
-});
-
-/**
- * Core Institutional Modules
- */
-router.use('/auth', authRoutes);
 router.use('/config', configRoutes);
-router.use('/courses', courseRoutes);
 router.use('/leads', leadsRoutes);
+router.use('/auth', authRoutes);
+router.use('/courses', coursesRoutes);
+
+// Generic Routes (Public Read, Protected Write)
+router.use('/notices', createGenericRouter('notices', false));
+router.use('/gallery', createGenericRouter('gallery', false));
+router.use('/faqs', createGenericRouter('faqs', false));
+router.use('/custom-pages', createGenericRouter('custom_pages', false));
+router.use('/placement-stats', createGenericRouter('placement_stats', false));
+router.use('/student-reviews', createGenericRouter('student_reviews', false));
+router.use('/industry-partners', createGenericRouter('industry_partners', false));
+router.use('/career-services', createGenericRouter('career_services', false));
+router.use('/team-members', createGenericRouter('team_members', false));
+router.use('/achievement-stats', createGenericRouter('achievement_stats', false));
+router.use('/extra-chapters', createGenericRouter('extra_chapters', false));
+router.use('/legal-sections', createGenericRouter('legal_sections', false));
 
 export default router;

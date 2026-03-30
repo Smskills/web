@@ -1,54 +1,45 @@
 
 import { Request, Response, NextFunction } from 'express';
-import { AuthService } from '../services/auth.service.js';
-import { sendResponse } from '../utils/response.js';
+import { AuthService } from '../services/auth.service.ts';
+import { sendResponse } from '../utils/response.ts';
 
 export class AuthController {
   static async login(req: Request, res: Response, next: NextFunction) {
     try {
-      const { identifier, password } = (req as any).body;
-
+      const { identifier, password } = req.body;
+      
       if (!identifier || !password) {
         return sendResponse(res, 400, false, 'Identifier and password are required');
       }
 
-      const authData = await AuthService.login(identifier, password);
-      
-      return sendResponse(res, 200, true, 'Login successful', authData);
-    } catch (error) {
-      next(error);
+      const result = await AuthService.login(identifier, password);
+      return sendResponse(res, 200, true, 'Login successful', result);
+    } catch (err: any) {
+      return sendResponse(res, 401, false, err.message || 'Login failed');
     }
   }
 
-  /**
-   * Public: Initiate password recovery
-   */
   static async forgotPassword(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email } = (req as any).body;
-      if (!email) return sendResponse(res, 400, false, 'Email address is required');
+      const { email } = req.body;
+      if (!email) return sendResponse(res, 400, false, 'Email is required');
 
-      await AuthService.requestPasswordReset(email);
-      
-      // For security, always return success to prevent email enumeration
-      return sendResponse(res, 200, true, 'If the email exists, a secure recovery link has been dispatched.');
-    } catch (error) {
-      next(error);
+      await AuthService.forgotPassword(email);
+      return sendResponse(res, 200, true, 'If an account with that email exists, a reset link has been sent.');
+    } catch (err) {
+      next(err);
     }
   }
 
-  /**
-   * Public: Finalize password reset via secure token
-   */
   static async resetPassword(req: Request, res: Response, next: NextFunction) {
     try {
-      const { token, password } = (req as any).body;
-      if (!token || !password) return sendResponse(res, 400, false, 'Missing mandatory recovery credentials');
+      const { token, newPassword } = req.body;
+      if (!token || !newPassword) return sendResponse(res, 400, false, 'Token and new password are required');
 
-      await AuthService.resetPassword(token, password);
-      return sendResponse(res, 200, true, 'Institutional password updated successfully. Please log in.');
-    } catch (error) {
-      next(error);
+      await AuthService.resetPassword(token, newPassword);
+      return sendResponse(res, 200, true, 'Password reset successful. You can now login with your new password.');
+    } catch (err: any) {
+      return sendResponse(res, 400, false, err.message || 'Password reset failed');
     }
   }
 }

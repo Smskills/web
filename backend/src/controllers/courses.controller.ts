@@ -1,3 +1,4 @@
+
 import { Request, Response, NextFunction } from 'express';
 import { CoursesService } from '../services/courses.service.ts';
 import { sendResponse } from '../utils/response.ts';
@@ -5,21 +6,39 @@ import { sendResponse } from '../utils/response.ts';
 export class CoursesController {
   static async getCourses(req: Request, res: Response, next: NextFunction) {
     try {
-      const data = await CoursesService.fetchActivePrograms();
-      return sendResponse(res, 200, true, 'Courses retrieved successfully', data);
-    } catch (error) {
-      next(error);
+      const courses = await CoursesService.getCourses();
+      return sendResponse(res, 200, true, 'Courses fetched successfully', courses);
+    } catch (err) {
+      next(err);
     }
   }
 
-  static async getCourseById(req: Request, res: Response, next: NextFunction) {
+  static async createCourse(req: Request, res: Response, next: NextFunction) {
     try {
-      // Fix: Cast req to any to access params as the current Request type definition in this environment lacks it
-      const { id } = (req as any).params;
-      const data = await CoursesService.fetchCourseDetails(id);
-      return sendResponse(res, 200, true, 'Course details retrieved', data);
-    } catch (error) {
-      next(error);
+      const course = await CoursesService.createCourse(req.body);
+      return sendResponse(res, 201, true, 'Course created successfully', course);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async updateCourse(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const course = await CoursesService.updateCourse(id as string, req.body);
+      return sendResponse(res, 200, true, 'Course updated successfully', course);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async deleteCourse(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      await CoursesService.deleteCourse(id as string);
+      return sendResponse(res, 200, true, 'Course deleted successfully');
+    } catch (err) {
+      next(err);
     }
   }
 }

@@ -1,7 +1,5 @@
-/**
- * Utility to convert snake_case database rows to camelCase frontend objects
- */
-export function mapToCamelCase(obj: any): any {
+
+export const mapToCamelCase = (obj: any): any => {
   if (Array.isArray(obj)) {
     return obj.map(v => mapToCamelCase(v));
   } else if (obj !== null && obj.constructor === Object) {
@@ -14,12 +12,9 @@ export function mapToCamelCase(obj: any): any {
     );
   }
   return obj;
-}
+};
 
-/**
- * Utility to convert camelCase frontend objects to snake_case database rows
- */
-export function mapToSnakeCase(obj: any): any {
+export const mapToSnakeCase = (obj: any): any => {
   if (Array.isArray(obj)) {
     return obj.map(v => mapToSnakeCase(v));
   } else if (obj !== null && obj.constructor === Object) {
@@ -32,4 +27,4 @@ export function mapToSnakeCase(obj: any): any {
     );
   }
   return obj;
-}
+};

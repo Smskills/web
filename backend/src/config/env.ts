@@ -1,28 +1,28 @@
 
 import dotenv from 'dotenv';
-import process from 'node:process';
-
-// Load .env from root (default behavior for dotenv when run from root)
 dotenv.config();
 
 export const ENV = {
-  PORT: process.env.PORT || 3000,
+  PORT: parseInt(process.env.PORT || '3000'),
   NODE_ENV: process.env.NODE_ENV || 'development',
   DB: {
     HOST: process.env.DB_HOST || 'localhost',
     USER: process.env.DB_USER || 'root',
-    PASS: process.env.DB_PASSWORD || '',
-    NAME: process.env.DB_NAME || 'smskills_db',
+    PASSWORD: process.env.DB_PASSWORD || '',
+    NAME: process.env.DB_NAME || 'eduinsta_cms',
     PORT: parseInt(process.env.DB_PORT || '3306'),
   },
-  JWT_SECRET: process.env.JWT_SECRET || 'super_strong_secret_key_change_later',
-  UPLOAD_LIMIT: process.env.UPLOAD_LIMIT || '100mb',
-  SMTP: {
-    HOST: process.env.SMTP_HOST || 'smtp.gmail.com',
-    PORT: parseInt(process.env.SMTP_PORT || '587'),
-    USER: process.env.SMTP_USER || '',
-    PASS: process.env.SMTP_PASS || '',
-    // Convert string "false" or "true" from .env correctly
-    SECURE: process.env.SMTP_SECURE === 'true' 
-  }
+  JWT: {
+    SECRET: process.env.JWT_SECRET || 'your_super_secret_jwt_key_change_me',
+    EXPIRES_IN: process.env.JWT_EXPIRES_IN || '24h',
+  },
+  EMAIL: {
+    HOST: process.env.EMAIL_HOST || 'smtp.gmail.com',
+    PORT: parseInt(process.env.EMAIL_PORT || '587'),
+    USER: process.env.EMAIL_USER || '',
+    PASS: process.env.EMAIL_PASS || '',
+    FROM: process.env.EMAIL_FROM || '"EduInsta CMS" <no-reply@eduinsta.com>',
+  },
+  APP_URL: process.env.APP_URL || 'http://localhost:3000',
+  UPLOAD_LIMIT: '10mb',
 };

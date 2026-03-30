@@ -52,7 +52,7 @@ async function startServer() {
     } else {
       const distPath = path.join(__dirname, 'dist');
       app.use(express.static(distPath));
-      app.get('*', (req, res) => res.sendFile(path.join(distPath, 'index.html')));
+      app.get('*all', (req, res) => res.sendFile(path.join(distPath, 'index.html')));
     }
 
     // 4. Start listening AFTER mounting everything
