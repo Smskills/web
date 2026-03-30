@@ -21,7 +21,7 @@ async function startServer() {
     try {
       console.log('📦 Loading Backend...');
       // Use dynamic import to break potential module cycles
-      const backendModule = await import('./backend/src/app.ts');
+      const backendModule = await import('./backend/src/app.js');
       const backendApp = backendModule.default || backendModule;
 
       if (typeof backendApp === 'function') {
@@ -52,8 +52,8 @@ async function startServer() {
 
     // 4. Start listening AFTER mounting everything
     app.listen(PORT, '0.0.0.0', () => {
-      console.log(`🚀 SERVER LISTENING: http://0.0.0.0:${PORT}`);
-      console.log(`📡 Health check: http://0.0.0.0:${PORT}/ping`);
+      console.log(`🚀 SERVER LISTENING: http://localhost:${PORT}`);
+      console.log(`📡 Health check: http://localhost:${PORT}/ping`);
     });
 
   } catch (error) {
