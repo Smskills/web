@@ -110,6 +110,67 @@ const HomeTab: React.FC<HomeTabProps> = ({
         </div>
       </div>
 
+      <div className="space-y-8 bg-emerald-600 p-10 rounded-[2.5rem] border border-emerald-500 shadow-xl relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 border-b border-white/10 pb-6">
+          <h3 className="text-white font-black text-xl flex items-center gap-3 uppercase tracking-tighter"><i className="fa-solid fa-bullhorn text-emerald-200"></i> CALL TO ACTION PANEL</h3>
+          <button 
+            onClick={() => updateHomeSubField('ctaBlock', 'visible', !data.ctaBlock.visible)} 
+            className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg ${ data.ctaBlock.visible ? 'bg-white text-emerald-700 hover:bg-emerald-50' : 'bg-emerald-700 text-emerald-300' }`}
+          >
+            { data.ctaBlock.visible ? 'VISIBLE ON SITE' : 'HIDDEN FROM SITE' }
+          </button>
+        </div>
+        
+        <div className="relative z-10 space-y-6">
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-emerald-100 uppercase tracking-widest ml-1">Main Headline</label>
+            <input 
+              value={data.ctaBlock.title} 
+              onChange={e => updateHomeSubField('ctaBlock', 'title', e.target.value)} 
+              className="w-full bg-white/10 border border-white/20 rounded-2xl px-6 py-4 text-white font-black text-xl placeholder:text-white/30 focus:bg-white/20 focus:border-white/40 transition-all outline-none" 
+              placeholder="e.g. Secure Your Future with S M Skills" 
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-emerald-100 uppercase tracking-widest ml-1">Support Subtitle</label>
+            <textarea 
+              value={data.ctaBlock.subtitle} 
+              onChange={e => updateHomeSubField('ctaBlock', 'subtitle', e.target.value)} 
+              rows={3} 
+              className="w-full bg-white/10 border border-white/20 rounded-2xl px-6 py-4 text-white font-medium placeholder:text-white/30 focus:bg-white/20 focus:border-white/40 transition-all outline-none resize-none" 
+              placeholder="e.g. Admissions for the 2024 academic cycle are now open..." 
+            />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-emerald-100 uppercase tracking-widest ml-1">Button Label</label>
+              <div className="relative">
+                <input 
+                  value={data.ctaBlock.buttonText} 
+                  onChange={e => updateHomeSubField('ctaBlock', 'buttonText', e.target.value)} 
+                  className="w-full bg-white border-none rounded-xl px-6 py-3 text-emerald-900 font-black text-sm shadow-xl" 
+                  placeholder="e.g. Begin Application" 
+                />
+                <i className="fa-solid fa-tag absolute right-5 top-1/2 -translate-y-1/2 text-emerald-200"></i>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-emerald-100 uppercase tracking-widest ml-1">Button Destination</label>
+              <div className="relative">
+                <input 
+                  value={data.ctaBlock.buttonLink} 
+                  onChange={e => updateHomeSubField('ctaBlock', 'buttonLink', e.target.value)} 
+                  className="w-full bg-slate-900 border-none rounded-xl px-6 py-3 text-emerald-400 font-mono text-xs shadow-xl" 
+                  placeholder="e.g. /enroll" 
+                />
+                <i className="fa-solid fa-link absolute right-5 top-1/2 -translate-y-1/2 text-slate-700"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="space-y-8">
         <div className="flex justify-between items-center border-b border-slate-100 pb-4">
           <h3 className="text-emerald-600 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-list-check"></i> HIGHLIGHT CARDS</h3>
