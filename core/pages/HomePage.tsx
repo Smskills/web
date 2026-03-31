@@ -81,7 +81,7 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
           <div className="container mx-auto px-6 py-24 relative z-10 max-w-7xl">
             <div className="max-w-4xl text-left">
               <span className="text-emerald-800 font-black uppercase tracking-[0.4em] text-[10px] md:text-[11px] mb-6 block animate-fade-in-up">
-                The Future of Vocational Excellence
+                {home.hero.tagline || 'The Future of Vocational Excellence'}
               </span>
               <h1 className="text-5xl sm:text-7xl md:text-8xl font-black mb-12 leading-[1] md:leading-[0.9] tracking-tighter text-[#020617] animate-fade-in-up">
                 {home.hero.title}
@@ -90,15 +90,17 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
                 {home.hero.subtitle}
               </p>
               <div className="flex flex-col sm:flex-row gap-6 animate-fade-in-up delay-200">
-                <Link to="/academics" className={btnPrimary}>{home.hero.ctaText}</Link>
-                <Link to="/about" className={btnMidnight}>Institutional Tour</Link>
+                <Link to={getCleanPath(home.hero.ctaLink)} className={btnPrimary}>{home.hero.ctaText}</Link>
+                {home.hero.secondaryCtaText && (
+                  <Link to={getCleanPath(home.hero.secondaryCtaLink || '/about')} className={btnMidnight}>{home.hero.secondaryCtaText}</Link>
+                )}
               </div>
 
               {/* Trust Badge */}
               <div className="mt-12 flex items-center gap-4 animate-fade-in delay-300">
                 <div className="h-px w-8 bg-emerald-600/30"></div>
                 <span className="text-[10px] font-black text-emerald-700/80 uppercase tracking-[0.2em] whitespace-nowrap">
-                  NSDC Certified | Placement Support | Since 2024
+                  {home.hero.trustBadge || 'NSDC Certified | Placement Support | Since 2024'}
                 </span>
               </div>
             </div>

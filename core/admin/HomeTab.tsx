@@ -76,8 +76,36 @@ const HomeTab: React.FC<HomeTabProps> = ({
             <div className="absolute inset-0 bg-black/30 flex items-center justify-center text-white font-black text-[10px] uppercase opacity-0 group-hover:opacity-100 transition-opacity">Change Media</div>
           </div>
           <div className="lg:col-span-2 space-y-4">
-            <input value={data.hero.title} onChange={e => updateNestedField('hero', 'title', e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl px-5 py-3 text-slate-900 font-black shadow-sm" placeholder="Institutional Headline" />
-            <textarea value={data.hero.subtitle} onChange={e => updateNestedField('hero', 'subtitle', e.target.value)} rows={3} className="w-full bg-white border border-slate-200 rounded-xl px-5 py-3 text-slate-600 font-medium resize-none shadow-sm" placeholder="Support text for the hero banner..." />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Hero Tagline</label>
+                <input value={data.hero.tagline || ''} onChange={e => updateNestedField('hero', 'tagline', e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl px-5 py-3 text-slate-900 font-black shadow-sm" placeholder="e.g. The Future of Vocational Excellence" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Trust Badge Text</label>
+                <input value={data.hero.trustBadge || ''} onChange={e => updateNestedField('hero', 'trustBadge', e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl px-5 py-3 text-slate-900 font-black shadow-sm" placeholder="e.g. NSDC Certified | Placement Support | Since 2024" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Main Headline</label>
+              <input value={data.hero.title} onChange={e => updateNestedField('hero', 'title', e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl px-5 py-3 text-slate-900 font-black shadow-sm" placeholder="Institutional Headline" />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Subtitle / Description</label>
+              <textarea value={data.hero.subtitle} onChange={e => updateNestedField('hero', 'subtitle', e.target.value)} rows={3} className="w-full bg-white border border-slate-200 rounded-xl px-5 py-3 text-slate-600 font-medium resize-none shadow-sm" placeholder="Support text for the hero banner..." />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-white rounded-3xl border border-slate-200 shadow-inner">
+              <div className="space-y-4">
+                <h4 className="text-[10px] font-black text-emerald-600 uppercase tracking-widest border-b border-emerald-50 pb-2">Primary Button</h4>
+                <input value={data.hero.ctaText} onChange={e => updateNestedField('hero', 'ctaText', e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs font-black" placeholder="Label" />
+                <input value={data.hero.ctaLink} onChange={e => updateNestedField('hero', 'ctaLink', e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-[10px] font-mono" placeholder="Path (e.g. /academics)" />
+              </div>
+              <div className="space-y-4">
+                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50 pb-2">Secondary Button</h4>
+                <input value={data.hero.secondaryCtaText || ''} onChange={e => updateNestedField('hero', 'secondaryCtaText', e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs font-black" placeholder="Label" />
+                <input value={data.hero.secondaryCtaLink || ''} onChange={e => updateNestedField('hero', 'secondaryCtaLink', e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-[10px] font-mono" placeholder="Path (e.g. /about)" />
+              </div>
+            </div>
           </div>
         </div>
       </div>

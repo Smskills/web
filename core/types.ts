@@ -97,8 +97,12 @@ export interface HomeConfig {
   hero: {
     title: string;
     subtitle: string;
+    tagline?: string;
     ctaText: string;
     ctaLink: string;
+    secondaryCtaText?: string;
+    secondaryCtaLink?: string;
+    trustBadge?: string;
     bgImage: string;
     visible: boolean;
   };

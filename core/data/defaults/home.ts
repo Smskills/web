@@ -5,8 +5,12 @@ export const homeDefaults: HomeConfig = {
   hero: {
     title: "Master Skills for the Modern Industry",
     subtitle: "Join S M Skills for specialized vocational tracks. Build your career with veterans.",
+    tagline: "The Future of Vocational Excellence",
     ctaText: "Browse Programs",
     ctaLink: "/academics",
+    secondaryCtaText: "Institutional Tour",
+    secondaryCtaLink: "/about",
+    trustBadge: "NSDC Certified | Placement Support | Since 2024",
     bgImage: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=1600",
     visible: true
   },
