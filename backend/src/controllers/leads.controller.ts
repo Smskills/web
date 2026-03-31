@@ -35,7 +35,10 @@ export class LeadsController {
   static async getLeads(req: Request, res: Response, next: NextFunction) {
     try {
       const [rows]: any = await pool.execute(`SELECT * FROM leads ORDER BY created_at DESC`);
-      const leads = mapToCamelCase(rows);
+      const leads = mapToCamelCase(rows).map((l: any) => ({
+        ...l,
+        details: typeof l.details === 'string' ? JSON.parse(l.details) : l.details
+      }));
       
       return sendResponse(res, 200, true, 'Leads fetched successfully', leads);
     } catch (err) {
