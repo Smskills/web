@@ -61,12 +61,12 @@ const LeadsTab: React.FC<LeadsTabProps> = ({ leads, onUpdateStatus, onDeleteLead
             value={search} 
             onChange={e => setSearch(e.target.value)} 
             placeholder="Search records..." 
-            className="bg-slate-900/50 border border-slate-700 rounded-xl pl-11 pr-4 py-3 text-sm text-white outline-none focus:border-emerald-500 transition-all w-64 shadow-inner" 
+            className="bg-slate-800/50 border border-slate-700 rounded-xl pl-11 pr-4 py-3 text-sm text-white outline-none focus:border-emerald-500 transition-all w-64 shadow-inner" 
           />
         </div>
       </div>
 
-      <div className="flex bg-slate-900/50 p-1.5 rounded-2xl border border-slate-700/50 w-fit shadow-inner">
+      <div className="flex bg-slate-800/50 p-1.5 rounded-2xl border border-slate-700/50 w-fit shadow-inner">
         {(['All', 'New', 'Contacted', 'Enrolled'] as const).map(f => (
             <button 
               key={f} 
@@ -80,7 +80,7 @@ const LeadsTab: React.FC<LeadsTabProps> = ({ leads, onUpdateStatus, onDeleteLead
 
       <div className="space-y-4">
         {filtered.map(lead => (
-          <div key={lead.id} className="bg-slate-800/40 rounded-[2rem] border border-slate-700/50 hover:border-emerald-500/30 transition-all group shadow-xl overflow-hidden">
+          <div key={lead.id} className="bg-slate-800/50 rounded-[2rem] border border-slate-700/50 hover:border-emerald-500/30 transition-all group shadow-xl overflow-hidden">
             <div className="p-6 flex flex-col lg:flex-row gap-8 items-start lg:items-center">
               <div className="flex items-center gap-6 flex-grow">
                 <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-xs shadow-2xl border ${lead.source === 'enrollment' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-blue-500/10 text-blue-500 border-blue-500/20'}`}>
@@ -123,7 +123,7 @@ const LeadsTab: React.FC<LeadsTabProps> = ({ leads, onUpdateStatus, onDeleteLead
             </div>
 
             {expandedLeadId === lead.id && (
-              <div className="px-6 pb-8 pt-2 border-t border-slate-700/30 bg-slate-900/30 animate-fade-in">
+              <div className="px-6 pb-8 pt-2 border-t border-slate-700/30 bg-slate-800/50 animate-fade-in">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   <div className="space-y-4">
                     <h5 className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Core Information</h5>
@@ -166,7 +166,7 @@ const LeadsTab: React.FC<LeadsTabProps> = ({ leads, onUpdateStatus, onDeleteLead
                   )}
 
                   {lead.message && lead.message !== 'Website Application' && (
-                    <div className="col-span-full mt-4 p-4 bg-slate-900/50 rounded-2xl border border-slate-700/50">
+                    <div className="col-span-full mt-4 p-4 bg-slate-800/50 rounded-2xl border border-slate-700/50">
                       <h5 className="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-2">Message / Notes</h5>
                       <p className="text-xs text-slate-300 leading-relaxed italic">"{lead.message}"</p>
                     </div>

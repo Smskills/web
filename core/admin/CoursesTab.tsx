@@ -43,7 +43,7 @@ const CoursesTab: React.FC<CoursesTabProps> = ({
       </div>
 
       {/* Page Header Customization */}
-      <div className="bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-700 space-y-6">
+      <div className="bg-slate-800/50 p-8 rounded-[2.5rem] border border-slate-700 space-y-6">
         <h3 className="text-emerald-500 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-heading"></i> PAGE HEADER</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
@@ -63,7 +63,7 @@ const CoursesTab: React.FC<CoursesTabProps> = ({
 
       <div className="grid grid-cols-1 gap-8">
         {list.map(course => (
-          <div key={course.id} className="bg-slate-900/50 p-8 rounded-[2rem] border border-slate-700 group transition-all hover:border-emerald-500/30">
+          <div key={course.id} className="bg-slate-800/50 p-8 rounded-[2rem] border border-slate-700 group transition-all hover:border-emerald-500/30">
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
               <div className="lg:col-span-1">
                 <div className="relative aspect-video rounded-2xl overflow-hidden border border-slate-800 bg-slate-800 group/img cursor-pointer" onClick={() => onCourseImageClick(course.id)}>

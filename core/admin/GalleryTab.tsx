@@ -62,7 +62,7 @@ const GalleryTab: React.FC<GalleryTabProps> = ({
       </div>
 
       {/* Page Header Customization */}
-      <div className="bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-700 space-y-6">
+      <div className="bg-slate-800/50 p-8 rounded-[2.5rem] border border-slate-700 space-y-6">
         <h3 className="text-emerald-500 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-heading"></i> PAGE HEADER</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
@@ -84,7 +84,7 @@ const GalleryTab: React.FC<GalleryTabProps> = ({
         const items = list.filter(item => item.category === category);
         const thumbnail = galleryMetadata?.[category];
         return (
-          <div key={category} className="space-y-6 bg-slate-900/20 p-6 rounded-[2rem] border border-slate-700/30">
+          <div key={category} className="space-y-6 bg-slate-800/50 p-6 rounded-[2rem] border border-slate-700/30">
             <div className="flex items-center justify-between border-b border-slate-700/50 pb-4">
               <div className="flex items-center gap-4">
                 <div onClick={() => triggerThumbnailUpload(category)} className="w-14 h-14 rounded-xl bg-slate-900 border border-slate-700 cursor-pointer flex items-center justify-center overflow-hidden hover:border-emerald-500 transition-all group relative">
@@ -103,7 +103,7 @@ const GalleryTab: React.FC<GalleryTabProps> = ({
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
               {items.map(item => (
-                <div key={item.id} className="relative group bg-slate-900/40 p-4 rounded-2xl border border-slate-700/50 transition-all hover:border-emerald-500/20">
+                <div key={item.id} className="relative group bg-slate-800/50 p-4 rounded-2xl border border-slate-700/50 transition-all hover:border-emerald-500/20">
                   <div className="aspect-square rounded-xl overflow-hidden border border-slate-800 relative">
                      <img src={item.url} className="w-full h-full object-cover" />
                      <button onClick={() => handleDelete(item.id)} className="absolute top-2 right-2 bg-red-600 w-8 h-8 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-xl hover:bg-red-500"><i className="fa-solid fa-trash-can text-xs text-white"></i></button>
