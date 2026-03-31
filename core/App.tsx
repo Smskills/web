@@ -1,31 +1,31 @@
 
 import React, { useState, useEffect, Suspense, useMemo } from 'react';
 import { HashRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
-import { INITIAL_CONTENT } from './data/defaultContent.ts';
-import { AppState } from './types.ts';
+import { INITIAL_CONTENT } from './data/defaultContent';
+import { AppState } from './types';
 
 // Components
-import Header from './components/Header.tsx';
-import Footer from './components/Footer.tsx';
+import Header from './components/Header';
+import Footer from './components/Footer';
 
 // Pages
-import HomePage from './pages/HomePage.tsx';
-import AboutPage from './pages/AboutPage.tsx';
-import CoursesPage from './pages/CoursesPage.tsx';
-import NoticesPage from './pages/NoticesPage.tsx';
-import GalleryPage from './pages/GalleryPage.tsx';
-import ContactPage from './pages/ContactPage.tsx';
-import AdminDashboard from './pages/AdminDashboard.tsx';
-import EnrollmentPage from './pages/EnrollmentPage.tsx';
-import PrivacyPolicyPage from './pages/PrivacyPolicyPage.tsx';
-import TermsOfServicePage from './pages/TermsOfServicePage.tsx';
-import CareerGuidancePage from './pages/CareerGuidancePage.tsx';
-import PlacementReviewPage from './pages/PlacementReviewPage.tsx';
-import FAQPage from './pages/FAQPage.tsx';
-import NotFoundPage from './pages/NotFoundPage.tsx';
-import LoginPage from './pages/LoginPage.tsx';
-import ForgotPasswordPage from './pages/ForgotPasswordPage.tsx';
-import ResetPasswordPage from './pages/ResetPasswordPage.tsx';
+import HomePage from './pages/HomePage';
+import AboutPage from './pages/AboutPage';
+import CoursesPage from './pages/CoursesPage';
+import NoticesPage from './pages/NoticesPage';
+import GalleryPage from './pages/GalleryPage';
+import ContactPage from './pages/ContactPage';
+import AdminDashboard from './pages/AdminDashboard';
+import EnrollmentPage from './pages/EnrollmentPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsOfServicePage from './pages/TermsOfServicePage';
+import CareerGuidancePage from './pages/CareerGuidancePage';
+import PlacementReviewPage from './pages/PlacementReviewPage';
+import FAQPage from './pages/FAQPage';
+import NotFoundPage from './pages/NotFoundPage';
+import LoginPage from './pages/LoginPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 
 const API_BASE = '/api';
 

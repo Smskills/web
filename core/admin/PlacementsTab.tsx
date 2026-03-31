@@ -62,7 +62,7 @@ const PlacementsTab: React.FC<PlacementsTabProps> = ({
   return (
     <div className="space-y-16 animate-fade-in pb-20">
       {/* Page Header Customization */}
-      <div className="bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-700 space-y-8">
+      <div className="bg-slate-800/50 p-8 rounded-[2.5rem] border border-slate-700 space-y-8">
          <h3 className="text-emerald-500 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-heading"></i> PAGE CONFIGURATION</h3>
          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
@@ -97,7 +97,7 @@ const PlacementsTab: React.FC<PlacementsTabProps> = ({
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {partners.map(partner => (
-            <div key={partner.id} className="bg-slate-900/50 p-6 rounded-3xl border border-slate-700 group relative flex items-center gap-6">
+            <div key={partner.id} className="bg-slate-800/50 p-6 rounded-3xl border border-slate-700 group relative flex items-center gap-6">
               <button onClick={() => handleDeletePartner(partner.id, partner.name)} className="absolute -top-2 -right-2 w-8 h-8 bg-red-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center shadow-xl"><i className="fa-solid fa-trash text-[10px]"></i></button>
               <div onClick={() => onPartnerImageClick(partner.id)} className="w-16 h-16 rounded-xl bg-slate-800 flex items-center justify-center shrink-0 cursor-pointer overflow-hidden border border-slate-700 relative">
                 {partner.image ? <img src={partner.image} className="w-full h-full object-contain p-1" /> : <i className={`fa-brands ${partner.icon || 'fa-building'} text-2xl text-emerald-500`}></i>}
@@ -118,7 +118,7 @@ const PlacementsTab: React.FC<PlacementsTabProps> = ({
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {stats.map(stat => (
-            <div key={stat.id} className="bg-slate-900/50 p-6 rounded-3xl border border-slate-700 group relative">
+            <div key={stat.id} className="bg-slate-800/50 p-6 rounded-3xl border border-slate-700 group relative">
               <button onClick={() => handleDeleteStat(stat.id, stat.label)} className="absolute -top-2 -right-2 w-8 h-8 bg-red-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center shadow-xl"><i className="fa-solid fa-trash text-[10px]"></i></button>
               <div className="grid grid-cols-2 gap-4">
                 <input value={stat.label} onChange={e => updateStat(stat.id, 'label', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" placeholder="Label" />
@@ -139,7 +139,7 @@ const PlacementsTab: React.FC<PlacementsTabProps> = ({
         </div>
         <div className="space-y-6">
           {reviews.map(review => (
-            <div key={review.id} className="bg-slate-900/50 p-8 rounded-[2.5rem] border border-slate-700 group">
+            <div key={review.id} className="bg-slate-800/50 p-8 rounded-[2.5rem] border border-slate-700 group">
               <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                 <div onClick={() => onReviewImageClick(review.id)} className="lg:col-span-1 cursor-pointer">
                   <div className="aspect-square rounded-2xl overflow-hidden border-2 border-slate-800 bg-slate-800">

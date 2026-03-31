@@ -29,7 +29,7 @@ const NoticesTab: React.FC<NoticesTabProps> = ({ noticesState, updateNoticeItem,
       </div>
 
       {/* Page Header Customization */}
-      <div className="bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-700 space-y-6">
+      <div className="bg-slate-800/50 p-8 rounded-[2.5rem] border border-slate-700 space-y-6">
         <h3 className="text-emerald-500 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-heading"></i> PAGE HEADER</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
@@ -49,7 +49,7 @@ const NoticesTab: React.FC<NoticesTabProps> = ({ noticesState, updateNoticeItem,
 
       <div className="space-y-6">
         {list.map(notice => (
-          <div key={notice.id} className="bg-slate-900/50 p-6 rounded-[1.5rem] border border-slate-700 flex gap-4 hover:border-emerald-500/30 transition-all">
+          <div key={notice.id} className="bg-slate-800/50 p-6 rounded-[1.5rem] border border-slate-700 flex gap-4 hover:border-emerald-500/30 transition-all">
             <div className="flex-grow space-y-4">
               <div className="flex flex-col md:flex-row gap-4">
                 <input value={notice.title} onChange={e => updateNoticeItem(notice.id, 'title', e.target.value)} className="bg-transparent border-b border-slate-700 font-bold text-white flex-grow outline-none focus:border-emerald-500 transition-colors" placeholder="Notice Headline" />

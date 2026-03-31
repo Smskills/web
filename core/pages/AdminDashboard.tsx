@@ -22,6 +22,7 @@ import CareerTab from '../admin/CareerTab.tsx';
 import PagesTab from '../admin/PagesTab.tsx';
 import LeadsTab from '../admin/LeadsTab.tsx';
 import ImageCropper from '../components/ImageCropper.tsx';
+import ConfirmModal from '../components/ConfirmModal.tsx';
 
 interface AdminDashboardProps {
   content: AppState;
@@ -40,6 +41,23 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate, serv
   const [leads, setLeads] = useState<Lead[]>([]);
   
   const [croppingCourseId, setCroppingCourseId] = useState<string | null>(null);
+
+  // Modal State
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    confirmLabel?: string;
+    onConfirm: () => void;
+    isDestructive?: boolean;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {}
+  });
+
+  const closeConfirm = () => setConfirmModal(prev => ({ ...prev, isOpen: false }));
   
   useEffect(() => {
     setLocalContent(content);
@@ -118,13 +136,20 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate, serv
   const activeThumbnailCategory = useRef<string | null>(null);
 
   const handleLogout = () => {
-    if (window.confirm("Are you sure you want to log out?")) {
-      localStorage.removeItem('sms_auth_token');
-      localStorage.removeItem('sms_is_auth');
-      localStorage.removeItem('sms_auth_user');
-      window.dispatchEvent(new Event('authChange'));
-      navigate('/');
-    }
+    setConfirmModal({
+      isOpen: true,
+      title: 'Sign Out',
+      message: 'Are you sure you want to end your administrative session?',
+      confirmLabel: 'Sign Out',
+      isDestructive: true,
+      onConfirm: () => {
+        localStorage.removeItem('sms_auth_token');
+        localStorage.removeItem('sms_is_auth');
+        localStorage.removeItem('sms_auth_user');
+        window.dispatchEvent(new Event('authChange'));
+        navigate('/');
+      }
+    });
   };
 
   const handleSave = async () => {
@@ -151,12 +176,20 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate, serv
   };
 
   const handleDiscard = () => {
-    if (window.confirm("Discard all unsaved changes?")) {
-      setLocalContent(content);
-      setHasUnsavedChanges(false);
-      setIsError(false);
-      setStatusMsg('');
-    }
+    setConfirmModal({
+      isOpen: true,
+      title: 'Discard Changes',
+      message: 'This will revert all unsaved modifications to the last saved state. Continue?',
+      confirmLabel: 'Discard All',
+      isDestructive: true,
+      onConfirm: () => {
+        setLocalContent(content);
+        setHasUnsavedChanges(false);
+        setIsError(false);
+        setStatusMsg('');
+        closeConfirm();
+      }
+    });
   };
 
   const trackChange = () => setHasUnsavedChanges(true);
@@ -318,7 +351,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate, serv
   const currentCroppingCourse = croppingCourseId ? localContent.courses.list.find(c => c.id === croppingCourseId) : null;
 
   return (
-    <div className="min-h-screen bg-slate-100 text-slate-900 pb-20 font-sans transition-colors duration-500">
+    <div className="min-h-screen bg-slate-950 text-slate-900 pb-20 font-sans transition-colors duration-500">
       <input 
         type="file" 
         ref={genericUploadRef} 
@@ -337,16 +370,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate, serv
         />
       )}
 
-      {/* Light Professional Header */}
-      <div className="bg-white/80 backdrop-blur-xl border-b border-slate-200 p-6 sticky top-16 md:top-24 z-[80] shadow-sm">
+      {/* Dark Professional Header */}
+      <div className="bg-slate-900/90 backdrop-blur-xl border-b border-slate-800 p-6 sticky top-16 md:top-24 z-[80] shadow-2xl">
         <div className="container mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-6">
-            <h1 className="text-2xl font-black uppercase tracking-tight text-slate-900 flex items-center gap-3">
-              <i className="fa-solid fa-gauge-high text-emerald-600"></i>
+            <h1 className="text-2xl font-black uppercase tracking-tight text-white flex items-center gap-3">
+              <i className="fa-solid fa-gauge-high text-emerald-500"></i>
               ADMIN PANEL
             </h1>
 
-            <div className={`flex items-center gap-2.5 px-4 py-1.5 border rounded-full transition-all ${serverOnline ? 'bg-emerald-50 border-emerald-100 text-emerald-600' : 'bg-amber-50 border-amber-100 text-amber-600'}`}>
+            <div className={`flex items-center gap-2.5 px-4 py-1.5 border rounded-full transition-all ${serverOnline ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-amber-500/10 border-amber-500/20 text-amber-400'}`}>
                <div className="relative">
                  <i className={`fa-solid ${serverOnline ? 'fa-cloud' : 'fa-hard-drive'} text-xs`}></i>
                </div>
@@ -357,7 +390,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate, serv
             </div>
 
             {statusMsg && (
-              <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border transition-all ${isError ? 'bg-red-50 text-red-600 border-red-200' : 'bg-emerald-50 text-emerald-600 border-emerald-200'}`}>
+              <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border transition-all ${isError ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'}`}>
                 {statusMsg}
               </span>
             )}
@@ -365,30 +398,30 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate, serv
           <div className="flex items-center gap-3">
               <button 
                 onClick={handleLogout} 
-                className="px-4 py-2 text-slate-500 hover:text-red-600 hover:bg-red-50 text-[10px] font-black transition-all border border-slate-200 rounded-lg uppercase tracking-widest flex items-center gap-2"
+                className="px-4 py-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 text-[10px] font-black transition-all border border-slate-800 rounded-lg uppercase tracking-widest flex items-center gap-2"
               >
                 <i className="fa-solid fa-right-from-bracket"></i>
                 Log out
               </button>
-              <div className="w-px h-6 bg-slate-200 mx-1"></div>
-              <button onClick={handleDiscard} className="px-5 py-2 text-slate-500 hover:text-slate-900 text-[10px] font-black transition-all border border-slate-200 rounded-lg uppercase tracking-widest">DISCARD</button>
-              <button onClick={handleSave} className={`px-8 py-2 rounded-lg text-[10px] font-black transition-all shadow-xl uppercase tracking-widest ${hasUnsavedChanges ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-slate-200 text-slate-400 cursor-default shadow-none'}`}>Save Changes</button>
+              <div className="w-px h-6 bg-slate-800 mx-1"></div>
+              <button onClick={handleDiscard} className="px-5 py-2 text-slate-400 hover:text-white text-[10px] font-black transition-all border border-slate-800 rounded-lg uppercase tracking-widest">DISCARD</button>
+              <button onClick={handleSave} className={`px-8 py-2 rounded-lg text-[10px] font-black transition-all shadow-xl uppercase tracking-widest ${hasUnsavedChanges ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-slate-800 text-slate-600 cursor-default shadow-none'}`}>Save Changes</button>
           </div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 mt-8 flex flex-col md:flex-row gap-8">
-        {/* Navigation Sidebar - Clean Light Theme */}
+        {/* Navigation Sidebar - Dark Theme */}
         <div className="w-full md:w-64 space-y-4 shrink-0 h-fit z-50">
           <button 
             onClick={() => setActiveTab('leads')} 
-            className={`w-full text-left px-5 py-4 rounded-2xl font-black transition-all flex items-center gap-4 border shadow-sm group ${activeTab === 'leads' ? 'bg-emerald-600 border-emerald-500 text-white shadow-xl' : 'text-slate-600 bg-white border-slate-200 hover:bg-emerald-50 hover:border-emerald-200 hover:text-emerald-700'}`}
+            className={`w-full text-left px-5 py-4 rounded-2xl font-black transition-all flex items-center gap-4 border shadow-sm group ${activeTab === 'leads' ? 'bg-emerald-600 border-emerald-500 text-white shadow-xl' : 'text-slate-400 bg-slate-900 border-slate-800 hover:bg-slate-800 hover:text-white'}`}
           >
               <i className="fa-solid fa-user-graduate shrink-0 text-lg"></i>
               <span className="leading-none text-sm uppercase tracking-widest">Student Leads</span>
           </button>
           
-          <div className="h-px bg-slate-200 my-6 opacity-80"></div>
+          <div className="h-px bg-slate-800 my-6 opacity-80"></div>
           
           <div className="space-y-2">
             {(['site', 'home', 'pages', 'about', 'academics', 'notices', 'gallery', 'faq', 'form', 'contact', 'footer', 'placements', 'legal', 'career'] as const).map(tab => (
@@ -397,8 +430,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate, serv
                 onClick={() => setActiveTab(tab)} 
                 className={`w-full text-left px-5 py-4 rounded-2xl font-black transition-all border text-[13px] flex items-center gap-4 ${
                   activeTab === tab 
-                    ? 'bg-white border-emerald-500 text-emerald-600 shadow-lg translate-x-1 ring-2 ring-emerald-50' 
-                    : 'text-slate-500 bg-white/50 border-transparent hover:bg-white hover:text-slate-900 hover:shadow-md'
+                    ? 'bg-slate-800 border-emerald-500 text-emerald-400 shadow-lg translate-x-1 ring-2 ring-emerald-500/10' 
+                    : 'text-slate-500 bg-transparent border-transparent hover:bg-slate-900 hover:text-slate-300'
                 }`}
               >
                 <i className={`fa-solid fa-${
@@ -424,17 +457,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate, serv
           </div>
         </div>
 
-        {/* Content Area - Bright White Card */}
-        <div className="flex-grow bg-white rounded-[2.5rem] p-8 md:p-12 border border-slate-200 shadow-2xl shadow-slate-200/50 min-h-[75vh]">
+        {/* Content Area - Dark Slate Card */}
+        <div className="flex-grow bg-slate-900 rounded-[2.5rem] p-8 md:p-12 border border-slate-800 shadow-2xl shadow-black/50 min-h-[75vh]">
           {!serverOnline && activeTab === 'leads' && (
             <div className="mb-8 p-6 bg-amber-50 border border-amber-100 rounded-2xl flex items-center gap-4 text-amber-800">
                <i className="fa-solid fa-triangle-exclamation text-xl"></i>
                <p className="text-xs font-bold uppercase tracking-tight">Leads require a connection to the Institutional Backend (MySQL). They cannot be managed in Local Mode.</p>
             </div>
           )}
-          {activeTab === 'leads' && <LeadsTab leads={leads} onUpdateStatus={handleUpdateLeads} onDeleteLead={handleDeleteLead} enrollmentForm={localContent.enrollmentForm} contactForm={localContent.contactForm} />}
+          {activeTab === 'leads' && <LeadsTab leads={leads} onUpdateStatus={handleUpdateLeads} onDeleteLead={(id) => { setConfirmModal({ isOpen: true, title: 'Delete Lead', message: 'Permanently delete this student record from the institutional database?', confirmLabel: 'Delete', isDestructive: true, onConfirm: () => { handleDeleteLead(id); closeConfirm(); } }); }} enrollmentForm={localContent.enrollmentForm} contactForm={localContent.contactForm} />}
           {activeTab === 'site' && <SiteTab data={localContent.site} theme={localContent.theme} updateTheme={(f, v) => updateField('theme', f, v)} updateField={(f, v) => updateField('site', f, v)} onLogoUploadClick={() => triggerGenericUpload('site.logo')} updateNavigation={(idx, f, v) => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, navigation: prev.site.navigation.map((n, i) => i === idx ? { ...n, [f]: v } : n) } })); trackChange(); }} addNavigation={() => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, navigation: [...prev.site.navigation, { label: 'New Link', path: '/' }] } })); trackChange(); }} removeNavigation={(idx) => { setLocalContent(prev => ({ ...prev, site: { ...prev.site, navigation: prev.site.navigation.filter((_, i) => i !== idx) } })); trackChange(); }} />}
-          {activeTab === 'home' && <HomeTab data={localContent.home} updateNestedField={(p, f, v) => updateNestedField('home', p, f, v)} updateHomeSubField={(p, f, v) => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, [p]: { ...(prev.home as any)[p], [f]: v } } })); trackChange(); }} onHeroBgClick={() => triggerGenericUpload('home.hero.bgImage')} onShowcaseImgClick={() => triggerGenericUpload('home.bigShowcase.image')} addHighlight={() => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, highlights: [...prev.home.highlights, { icon: 'fa-star', title: 'New', description: '' }] } })); trackChange(); }} updateHighlight={(idx, f, v) => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, highlights: prev.home.highlights.map((h, i) => i === idx ? { ...h, [f]: v } : h) } })); trackChange(); }} deleteHighlight={(idx) => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, highlights: prev.home.highlights.filter((_, i) => i !== idx) } })); trackChange(); }} reorderSections={(idx, dir) => { setLocalContent(prev => { const order = [...prev.home.sectionOrder]; const t = dir === 'up' ? idx - 1 : idx + 1; if (t >= 0 && t < order.length) [order[idx], order[t]] = [order[t], order[idx]]; return { ...prev, home: { ...prev.home, sectionOrder: order } }; }); trackChange(); }} />}
+          {activeTab === 'home' && <HomeTab data={localContent.home} updateNestedField={(p, f, v) => updateNestedField('home', p, f, v)} updateHomeSubField={(p, f, v) => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, [p]: { ...(prev.home as any)[p], [f]: v } } })); trackChange(); }} onHeroBgClick={() => triggerGenericUpload('home.hero.bgImage')} onShowcaseImgClick={() => triggerGenericUpload('home.bigShowcase.image')} addHighlight={() => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, highlights: [...prev.home.highlights, { icon: 'fa-star', title: 'New', description: '' }] } })); trackChange(); }} updateHighlight={(idx, f, v) => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, highlights: prev.home.highlights.map((h, i) => i === idx ? { ...h, [f]: v } : h) } })); trackChange(); }} deleteHighlight={(idx, title) => { setConfirmModal({ isOpen: true, title: 'Delete Highlight', message: `Permanently remove "${title}" from the institutional highlights?`, confirmLabel: 'Delete', isDestructive: true, onConfirm: () => { setLocalContent(prev => ({ ...prev, home: { ...prev.home, highlights: prev.home.highlights.filter((_, i) => i !== idx) } })); trackChange(); closeConfirm(); } }); }} reorderSections={(idx, dir) => { setLocalContent(prev => { const order = [...prev.home.sectionOrder]; const t = dir === 'up' ? idx - 1 : idx + 1; if (t >= 0 && t < order.length) [order[idx], order[t]] = [order[t], order[idx]]; return { ...prev, home: { ...prev.home, sectionOrder: order } }; }); trackChange(); }} />}
           {activeTab === 'about' && <AboutTab data={localContent.about} updateChapter={(ch, f, v) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, [ch]: { ...(prev.about as any)[ch], [f]: v } } })); trackChange(); }} triggerUpload={(p) => triggerGenericUpload(p)} addTeamMember={() => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, faculty: { ...prev.about.faculty, members: [...prev.about.faculty.members, { id: Date.now().toString(), name: 'Name', role: 'Role', bio: '', image: 'https://i.pravatar.cc/150' }] } } })); trackChange(); }} updateTeamMember={(id, f, v) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, faculty: { ...prev.about.faculty, members: prev.about.faculty.members.map(m => m.id === id ? { ...m, [f]: v } : m) } } })); trackChange(); }} removeTeamMember={(id) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, faculty: { ...prev.about.faculty, members: prev.about.faculty.members.filter(m => m.id !== id) } } })); trackChange(); }} updateStats={(id, f, v) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, achievements: { ...prev.about.achievements, stats: prev.about.achievements.stats.map(s => s.id === id ? { ...s, [f]: v } : s) } } })); trackChange(); }} addStat={() => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, achievements: { ...prev.about.achievements, stats: [...prev.about.achievements.stats, { id: Date.now().toString(), label: 'Stat', value: '0' }] } } })); trackChange(); }} removeStat={(id) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, achievements: { ...prev.about.achievements, stats: prev.about.achievements.stats.filter(s => s.id !== id) } } })); trackChange(); }} updateValues={(idx, v) => { setLocalContent(prev => { const next = [...prev.about.vision.values]; next[idx] = v; return { ...prev, about: { ...prev.about, vision: { ...prev.about.vision, values: next } } }; }); trackChange(); }} addValue={() => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, vision: { ...prev.about.vision, values: [...prev.about.vision.values, 'New Value'] } } })); trackChange(); }} removeValue={(idx) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, vision: { ...prev.about.vision, values: prev.about.vision.values.filter((_, i) => i !== idx) } } })); trackChange(); }} addExtraChapter={() => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, extraChapters: [...(prev.about.extraChapters || []), { id: Date.now().toString(), label: 'CH', title: 'Title', story: '', image: '' }] } })); trackChange(); }} updateExtraChapter={(id, f, v) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, extraChapters: prev.about.extraChapters.map(c => c.id === id ? { ...c, [f]: v } : c) } })); trackChange(); }} removeExtraChapter={(id) => { setLocalContent(prev => ({ ...prev, about: { ...prev.about, extraChapters: prev.about.extraChapters.filter(c => c.id !== id) } })); trackChange(); }} />}
           {activeTab === 'academics' && <AcademicsTab coursesState={localContent.courses} updateCourseItem={(id, f, v) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: prev.courses.list.map(c => c.id === id ? { ...c, [f]: v } : c) } })); trackChange(); }} updatePageMeta={(f, v) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, pageMeta: { ...prev.courses.pageMeta, [f]: v } } })); trackChange(); }} onCourseImageClick={(id) => { activeCourseId.current = id; triggerGenericUpload('courses.list'); }} onCropCardClick={(id) => setCroppingCourseId(id)} addItem={() => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: [{ id: Date.now().toString(), name: 'New Program', duration: '6 Months', mode: 'Offline', academicLevel: 'Certificate (NSDC)', industry: 'General', description: '', status: 'Active', image: 'https://picsum.photos/800/600', price: 'Rs. 0', certification: 'SMS Technical Diploma', eligibility: '', benefits: '' }, ...prev.courses.list] } })); trackChange(); }} deleteItem={(id) => { setLocalContent(prev => ({ ...prev, courses: { ...prev.courses, list: prev.courses.list.filter(c => c.id !== id) } })); trackChange(); }} />}
           {activeTab === 'notices' && <NoticesTab noticesState={localContent.notices} updateNoticeItem={(id, f, v) => { setLocalContent(prev => ({ ...prev, notices: { ...prev.notices, list: prev.notices.list.map(n => n.id === id ? { ...n, [f]: v } : n) } })); trackChange(); }} updatePageMeta={(f, v) => { setLocalContent(prev => ({ ...prev, notices: { ...prev.notices, pageMeta: { ...prev.notices.pageMeta, [f]: v } } })); trackChange(); }} addItem={() => { setLocalContent(prev => ({ ...prev, notices: { ...prev.notices, list: [{ id: Date.now().toString(), date: new Date().toISOString().split('T')[0], title: 'Announcement', description: '', isImportant: false, category: 'General' }, ...prev.notices.list] } })); trackChange(); }} deleteItem={(id) => { setLocalContent(prev => ({ ...prev, notices: { ...prev.notices, list: prev.notices.list.filter(n => n.id !== id) } })); trackChange(); }} />}
@@ -449,6 +482,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate, serv
           {activeTab === 'pages' && <PagesTab pages={localContent.customPages} addPage={() => { setLocalContent(prev => ({ ...prev, customPages: [...prev.customPages, { id: Date.now().toString(), title: 'New Page', slug: '/new', content: '', visible: false, showHeader: true }] })); trackChange(); }} updatePage={(id, up) => { setLocalContent(prev => ({ ...prev, customPages: prev.customPages.map(p => p.id === id ? { ...p, ...up } : p) })); trackChange(); }} deletePage={(id) => { setLocalContent(prev => ({ ...prev, customPages: prev.customPages.filter(p => p.id !== id) })); trackChange(); }} />}
         </div>
       </div>
+
+      <ConfirmModal 
+        isOpen={confirmModal.isOpen}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        confirmLabel={confirmModal.confirmLabel}
+        isDestructive={confirmModal.isDestructive}
+        onConfirm={confirmModal.onConfirm}
+        onCancel={closeConfirm}
+      />
     </div>
   );
 };

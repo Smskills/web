@@ -54,7 +54,7 @@ const AboutTab: React.FC<AboutTabProps> = ({
       </div>
 
       {/* Chapter 1: Beginning */}
-      <div className="space-y-8 bg-slate-50 p-8 rounded-[2.5rem] border border-slate-200">
+      <div className="space-y-8 bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm">
         <h3 className="text-emerald-600 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-feather-pointed"></i> THE GENESIS</h3>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
            <div className="lg:col-span-1 space-y-4">
@@ -84,7 +84,7 @@ const AboutTab: React.FC<AboutTabProps> = ({
       </div>
 
       {/* NEW: Founder Section Management */}
-      <div className="space-y-8 bg-slate-50 p-8 rounded-[2.5rem] border border-slate-200">
+      <div className="space-y-8 bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm">
         <h3 className="text-emerald-600 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-user-tie"></i> THE FOUNDER</h3>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
            <div className="lg:col-span-1 space-y-4">
@@ -118,7 +118,7 @@ const AboutTab: React.FC<AboutTabProps> = ({
       </div>
 
       {/* Chapter 3: Mentors / Faculty */}
-      <div className="space-y-8 bg-slate-50 p-8 rounded-[2.5rem] border border-slate-200">
+      <div className="space-y-8 bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm">
         <div className="flex justify-between items-center">
            <div className="flex items-center gap-3">
              <h3 className="text-emerald-600 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-user-graduate"></i> FACULTY & MENTORS</h3>
@@ -127,7 +127,7 @@ const AboutTab: React.FC<AboutTabProps> = ({
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-           {(Array.isArray(faculty.members) ? faculty.members : Object.values(faculty.members || {})).map(member => (
+           {(Array.isArray(faculty.members) ? faculty.members : Object.values(faculty.members || {})).map((member: any) => (
               <div key={member.id} className="bg-white p-6 rounded-3xl border border-slate-200 relative group hover:border-emerald-300 transition-all shadow-sm">
                  <button onClick={() => removeTeamMember(member.id)} className="absolute -top-2 -right-2 w-8 h-8 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center shadow-xl hover:bg-red-600 z-20"><i className="fa-solid fa-trash-can text-[10px]"></i></button>
                  
@@ -163,7 +163,7 @@ const AboutTab: React.FC<AboutTabProps> = ({
       </div>
 
       {/* Chapter 4: Vision & Values */}
-      <div className="space-y-8 bg-slate-50 p-8 rounded-[2.5rem] border border-slate-200">
+      <div className="space-y-8 bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm">
         <h3 className="text-emerald-600 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-eye"></i> VISION & DNA</h3>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
            <div className="space-y-4">
