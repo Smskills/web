@@ -13,9 +13,9 @@ const INITIAL_DATA = {
   users: [
     {
       id: 1,
-      username: 'admin',
-      password: bcrypt.hashSync('admin123', 10),
-      email: 'admin@eduinsta.com',
+      username: 'ADM2026@smskills',
+      password: bcrypt.hashSync('Website26@smskills.in', 10),
+      email: 'info@smskills.in',
       role: 'admin',
       created_at: new Date().toISOString()
     }
