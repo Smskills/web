@@ -7,5 +7,7 @@ const router = express.Router();
 
 router.post('/', LeadsController.createLead);
 router.get('/', authMiddleware, LeadsController.getLeads);
+router.patch('/:id/status', authMiddleware, LeadsController.updateLeadStatus);
+router.delete('/:id', authMiddleware, LeadsController.deleteLead);
 
 export default router;

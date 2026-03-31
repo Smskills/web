@@ -71,13 +71,13 @@ class MockPool {
     
     // Very basic SQL parser for mock purposes
     if (normalizedSql.startsWith('select')) {
-      return this.handleSelect(normalizedSql, params);
+      return this.handleSelect(normalizedSql, params) as [any, any];
     } else if (normalizedSql.startsWith('insert')) {
-      return this.handleInsert(normalizedSql, params);
+      return this.handleInsert(normalizedSql, params) as [any, any];
     } else if (normalizedSql.startsWith('update')) {
-      return this.handleUpdate(normalizedSql, params);
+      return this.handleUpdate(normalizedSql, params) as [any, any];
     } else if (normalizedSql.startsWith('delete')) {
-      return this.handleDelete(normalizedSql, params);
+      return this.handleDelete(normalizedSql, params) as [any, any];
     }
 
     throw new Error(`Mock DB: Unsupported SQL query: ${sql}`);

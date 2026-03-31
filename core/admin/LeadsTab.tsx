@@ -4,20 +4,21 @@ import PageStateGuard from '../components/PageStateGuard.tsx';
 
 interface LeadsTabProps {
   leads: Lead[];
-  onUpdateLeads: (leads: Lead[]) => void;
+  onUpdateStatus: (id: string, status: Lead['status']) => void;
+  onDeleteLead: (id: string) => void;
 }
 
-const LeadsTab: React.FC<LeadsTabProps> = ({ leads, onUpdateLeads }) => {
+const LeadsTab: React.FC<LeadsTabProps> = ({ leads, onUpdateStatus, onDeleteLead }) => {
   const [filter, setFilter] = useState<'All' | 'New' | 'Contacted' | 'Enrolled'>('All');
   const [search, setSearch] = useState('');
 
   const updateStatus = (id: string, status: Lead['status']) => {
-    onUpdateLeads(leads.map(l => l.id === id ? { ...l, status } : l));
+    onUpdateStatus(id, status);
   };
 
   const deleteLead = (id: string) => {
     if (window.confirm("Permanently delete this student record?")) {
-      onUpdateLeads(leads.filter(l => l.id !== id));
+      onDeleteLead(id);
     }
   };
 

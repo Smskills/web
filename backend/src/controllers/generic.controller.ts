@@ -20,7 +20,7 @@ export class GenericController {
 
   getOne = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       const data = await GenericService.findOne(this.table, id);
       if (!data) return sendResponse(res, 404, false, `${this.table} not found`);
       return sendResponse(res, 200, true, `${this.table} fetched successfully`, data);
@@ -40,7 +40,7 @@ export class GenericController {
 
   update = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       const data = await GenericService.update(this.table, id, req.body);
       return sendResponse(res, 200, true, `${this.table} updated successfully`, data);
     } catch (err) {
@@ -50,7 +50,7 @@ export class GenericController {
 
   delete = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       await GenericService.delete(this.table, id);
       return sendResponse(res, 200, true, `${this.table} deleted successfully`);
     } catch (err) {

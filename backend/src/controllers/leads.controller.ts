@@ -42,4 +42,39 @@ export class LeadsController {
       next(err);
     }
   }
+
+  static async updateLeadStatus(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+
+      if (!status) {
+        return sendResponse(res, 400, false, 'Status is required');
+      }
+
+      await pool.execute(
+        `UPDATE leads SET status = ? WHERE id = ?`,
+        [status, id]
+      );
+
+      return sendResponse(res, 200, true, 'Lead status updated successfully');
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async deleteLead(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+
+      await pool.execute(
+        `DELETE FROM leads WHERE id = ?`,
+        [id]
+      );
+
+      return sendResponse(res, 200, true, 'Lead deleted successfully');
+    } catch (err) {
+      next(err);
+    }
+  }
 }
