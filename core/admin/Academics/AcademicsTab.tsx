@@ -29,7 +29,7 @@ const AcademicsTab: React.FC<AcademicsTabProps> = ({
     <div className="space-y-16 animate-fade-in pb-20">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h2 className="text-3xl font-black text-white uppercase tracking-tight leading-none">Academic Catalog</h2>
+          <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tight leading-none">Academic Catalog</h2>
           <p className="text-slate-400 font-black text-[10px] uppercase tracking-[0.3em] mt-2">Global Vocational Standards Management</p>
         </div>
         <button 
@@ -45,7 +45,7 @@ const AcademicsTab: React.FC<AcademicsTabProps> = ({
         updatePageMeta={updatePageMeta} 
       />
 
-      <div className="h-px bg-slate-700"></div>
+      <div className="h-px bg-slate-200"></div>
 
       <ProgramsList 
         list={list} 

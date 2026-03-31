@@ -28,7 +28,7 @@ const PagesTab: React.FC<PagesTabProps> = ({ pages, addPage, updatePage, deleteP
 
       <div className="space-y-6">
         {pages.map((page) => (
-          <div key={page.id} className="bg-slate-800/50 p-8 rounded-[2.5rem] border border-slate-700 group hover:border-emerald-500/40 transition-all">
+          <div key={page.id} className="bg-slate-900/50 p-8 rounded-[2.5rem] border border-slate-700 group hover:border-emerald-500/40 transition-all">
             <div className="flex justify-between items-start mb-8">
               <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">

@@ -24,7 +24,7 @@ const LegalTab: React.FC<LegalTabProps> = ({ legal, updateLegal, updateSection, 
         const sections = legal[page]?.sections || [];
         
         return (
-          <div key={page} className="space-y-8 bg-slate-800/50 p-8 rounded-[2.5rem] border border-slate-700">
+          <div key={page} className="space-y-8 bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-700">
             <div className="flex justify-between items-center border-b border-slate-700 pb-4">
               <h2 className="text-2xl font-black text-white uppercase tracking-tight capitalize">{page} Policy Content</h2>
               <button onClick={() => addSection(page)} className="bg-emerald-600 hover:bg-emerald-500 px-6 py-2 rounded-xl text-xs font-black shadow-lg transition-all active:scale-95">ADD SECTION</button>
@@ -75,7 +75,7 @@ const LegalTab: React.FC<LegalTabProps> = ({ legal, updateLegal, updateSection, 
               ))}
               
               {sections.length === 0 && (
-                <div className="text-center py-10 bg-slate-800/50 rounded-2xl border-2 border-dashed border-slate-700">
+                <div className="text-center py-10 bg-slate-900/50 rounded-2xl border-2 border-dashed border-slate-700">
                   <p className="text-slate-500 text-xs font-black uppercase">No sections added yet.</p>
                 </div>
               )}

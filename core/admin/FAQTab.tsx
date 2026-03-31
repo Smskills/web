@@ -36,7 +36,7 @@ const FAQTab: React.FC<FAQTabProps> = ({ faqsState, updateFAQ, updatePageMeta, a
       </div>
 
       {/* Page Header Customization */}
-      <div className="bg-slate-800/50 p-8 rounded-[2.5rem] border border-slate-700 space-y-6">
+      <div className="bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-700 space-y-6">
         <h3 className="text-emerald-500 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-heading"></i> PAGE HEADER</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
@@ -56,7 +56,7 @@ const FAQTab: React.FC<FAQTabProps> = ({ faqsState, updateFAQ, updatePageMeta, a
 
       <div className="space-y-6">
         {list.map((faq, idx) => (
-          <div key={faq.id} className="bg-slate-800/50 p-8 rounded-[2.5rem] border border-slate-700 group hover:border-emerald-500/40 transition-all flex gap-8">
+          <div key={faq.id} className="bg-slate-900/50 p-8 rounded-[2.5rem] border border-slate-700 group hover:border-emerald-500/40 transition-all flex gap-8">
             <div className="flex flex-col gap-2 shrink-0">
               <button 
                 onClick={() => reorderFAQs(idx, idx - 1)}

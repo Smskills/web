@@ -70,7 +70,7 @@ const ContactTab: React.FC<ContactTabProps> = ({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        <div className="space-y-8 bg-slate-800/50 p-8 rounded-[2.5rem] border border-slate-700">
+        <div className="space-y-8 bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-700">
           <h3 className="text-emerald-500 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-envelope-open-text"></i> CORE CONTACT</h3>
           <div className="space-y-6">
             <div className="space-y-1">
@@ -123,7 +123,7 @@ const ContactTab: React.FC<ContactTabProps> = ({
           </div>
         </div>
 
-        <div className="space-y-8 bg-slate-800/50 p-8 rounded-[2.5rem] border border-slate-700">
+        <div className="space-y-8 bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-700">
           <div className="flex justify-between items-center">
             <h3 className="text-emerald-500 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-share-nodes"></i> SOCIAL MEDIA</h3>
             <button onClick={addSocialLink} className="px-4 py-1.5 bg-emerald-600 rounded-full text-[10px] font-black uppercase transition-all shadow-lg">ADD SOCIAL</button>
@@ -143,7 +143,7 @@ const ContactTab: React.FC<ContactTabProps> = ({
         </div>
       </div>
 
-      <div className="space-y-8 bg-slate-800/50 p-8 rounded-[3rem] border border-slate-700">
+      <div className="space-y-8 bg-slate-900/30 p-8 rounded-[3rem] border border-slate-700">
         <div className="flex justify-between items-center border-b border-slate-700 pb-6">
           <div>
             <h3 className="text-emerald-500 font-black text-xl flex items-center gap-3">

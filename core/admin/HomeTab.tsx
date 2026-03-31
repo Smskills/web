@@ -39,71 +39,71 @@ const HomeTab: React.FC<HomeTabProps> = ({
   };
 
   return (
-    <div className="space-y-16 animate-fade-in text-white">
-      <div className="flex items-center gap-6 mb-8 border-b border-slate-800 pb-6">
-        <h2 className="text-2xl font-black text-white uppercase tracking-tight shrink-0">Home Management</h2>
+    <div className="space-y-16 animate-fade-in text-slate-900">
+      <div className="flex items-center gap-6 mb-8 border-b border-slate-100 pb-6">
+        <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight shrink-0">Home Management</h2>
       </div>
 
-      <div className="space-y-8 bg-slate-800/50 p-8 rounded-[2.5rem] border border-slate-700 shadow-sm">
-        <h3 className="text-emerald-400 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-arrows-up-down"></i> LAYOUT SEQUENCE</h3>
+      <div className="space-y-8 bg-slate-50 p-8 rounded-[2.5rem] border border-slate-200">
+        <h3 className="text-emerald-600 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-arrows-up-down"></i> LAYOUT SEQUENCE</h3>
         <div className="space-y-3 max-w-2xl">
           {data.sectionOrder.map((sid, idx) => (
-            <div key={sid} className="flex items-center justify-between p-4 bg-slate-900 rounded-2xl border border-slate-700 group hover:border-emerald-400 hover:shadow-md transition-all">
+            <div key={sid} className="flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-200 group hover:border-emerald-400 hover:shadow-md transition-all">
               <div className="flex items-center gap-4">
-                <span className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-[10px] font-black text-slate-500">{idx + 1}</span>
-                <span className="text-[11px] font-black text-white uppercase tracking-widest">{sectionLabels[sid] || sid}</span>
+                <span className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-black text-slate-400">{idx + 1}</span>
+                <span className="text-[11px] font-black text-slate-900 uppercase tracking-widest">{sectionLabels[sid] || sid}</span>
                 <button 
                   onClick={() => updateHomeSubField('sections', sid, !(data.sections as any)[sid])} 
-                  className={`px-3 py-1 rounded-full text-[8px] font-black uppercase transition-all ${ (data.sections as any)[sid] ? 'bg-emerald-500 text-white' : 'bg-slate-800 text-slate-500' }`}
+                  className={`px-3 py-1 rounded-full text-[8px] font-black uppercase transition-all ${ (data.sections as any)[sid] ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-400' }`}
                 >
                   { (data.sections as any)[sid] ? 'VISIBLE' : 'HIDDEN' }
                 </button>
               </div>
               <div className="flex gap-2">
-                 <button onClick={() => reorderSections(idx, 'up')} disabled={idx === 0} className="w-9 h-9 bg-slate-800 rounded-lg flex items-center justify-center text-slate-500 hover:text-emerald-400 hover:bg-emerald-500/10 disabled:opacity-20 border border-slate-700"><i className="fa-solid fa-chevron-up text-xs"></i></button>
-                 <button onClick={() => reorderSections(idx, 'down')} disabled={idx === data.sectionOrder.length - 1} className="w-9 h-9 bg-slate-800 rounded-lg flex items-center justify-center text-slate-500 hover:text-emerald-400 hover:bg-emerald-500/10 disabled:opacity-20 border border-slate-700"><i className="fa-solid fa-chevron-down text-xs"></i></button>
+                 <button onClick={() => reorderSections(idx, 'up')} disabled={idx === 0} className="w-9 h-9 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 disabled:opacity-20 border border-slate-100"><i className="fa-solid fa-chevron-up text-xs"></i></button>
+                 <button onClick={() => reorderSections(idx, 'down')} disabled={idx === data.sectionOrder.length - 1} className="w-9 h-9 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 disabled:opacity-20 border border-slate-100"><i className="fa-solid fa-chevron-down text-xs"></i></button>
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="space-y-8 bg-slate-800/50 p-8 rounded-[2.5rem] border border-slate-700 shadow-sm">
-        <h3 className="text-emerald-400 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-wand-magic-sparkles"></i> MAIN HERO BANNERS</h3>
+      <div className="space-y-8 bg-slate-50 p-8 rounded-[2.5rem] border border-slate-200">
+        <h3 className="text-emerald-600 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-wand-magic-sparkles"></i> MAIN HERO BANNERS</h3>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div onClick={onHeroBgClick} className="relative aspect-video rounded-3xl overflow-hidden border-2 border-slate-700 bg-slate-800 group cursor-pointer shadow-lg">
+          <div onClick={onHeroBgClick} className="relative aspect-video rounded-3xl overflow-hidden border-2 border-white bg-slate-200 group cursor-pointer shadow-lg">
             <img src={data.hero.bgImage} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
             <div className="absolute inset-0 bg-black/30 flex items-center justify-center text-white font-black text-[10px] uppercase opacity-0 group-hover:opacity-100 transition-opacity">Change Media</div>
           </div>
           <div className="lg:col-span-2 space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Hero Tagline</label>
-                <input value={data.hero.tagline || ''} onChange={e => updateNestedField('hero', 'tagline', e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-5 py-3 text-white font-black shadow-sm outline-none focus:border-emerald-500" placeholder="e.g. The Future of Vocational Excellence" />
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Hero Tagline</label>
+                <input value={data.hero.tagline || ''} onChange={e => updateNestedField('hero', 'tagline', e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl px-5 py-3 text-slate-900 font-black shadow-sm" placeholder="e.g. The Future of Vocational Excellence" />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Trust Badge Text</label>
-                <input value={data.hero.trustBadge || ''} onChange={e => updateNestedField('hero', 'trustBadge', e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-5 py-3 text-white font-black shadow-sm outline-none focus:border-emerald-500" placeholder="e.g. NSDC Certified | Placement Support | Since 2024" />
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Trust Badge Text</label>
+                <input value={data.hero.trustBadge || ''} onChange={e => updateNestedField('hero', 'trustBadge', e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl px-5 py-3 text-slate-900 font-black shadow-sm" placeholder="e.g. NSDC Certified | Placement Support | Since 2024" />
               </div>
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Main Headline</label>
-              <input value={data.hero.title} onChange={e => updateNestedField('hero', 'title', e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-5 py-3 text-white font-black shadow-sm outline-none focus:border-emerald-500" placeholder="Institutional Headline" />
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Main Headline</label>
+              <input value={data.hero.title} onChange={e => updateNestedField('hero', 'title', e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl px-5 py-3 text-slate-900 font-black shadow-sm" placeholder="Institutional Headline" />
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Subtitle / Description</label>
-              <textarea value={data.hero.subtitle} onChange={e => updateNestedField('hero', 'subtitle', e.target.value)} rows={3} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-5 py-3 text-slate-300 font-medium resize-none shadow-sm outline-none focus:border-emerald-500" placeholder="Support text for the hero banner..." />
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Subtitle / Description</label>
+              <textarea value={data.hero.subtitle} onChange={e => updateNestedField('hero', 'subtitle', e.target.value)} rows={3} className="w-full bg-white border border-slate-200 rounded-xl px-5 py-3 text-slate-600 font-medium resize-none shadow-sm" placeholder="Support text for the hero banner..." />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-slate-900 rounded-3xl border border-slate-700 shadow-inner">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-white rounded-3xl border border-slate-200 shadow-inner">
               <div className="space-y-4">
-                <h4 className="text-[10px] font-black text-emerald-400 uppercase tracking-widest border-b border-emerald-900/30 pb-2">Primary Button</h4>
-                <input value={data.hero.ctaText} onChange={e => updateNestedField('hero', 'ctaText', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-xs font-black text-white" placeholder="Label" />
-                <input value={data.hero.ctaLink} onChange={e => updateNestedField('hero', 'ctaLink', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-[10px] font-mono text-emerald-400" placeholder="Path (e.g. /academics)" />
+                <h4 className="text-[10px] font-black text-emerald-600 uppercase tracking-widest border-b border-emerald-50 pb-2">Primary Button</h4>
+                <input value={data.hero.ctaText} onChange={e => updateNestedField('hero', 'ctaText', e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs font-black" placeholder="Label" />
+                <input value={data.hero.ctaLink} onChange={e => updateNestedField('hero', 'ctaLink', e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-[10px] font-mono" placeholder="Path (e.g. /academics)" />
               </div>
               <div className="space-y-4">
-                <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest border-b border-slate-800 pb-2">Secondary Button</h4>
-                <input value={data.hero.secondaryCtaText || ''} onChange={e => updateNestedField('hero', 'secondaryCtaText', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-xs font-black text-white" placeholder="Label" />
-                <input value={data.hero.secondaryCtaLink || ''} onChange={e => updateNestedField('hero', 'secondaryCtaLink', e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-[10px] font-mono text-emerald-400" placeholder="Path (e.g. /about)" />
+                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50 pb-2">Secondary Button</h4>
+                <input value={data.hero.secondaryCtaText || ''} onChange={e => updateNestedField('hero', 'secondaryCtaText', e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs font-black" placeholder="Label" />
+                <input value={data.hero.secondaryCtaLink || ''} onChange={e => updateNestedField('hero', 'secondaryCtaLink', e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-[10px] font-mono" placeholder="Path (e.g. /about)" />
               </div>
             </div>
           </div>
@@ -178,7 +178,7 @@ const HomeTab: React.FC<HomeTabProps> = ({
         </div>
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           {data.highlights.map((item, idx) => (
-            <div key={idx} className="bg-white p-7 rounded-[2rem] border border-slate-200 space-y-4 group relative hover:border-emerald-300 transition-all shadow-sm">
+            <div key={idx} className="bg-slate-50 p-7 rounded-[2rem] border border-slate-200 space-y-4 group relative hover:border-emerald-300 transition-all shadow-sm">
               <button onClick={() => handleDeleteHighlight(idx, item.title)} className="absolute -top-3 -right-3 w-8 h-8 bg-red-500 text-white rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 shadow-xl transition-all"><i className="fa-solid fa-xmark"></i></button>
               <input value={item.title} onChange={e => updateHighlight(idx, 'title', e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 font-black shadow-inner" placeholder="Label" />
               <textarea value={item.description} onChange={e => updateHighlight(idx, 'description', e.target.value)} rows={2} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-500 resize-none font-medium" placeholder="Brief info..." />

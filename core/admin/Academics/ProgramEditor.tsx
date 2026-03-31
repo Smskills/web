@@ -24,14 +24,14 @@ const ProgramEditor: React.FC<ProgramEditorProps> = ({
   };
 
   return (
-    <div className="bg-slate-800/50 p-8 rounded-[2rem] border border-slate-700 group transition-all hover:border-emerald-500/50 shadow-sm">
+    <div className="bg-white p-8 rounded-[2rem] border border-slate-200 group transition-all hover:border-emerald-500/50 shadow-sm">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <div className="lg:col-span-1">
           <div className="space-y-4">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Hero Image (Full View)</label>
             <div 
               onClick={() => onCourseImageClick(course.id)} 
-              className="relative aspect-video rounded-2xl overflow-hidden border border-slate-700 bg-slate-900 group/img cursor-pointer"
+              className="relative aspect-video rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 group/img cursor-pointer"
             >
               <img src={course.image} className="w-full h-full object-cover transition-opacity group-hover/img:opacity-50" />
               <div className="absolute inset-0 bg-emerald-600/20 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition-opacity">
@@ -41,7 +41,7 @@ const ProgramEditor: React.FC<ProgramEditorProps> = ({
             
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 mt-4 block">Card Framing (Catalog)</label>
             <div className="flex gap-3">
-              <div className="w-20 h-15 aspect-[4/3] rounded-xl overflow-hidden bg-slate-900 border border-slate-700 shrink-0">
+              <div className="w-20 h-15 aspect-[4/3] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
                 <img src={course.cardImage || course.image} className="w-full h-full object-cover" />
               </div>
               <button 
@@ -54,7 +54,7 @@ const ProgramEditor: React.FC<ProgramEditorProps> = ({
           </div>
 
           <div className="mt-6 space-y-3">
-             <div className="flex items-center justify-between p-3 bg-slate-900 rounded-xl border border-slate-700">
+             <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200">
                 <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Home Spotlight</span>
                 <button 
                   onClick={() => updateCourseItem(course.id, 'isFeatured', !course.isFeatured)}
@@ -73,14 +73,14 @@ const ProgramEditor: React.FC<ProgramEditorProps> = ({
               <input 
                 value={course.name} 
                 onChange={e => updateCourseItem(course.id, 'name', e.target.value)} 
-                className="text-xl font-black bg-transparent border-b border-slate-700 text-white flex-grow outline-none focus:border-emerald-500 transition-colors" 
+                className="text-xl font-black bg-transparent border-b border-slate-200 text-slate-900 flex-grow outline-none focus:border-emerald-500 transition-colors" 
                 placeholder="Course Name" 
               />
               {course.isFeatured && (
                 <span className="bg-emerald-500 text-white text-[8px] font-black uppercase px-2 py-1 rounded tracking-[0.2em] shrink-0 shadow-lg animate-pulse">TOP TRACK</span>
               )}
             </div>
-            <button onClick={() => onDelete(course.id, course.name)} className="text-red-500 hover:text-red-600 hover:bg-red-900/30 p-2 rounded-lg transition-colors">
+            <button onClick={() => onDelete(course.id, course.name)} className="text-red-500 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-colors">
               <i className="fa-solid fa-trash-can"></i>
             </button>
           </div>
@@ -88,11 +88,11 @@ const ProgramEditor: React.FC<ProgramEditorProps> = ({
           <div className="grid grid-cols-2 xl:grid-cols-5 gap-4">
             <div className="space-y-1">
               <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Duration</label>
-              <input value={course.duration} onChange={e => updateCourseItem(course.id, 'duration', e.target.value)} className="w-full bg-slate-900 border border-slate-700 p-2 rounded text-sm text-white outline-none focus:ring-1 focus:ring-emerald-500" placeholder="e.g. 6 Months" />
+              <input value={course.duration} onChange={e => updateCourseItem(course.id, 'duration', e.target.value)} className="w-full bg-slate-50 border border-slate-200 p-2 rounded text-sm text-slate-900 outline-none focus:ring-1 focus:ring-emerald-500" placeholder="e.g. 6 Months" />
             </div>
             <div className="space-y-1">
               <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Academic Level</label>
-              <select value={course.academicLevel} onChange={e => updateCourseItem(course.id, 'academicLevel', e.target.value)} className="w-full bg-slate-900 border border-slate-700 p-2 rounded text-sm text-white outline-none focus:ring-1 focus:ring-emerald-500">
+              <select value={course.academicLevel} onChange={e => updateCourseItem(course.id, 'academicLevel', e.target.value)} className="w-full bg-slate-50 border border-slate-200 p-2 rounded text-sm text-slate-900 outline-none focus:ring-1 focus:ring-emerald-500">
                 <option value="Certificate (NSDC)">Certificate (NSDC)</option>
                 <option value="UG Certificate (NSDC)">UG Certificate (NSDC)</option>
                 <option value="UG Diploma">UG Diploma</option>
@@ -103,11 +103,11 @@ const ProgramEditor: React.FC<ProgramEditorProps> = ({
             </div>
             <div className="space-y-1">
               <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Price</label>
-              <input value={course.price} onChange={e => handlePriceChange(course.id, e.target.value)} className="w-full bg-slate-900 border border-slate-700 p-2 rounded text-sm text-white outline-none focus:ring-1 focus:ring-emerald-500" placeholder="Rs. 50,000" />
+              <input value={course.price} onChange={e => handlePriceChange(course.id, e.target.value)} className="w-full bg-slate-50 border border-slate-200 p-2 rounded text-sm text-slate-900 outline-none focus:ring-1 focus:ring-emerald-500" placeholder="Rs. 50,000" />
             </div>
             <div className="space-y-1">
               <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Mode</label>
-              <select value={course.mode} onChange={e => updateCourseItem(course.id, 'mode', e.target.value)} className="w-full bg-slate-900 border border-slate-700 p-2 rounded text-sm text-white outline-none focus:ring-1 focus:ring-emerald-500">
+              <select value={course.mode} onChange={e => updateCourseItem(course.id, 'mode', e.target.value)} className="w-full bg-slate-50 border border-slate-200 p-2 rounded text-sm text-slate-900 outline-none focus:ring-1 focus:ring-emerald-500">
                 <option value="Online">Online</option>
                 <option value="Offline">Offline</option>
                 <option value="Hybrid">Hybrid (Online + Offline)</option>
@@ -115,7 +115,7 @@ const ProgramEditor: React.FC<ProgramEditorProps> = ({
             </div>
             <div className="space-y-1">
               <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Status</label>
-              <select value={course.status} onChange={e => updateCourseItem(course.id, 'status', e.target.value)} className="w-full bg-slate-900 border border-slate-700 p-2 rounded text-sm text-white outline-none focus:ring-1 focus:ring-emerald-500">
+              <select value={course.status} onChange={e => updateCourseItem(course.id, 'status', e.target.value)} className="w-full bg-slate-50 border border-slate-200 p-2 rounded text-sm text-slate-900 outline-none focus:ring-1 focus:ring-emerald-500">
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
               </select>
@@ -125,11 +125,11 @@ const ProgramEditor: React.FC<ProgramEditorProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className="text-[9px] font-black text-emerald-600 uppercase tracking-widest ml-1">Eligibility Criteria</label>
-              <textarea value={course.eligibility || ''} onChange={e => updateCourseItem(course.id, 'eligibility', e.target.value)} className="w-full bg-slate-900 border border-slate-700 p-3 rounded text-sm text-slate-200 resize-none outline-none focus:ring-1 focus:ring-emerald-500 shadow-inner" rows={2} placeholder="Requirements to join..." />
+              <textarea value={course.eligibility || ''} onChange={e => updateCourseItem(course.id, 'eligibility', e.target.value)} className="w-full bg-slate-50 border border-slate-200 p-3 rounded text-sm text-slate-600 resize-none outline-none focus:ring-1 focus:ring-emerald-500 shadow-inner" rows={2} placeholder="Requirements to join..." />
             </div>
             <div className="space-y-1">
               <label className="text-[9px] font-black text-emerald-600 uppercase tracking-widest ml-1">Certification Name</label>
-              <input value={course.certification || ''} onChange={e => updateCourseItem(course.id, 'certification', e.target.value)} className="w-full bg-slate-900 border border-slate-700 p-2 rounded text-sm text-white outline-none focus:ring-1 focus:ring-emerald-500 shadow-inner" placeholder="e.g. Government Certified Diploma" />
+              <input value={course.certification || ''} onChange={e => updateCourseItem(course.id, 'certification', e.target.value)} className="w-full bg-slate-50 border border-slate-200 p-2 rounded text-sm text-slate-900 outline-none focus:ring-1 focus:ring-emerald-500 shadow-inner" placeholder="e.g. Government Certified Diploma" />
             </div>
           </div>
 
@@ -146,12 +146,12 @@ const ProgramEditor: React.FC<ProgramEditorProps> = ({
                   </button>
                </div>
             </div>
-            <textarea value={course.benefits || ''} onChange={e => updateCourseItem(course.id, 'benefits', e.target.value)} className="w-full bg-slate-900 border border-slate-700 p-3 rounded text-sm text-slate-200 resize-none outline-none focus:ring-1 focus:ring-emerald-500 shadow-inner" rows={3} placeholder="Key outcomes or perks..." />
+            <textarea value={course.benefits || ''} onChange={e => updateCourseItem(course.id, 'benefits', e.target.value)} className="w-full bg-slate-50 border border-slate-200 p-3 rounded text-sm text-slate-600 resize-none outline-none focus:ring-1 focus:ring-emerald-500 shadow-inner" rows={3} placeholder="Key outcomes or perks..." />
           </div>
 
           <div className="space-y-1">
             <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Main Description</label>
-            <textarea value={course.description} onChange={e => updateCourseItem(course.id, 'description', e.target.value)} className="w-full bg-slate-900 border border-slate-700 p-3 rounded text-sm text-slate-200 resize-none outline-none focus:ring-1 focus:ring-emerald-500 shadow-inner" rows={3} placeholder="Detailed course summary..." />
+            <textarea value={course.description} onChange={e => updateCourseItem(course.id, 'description', e.target.value)} className="w-full bg-slate-50 border border-slate-200 p-3 rounded text-sm text-slate-600 resize-none outline-none focus:ring-1 focus:ring-emerald-500 shadow-inner" rows={3} placeholder="Detailed course summary..." />
             <p className="text-[9px] text-emerald-600/70 font-bold uppercase mt-1 tracking-widest italic">Supports basic HTML tags: &lt;b&gt;, &lt;ul&gt;, &lt;li&gt;</p>
           </div>
         </div>

@@ -61,7 +61,7 @@ const FormTab: React.FC<FormTabProps> = ({ formData, addField, updateField, dele
   return (
     <div className="space-y-12 animate-fade-in">
       {/* Header & Success UI Builder */}
-      <div className="space-y-8 bg-slate-800/50 p-8 rounded-[2.5rem] border border-slate-700">
+      <div className="space-y-8 bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-700">
         <h3 className="text-emerald-500 font-black text-lg flex items-center gap-3">
           <i className="fa-solid fa-pager"></i> TEXT & FEEDBACK
         </h3>
@@ -114,7 +114,7 @@ const FormTab: React.FC<FormTabProps> = ({ formData, addField, updateField, dele
       </div>
 
       {/* Roadmap Builder */}
-      <div className="space-y-8 bg-slate-800/50 p-8 rounded-[2.5rem] border border-slate-700">
+      <div className="space-y-8 bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-700">
         <h3 className="text-emerald-500 font-black text-lg flex items-center gap-3">
           <i className="fa-solid fa-stairs"></i> SIDEBAR ROADMAP
         </h3>
@@ -162,7 +162,7 @@ const FormTab: React.FC<FormTabProps> = ({ formData, addField, updateField, dele
               onDragOver={(e) => handleDragOver(e, idx)}
               onDrop={() => handleDrop(idx)}
               onDragEnd={() => setDraggedIndex(null)}
-              className={`bg-slate-800/50 p-6 rounded-[1.5rem] border flex flex-col gap-4 group hover:border-emerald-500/30 transition-all cursor-default ${
+              className={`bg-slate-900/50 p-6 rounded-[1.5rem] border flex flex-col gap-4 group hover:border-emerald-500/30 transition-all cursor-default ${
                 draggedIndex === idx ? 'opacity-40 border-dashed border-emerald-500' : 'border-slate-700'
               }`}
             >

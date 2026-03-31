@@ -38,7 +38,7 @@ const CareerTab: React.FC<CareerTabProps> = ({
       </div>
 
       {/* Page Header Customization */}
-      <div className="bg-slate-800/50 p-8 rounded-[2.5rem] border border-slate-700 space-y-6">
+      <div className="bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-700 space-y-6">
         <h3 className="text-emerald-500 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-heading"></i> PAGE CONFIGURATION</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
@@ -56,7 +56,7 @@ const CareerTab: React.FC<CareerTabProps> = ({
         </div>
       </div>
 
-      <div className="space-y-8 bg-slate-800/50 p-8 rounded-[2.5rem] border border-slate-700">
+      <div className="space-y-8 bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-700">
         <h3 className="text-emerald-500 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-rocket"></i> HERO BANNER</h3>
         <div onClick={onHeroBgClick} className="relative aspect-video rounded-2xl overflow-hidden border-2 border-slate-800 bg-slate-800 cursor-pointer group mb-4">
           {career.hero.bgImage ? <img src={career.hero.bgImage} className="w-full h-full object-cover group-hover:opacity-40 transition-opacity" /> : <div className="w-full h-full flex items-center justify-center text-slate-600"><i className="fa-solid fa-image text-3xl"></i></div>}
@@ -66,7 +66,7 @@ const CareerTab: React.FC<CareerTabProps> = ({
         <textarea value={career.hero.subtitle} onChange={e => updateHero('subtitle', e.target.value)} rows={2} className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-slate-300 font-medium resize-none" placeholder="Hero Subtitle" />
       </div>
 
-      <div className="space-y-8 bg-slate-800/50 p-8 rounded-[2.5rem] border border-slate-700">
+      <div className="space-y-8 bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-700">
         <div className="flex justify-between items-center">
           <h3 className="text-emerald-500 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-list-stars"></i> SERVICES</h3>
           <button onClick={addService} className="bg-emerald-600 hover:bg-emerald-500 px-6 py-2 rounded-xl text-xs font-black shadow-lg transition-all active:scale-95">ADD SERVICE</button>
