@@ -19,6 +19,7 @@ router.use('/config', configRoutes);
 router.use('/leads', leadsRoutes);
 router.use('/auth', authRoutes);
 router.use('/courses', coursesRoutes);
+router.use('/users', createGenericRouter('users', true));
 
 // Generic Routes (Public Read, Protected Write)
 router.use('/notices', createGenericRouter('notices', false));
