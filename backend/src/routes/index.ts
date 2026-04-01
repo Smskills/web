@@ -7,6 +7,14 @@ import { createGenericRouter } from './generic.routes.ts';
 
 const router = Router();
 
+router.get('/', (req, res) => {
+  res.json({
+    status: 'success',
+    message: 'SM Skills API is running',
+    version: '1.0.0'
+  });
+});
+
 router.use('/config', configRoutes);
 router.use('/leads', leadsRoutes);
 router.use('/auth', authRoutes);
