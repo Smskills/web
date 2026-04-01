@@ -43,8 +43,8 @@ async function startServer() {
       const distPath = path.join(__dirname, 'dist');
       app.use(express.static(distPath));
       
-      // Catch-all for SPA - with API guard
-      app.get('*', (req, res) => {
+      // Catch-all for SPA - with API guard (Express 5 syntax)
+      app.get('(.*)', (req, res) => {
         if (req.path.startsWith('/api')) {
           return res.status(404).json({
             status: false,
