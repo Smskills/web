@@ -35,4 +35,12 @@ router.use('/achievement-stats', createGenericRouter('achievement_stats', false)
 router.use('/extra-chapters', createGenericRouter('extra_chapters', false));
 router.use('/legal-sections', createGenericRouter('legal_sections', false));
 
+// Catch-all for unmatched API routes
+router.all('*', (req, res) => {
+  res.status(404).json({
+    status: false,
+    message: `API Route not found: ${req.originalUrl}`
+  });
+});
+
 export default router;
