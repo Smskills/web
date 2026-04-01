@@ -274,8 +274,8 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
             <Link to="/admin" className={adminBtnClass}><i className={`fa-solid ${isAuthenticated ? 'fa-gauge-high' : 'fa-lock'}`}></i>{isAuthenticated ? "DASHBOARD" : "LOGIN"}</Link>
           </nav>
 
-          <button className="lg:hidden w-12 h-12 flex items-center justify-center text-slate-900 bg-slate-50 border border-slate-200 rounded-lg active:scale-90 transition-transform" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            <i className={`fa-solid ${isMenuOpen ? 'fa-xmark' : 'fa-bars-staggered'} text-2xl`}></i>
+          <button className="lg:hidden w-12 h-12 grid place-items-center text-slate-900 bg-slate-50 border border-slate-200 rounded-lg active:scale-90 transition-transform" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            <i className={`fa-solid ${isMenuOpen ? 'fa-xmark' : 'fa-bars'} text-2xl leading-none`}></i>
           </button>
         </div>
       </div>

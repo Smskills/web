@@ -9,13 +9,13 @@ const __dirname = path.dirname(__filename);
 
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = parseInt(process.env.PORT || '3000', 10);
 
   // 0. Immediate Health Check
   app.get('/ping', (req, res) => res.send('pong'));
 
   try {
-    console.log('🚀 Starting Unified Server...');
+    console.log(`🚀 Starting Unified Server on port ${PORT}...`);
     
     // 2. Mount Backend API
     try {

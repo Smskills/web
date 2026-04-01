@@ -9,9 +9,12 @@ interface State {
 }
 
 export default class ErrorBoundary extends Component<Props, State> {
+  public state: State = { hasError: false };
+  public props: Props;
+
   constructor(props: Props) {
     super(props);
-    this.state = { hasError: false };
+    this.props = props;
   }
 
   public static getDerivedStateFromError(_: Error): State {
