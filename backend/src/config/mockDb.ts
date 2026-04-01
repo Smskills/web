@@ -66,6 +66,13 @@ class MockPool {
     fs.writeFileSync(DB_PATH, JSON.stringify(this.data, null, 2));
   }
 
+  async getConnection(): Promise<any> {
+    return {
+      release: () => {},
+      execute: (sql: string, params: any[] = []) => this.execute(sql, params)
+    };
+  }
+
   async execute(sql: string, params: any[] = []): Promise<[any, any]> {
     const normalizedSql = sql.trim().toLowerCase();
     

@@ -1,20 +1,29 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# EduInsta CMS Deployment Guide
 
-# Run and deploy your AI Studio app
+This project is a full-stack application with a React frontend and an Express backend.
 
-This contains everything you need to run your app locally.
+## Deployment on Render
 
-View your app in AI Studio: https://ai.studio/apps/8662c2ba-c4e3-4527-9324-8e0b156493da
+### 1. Create a New Web Service
+- Connect your GitHub repository to Render.
+- Select **Web Service**.
 
-## Run Locally
+### 2. Configure Settings
+- **Runtime:** Node
+- **Build Command:** `npm install && npm run build`
+- **Start Command:** `npm start`
+- **Node Version:** Ensure it's set to 20 or higher (the `package.json` specifies this).
 
-**Prerequisites:**  Node.js
+### 3. Environment Variables
+Add the following environment variables in the Render dashboard:
+- `NODE_ENV`: `production`
+- `JWT_SECRET`: A long random string for security.
+- `APP_URL`: `https://your-app-name.onrender.com`
+- `DB_HOST`: (Optional) Your MySQL host. If omitted, it will use a local `db.json` file.
+- `DB_USER`: (Optional) Your MySQL user.
+- `DB_PASSWORD`: (Optional) Your MySQL password.
+- `DB_NAME`: (Optional) Your MySQL database name.
 
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Local Development
+1. `npm install`
+2. `npm run dev` (Starts both frontend and backend)
