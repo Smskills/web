@@ -43,7 +43,7 @@ async function startServer() {
     app.use(express.static(distPath));
 
     // Handle SPA routing - redirect all non-API requests to index.html
-    app.get('*', (req, res) => {
+    app.get('*all', (req, res) => {
       // Skip API routes which should have been handled by backendApp
       if (req.path.startsWith('/api')) {
         return res.status(404).json({ status: false, message: 'API Route not found' });
