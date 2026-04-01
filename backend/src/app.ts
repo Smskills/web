@@ -35,7 +35,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/api', apiRoutes);
 
 // Catch-all for unknown API routes
-app.use('/api/*', (req, res) => {
+app.use('/api/*all', (req, res) => {
   res.status(404).json({
     status: false,
     message: `API Route not found: ${req.originalUrl}`
