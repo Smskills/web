@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { SiteConfig } from '../types';
+import { API_BASE_URL } from '../config';
 
 interface ForgotPasswordPageProps {
   siteConfig: SiteConfig;
@@ -19,7 +20,7 @@ const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ siteConfig }) =
     setError('');
     
     try {
-      const response = await fetch('/api/auth/forgot-password', {
+      const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })

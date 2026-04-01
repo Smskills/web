@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { SiteConfig, AppState, FormField } from '../types';
 import { Link } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 
 interface ContactPageProps {
   config: SiteConfig['contact'];
@@ -42,7 +43,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
     const message = messageField ? formData[messageField.id] : 'Website Inquiry';
 
     try {
-      const response = await fetch('/api/leads', {
+      const response = await fetch(`${API_BASE_URL}/leads`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

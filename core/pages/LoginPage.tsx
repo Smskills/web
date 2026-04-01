@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { SiteConfig } from '../types';
+import { API_BASE_URL } from '../config';
 
 interface LoginPageProps {
   siteConfig: SiteConfig;
@@ -20,7 +21,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ siteConfig }) => {
     setError('');
     
     try {
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ identifier, password })

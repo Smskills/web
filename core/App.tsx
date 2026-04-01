@@ -26,8 +26,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import LoginPage from './pages/LoginPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
-
-const API_BASE = '/api';
+import { API_BASE_URL } from './config.ts';
 
 const App: React.FC = () => {
   const [isInitializing, setIsInitializing] = useState(true);
@@ -41,7 +40,7 @@ const App: React.FC = () => {
       let remoteData = null;
       
       try {
-        const response = await fetch(`${API_BASE}/config`, { signal: AbortSignal.timeout(3000) });
+        const response = await fetch(`${API_BASE_URL}/config`, { signal: AbortSignal.timeout(3000) });
         const result = await response.json();
         
         if (result.success && result.data) {
@@ -110,7 +109,7 @@ const App: React.FC = () => {
     // Attempt to persist to Database if it was previously online
     try {
       const token = localStorage.getItem('sms_auth_token');
-      const response = await fetch(`${API_BASE}/config`, {
+      const response = await fetch(`${API_BASE_URL}/config`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { AppState, FormField } from '../types.ts';
+import { API_BASE_URL } from '../config.ts';
 
 interface EnrollmentPageProps {
   content: AppState;
@@ -77,7 +78,7 @@ const EnrollmentPage: React.FC<EnrollmentPageProps> = ({ content }) => {
     const course = courseField ? formData[courseField.id] : 'N/A';
 
     try {
-      const response = await fetch('/api/leads', {
+      const response = await fetch(`${API_BASE_URL}/leads`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

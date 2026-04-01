@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { SiteConfig } from '../types';
+import { API_BASE_URL } from '../config';
 
 interface ResetPasswordPageProps {
   siteConfig: SiteConfig;
@@ -28,7 +29,7 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ siteConfig }) => 
     setError('');
     
     try {
-      const response = await fetch('/api/auth/reset-password', {
+      const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, password })

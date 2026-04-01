@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { AppState, Course, Notice, FAQItem, FormField, PlacementStat, StudentReview, IndustryPartner, LegalSection, CareerService, CustomPage, TeamMember, PageMeta, SocialLink, AchievementStat, ExtraChapter, Lead } from '../types.ts';
 import { INITIAL_CONTENT } from '../data/defaultContent.ts';
 import { optimizeImage } from '../utils/imageOptimizer.ts';
+import { API_BASE_URL } from '../config.ts';
 
 // Modular Sections
 import SiteTab from '../admin/SiteTab.tsx';
@@ -73,7 +74,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate, serv
   const fetchLeads = async () => {
     try {
       const token = localStorage.getItem('sms_auth_token');
-      const response = await fetch('/api/leads', {
+      const response = await fetch(`${API_BASE_URL}/leads`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -90,7 +91,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate, serv
   const handleUpdateLeads = async (id: string, status: Lead['status']) => {
     try {
       const token = localStorage.getItem('sms_auth_token');
-      const response = await fetch(`/api/leads/${id}/status`, {
+      const response = await fetch(`${API_BASE_URL}/leads/${id}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -110,7 +111,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ content, onUpdate, serv
   const handleDeleteLead = async (id: string) => {
     try {
       const token = localStorage.getItem('sms_auth_token');
-      const response = await fetch(`/api/leads/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/leads/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
