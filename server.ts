@@ -1,6 +1,5 @@
 
 import express from 'express';
-import { createServer as createViteServer } from 'vite';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -11,15 +10,15 @@ async function startServer() {
   const app = express();
   const PORT = parseInt(process.env.PORT || '3000', 10);
 
-  // 0. Immediate Health Check
+  // 1. Immediate Health Check
   app.get('/ping', (req, res) => res.send('pong'));
 
   try {
-    console.log(`🚀 Starting Unified Server on port ${PORT}...`);
+    console.log(`🚀 Starting Dedicated Backend API Server on port ${PORT}...`);
     
     // 2. Mount Backend API
     try {
-      console.log('📦 Loading Backend...');
+      console.log('📦 Loading Backend Modules...');
       const backendModule = await import('./backend/src/app.ts');
       const backendApp = backendModule.default || backendModule;
 
@@ -29,40 +28,19 @@ async function startServer() {
       }
     } catch (err: any) {
       console.error('❌ Backend failed to mount!', err.message);
+      process.exit(1); // Exit if backend fails to load
     }
 
-    // 3. Mount Frontend
-    if (process.env.NODE_ENV !== 'production') {
-      console.log('🔧 Loading Vite...');
-      const vite = await createViteServer({
-        server: { middlewareMode: true },
-        appType: 'spa',
-      });
-      app.use(vite.middlewares);
-    } else {
-      const distPath = path.join(__dirname, 'dist');
-      app.use(express.static(distPath));
-      
-      // Catch-all for SPA - with API guard (Express 5 syntax)
-      app.get('(.*)', (req, res) => {
-        if (req.path.startsWith('/api')) {
-          return res.status(404).json({
-            status: false,
-            message: `API Route not found: ${req.originalUrl}`
-          });
-        }
-        res.sendFile(path.join(distPath, 'index.html'));
-      });
-    }
-
-    // 4. Start listening AFTER mounting everything
+    // 3. Start listening
     app.listen(PORT, '0.0.0.0', () => {
-      console.log(`🚀 SERVER LISTENING: http://localhost:${PORT}`);
+      console.log(`🚀 BACKEND API LISTENING: http://localhost:${PORT}`);
       console.log(`📡 Health check: http://localhost:${PORT}/ping`);
+      console.log(`📡 API Base: http://localhost:${PORT}/api`);
     });
 
   } catch (error) {
     console.error('❌ Startup Error:', error);
+    process.exit(1);
   }
 }
 

@@ -3,10 +3,10 @@ import mysql from 'mysql2/promise';
 import { mockPool } from './mockDb.ts';
 import { ENV } from './env.ts';
 
-// Use real MySQL if DB_USER is provided (standard for production), otherwise fallback to mock
-const useRealDb = process.env.DB_USER && process.env.DB_USER !== 'root';
+// Use real MySQL if DB_HOST is provided (standard for production), otherwise fallback to mock
+const useRealDb = !!process.env.DB_HOST;
 
-console.log(`🔍 DB Config Check: DB_USER="${process.env.DB_USER}", useRealDb=${useRealDb}`);
+console.log(`🔍 DB Config Check: DB_HOST="${process.env.DB_HOST}", useRealDb=${useRealDb}`);
 
 let pool: any = mockPool;
 
