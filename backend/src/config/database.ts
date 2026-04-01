@@ -23,9 +23,23 @@ if (useRealDb) {
       connectionLimit: 10,
       queueLimit: 0
     });
-    console.log('✅ Connected to Production MySQL Database');
+    
+    // Test the connection immediately
+    (async () => {
+      try {
+        const connection = await pool.getConnection();
+        console.log('✅ Connected to Production MySQL Database');
+        connection.release();
+      } catch (err: any) {
+        console.error('❌ Database Connection Test Failed!');
+        console.error('Error Code:', err.code);
+        console.error('Error Message:', err.message);
+        console.log('ℹ️ Falling back to Mock DB');
+        pool = mockPool;
+      }
+    })();
   } catch (err: any) {
-    console.error('❌ Failed to connect to Production MySQL:', err.message);
+    console.error('❌ Failed to initialize MySQL Pool:', err.message);
     console.log('ℹ️ Falling back to Mock DB');
     pool = mockPool;
   }
