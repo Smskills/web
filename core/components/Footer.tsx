@@ -105,7 +105,7 @@ const Footer: React.FC<FooterProps> = ({ config }) => {
             </h4>
             <ul className="space-y-8 text-sm font-bold">
               <li className="flex gap-4 group">
-                <div className="mt-1 w-5 flex justify-center text-emerald-500 transition-transform group-hover:scale-125">
+                <div className="mt-1 w-5 flex justify-center text-red-500 transition-transform group-hover:scale-125">
                   <i className="fa-solid fa-location-dot text-base" aria-hidden="true"></i>
                 </div>
                 <span className="leading-relaxed text-slate-300">{config.contact?.address}</span>

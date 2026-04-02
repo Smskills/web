@@ -92,8 +92,8 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           <div className="space-y-12">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="p-10 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm flex flex-col gap-6 group hover:border-emerald-500 transition-all">
-                <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+              <div className="p-10 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm flex flex-col gap-6 group hover:border-red-500 transition-all">
+                <div className="w-16 h-16 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
                   <i className="fa-solid fa-location-dot" aria-hidden="true"></i>
                 </div>
                 <div>
@@ -118,7 +118,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
             </div>
             
             <div className="rounded-[3rem] overflow-hidden shadow-3xl h-96 border-8 border-white group">
-              <iframe src={config.mapUrl} width="100%" height="100%" style={{ border: 0 }} allowFullScreen={true} loading="lazy" title="Campus Map" className="grayscale group-hover:grayscale-0 transition-all duration-700"></iframe>
+              <iframe src={config.mapUrl} width="100%" height="100%" style={{ border: 0 }} allowFullScreen={true} loading="lazy" title="Campus Map" className="transition-all duration-700"></iframe>
             </div>
           </div>
 

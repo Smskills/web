@@ -4,7 +4,7 @@ import { SiteConfig } from '../../types';
 export const siteDefaults: SiteConfig = {
   name: "S M Skills",
   tagline: "SM SKILLS TRAINING INSTITUTE • ESTD 2024",
-  logo: "https://lwfiles.mycourse.app/62a6cd5-public/6efdd5e.png", 
+  logo: "/logo.png", 
   loginLabel: "DASHBOARD",
   admissionAlert: {
     enabled: true,

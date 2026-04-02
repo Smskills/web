@@ -101,7 +101,7 @@ const PlacementReviewPage: React.FC<PlacementReviewPageProps> = ({ placements, l
       <section className="py-20 bg-slate-50 border-y border-slate-100">
         <div className="container mx-auto px-4 text-center">
           <p className="text-xs font-black text-slate-400 uppercase tracking-[0.5em] mb-12">Our Students are Hired By</p>
-          <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-40 grayscale group hover:grayscale-0 transition-all">
+          <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-40 group hover:opacity-100 transition-all">
              {Array.from(new Set(reviews.map(r => r.companyIcon))).map(icon => (
                 <i key={icon} className={`fa-brands ${icon} text-5xl`}></i>
              ))}
