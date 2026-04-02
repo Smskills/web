@@ -81,7 +81,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ siteConfig }) => {
                     autoComplete="username"
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
-                    placeholder="Username"
+                    placeholder="Enter your username or email"
                     className="w-full pl-12 pr-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all text-slate-900 font-medium placeholder-slate-300"
                   />
                 </div>

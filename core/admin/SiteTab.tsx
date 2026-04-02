@@ -65,7 +65,7 @@ const SiteTab: React.FC<SiteTabProps> = ({
                     value={(data.notificationEmails || []).join(', ')} 
                     onChange={e => handleEmailsChange(e.target.value)}
                     className="w-full bg-slate-900 border border-emerald-900/30 rounded-xl px-6 py-4 text-slate-300 font-mono text-xs focus:border-emerald-500 outline-none"
-                    placeholder="e.g. admin@sm-skills.edu"
+                    placeholder="Enter your email address"
                 />
                 <p className="text-[9px] text-emerald-400/70 font-bold uppercase mt-2 ml-1 tracking-widest italic">
                   * Alert: Enter your business email to receive enrollment notifications automatically.
