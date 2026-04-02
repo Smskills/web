@@ -11,6 +11,8 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAcademicsOpen, setIsAcademicsOpen] = useState(false);
+  const [isMobileAcademicsOpen, setIsMobileAcademicsOpen] = useState(false);
+  const [expandedMobileCategory, setExpandedMobileCategory] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('sms_is_auth') === 'true');
   
@@ -173,9 +175,9 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
         <div className="flex items-center gap-8">
           <Link to="/" className="flex items-center gap-5 group focus:outline-none rounded-xl" aria-label="Institute Home">
             <img src={config.logo || "https://lwfiles.mycourse.app/62a6cd5-public/6efdd5e.png"} alt="Logo" className="h-24 w-auto object-contain transition-transform group-hover:scale-105" />
-            <div className="hidden md:flex flex-col leading-tight border-l-2 border-slate-100 pl-5">
-              <span className="font-black text-2xl text-emerald-600 tracking-tighter uppercase whitespace-nowrap transition-colors">{config.name}</span>
-              <span className="text-[10px] text-emerald-600 font-bold uppercase tracking-[0.25em] mt-1 opacity-80">{config.tagline}</span>
+            <div className="flex flex-col leading-tight border-l-2 border-slate-100 pl-3 sm:pl-5">
+              <span className="font-black text-base sm:text-2xl text-emerald-600 tracking-tighter uppercase whitespace-nowrap transition-colors">{config.name}</span>
+              <span className="text-[8px] sm:text-[10px] text-emerald-600 font-bold uppercase tracking-[0.1em] sm:tracking-[0.25em] mt-0.5 sm:mt-1 opacity-80 line-clamp-1">{config.tagline}</span>
             </div>
           </Link>
         </div>
@@ -286,29 +288,60 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
             <Link to="/" onClick={() => setIsMenuOpen(false)} className="font-black text-xs uppercase tracking-widest text-slate-900">HOME</Link>
             <Link to="/about" onClick={() => setIsMenuOpen(false)} className="font-black text-xs uppercase tracking-widest text-slate-900">ABOUT</Link>
             
-            <div className="space-y-4 border-l-2 border-emerald-100 pl-4 py-2">
-              <span className="font-black text-xs uppercase tracking-widest text-emerald-600 block mb-2">ACADEMICS</span>
-              {categories.map(cat => (
-                <div key={cat.label} className="space-y-2">
-                  <span className="font-bold text-[10px] uppercase tracking-widest text-slate-400">{cat.label}</span>
-                  <div className="flex flex-col gap-2 pl-2">
-                    {cat.sectorList ? (
-                      cat.sectorList.slice(0, 5).map(sector => (
-                        <button key={sector.label} onClick={() => handleSectorClick(sector.value, cat.level)} className="text-left text-[10px] font-bold text-slate-600">
-                          {sector.label}
+            <div className="space-y-2">
+              <button 
+                onClick={() => setIsMobileAcademicsOpen(!isMobileAcademicsOpen)}
+                className="w-full text-left font-black text-xs uppercase tracking-widest text-slate-900 flex items-center justify-between"
+              >
+                ACADEMICS
+                <i className={`fa-solid fa-chevron-${isMobileAcademicsOpen ? 'up' : 'down'} text-[10px] text-slate-400`}></i>
+              </button>
+              
+              {isMobileAcademicsOpen && (
+                <div className="space-y-4 border-l-2 border-emerald-100 pl-4 py-2 mt-2 animate-fade-in-down">
+                  {categories.map(cat => {
+                    const isExpanded = expandedMobileCategory === cat.label;
+                    return (
+                      <div key={cat.label} className="space-y-2">
+                        <button 
+                          onClick={() => setExpandedMobileCategory(isExpanded ? null : cat.label)}
+                          className={`w-full text-left font-black text-[10px] uppercase tracking-widest flex items-center justify-between transition-colors ${isExpanded ? 'text-emerald-600' : 'text-slate-400'}`}
+                        >
+                          {cat.label}
+                          <i className={`fa-solid fa-chevron-${isExpanded ? 'up' : 'down'} text-[8px]`}></i>
                         </button>
-                      ))
-                    ) : (
-                      groupedCourses[cat.label]?.slice(0, 3).map(course => (
-                        <button key={course.id} onClick={() => handleCourseClick(course.id)} className="text-left text-[10px] font-bold text-slate-600">
-                          {course.name}
-                        </button>
-                      ))
-                    )}
-                    <Link to="/academics" onClick={() => setIsMenuOpen(false)} className="text-[9px] font-black text-emerald-600 uppercase">View All</Link>
-                  </div>
+                        
+                        {isExpanded && (
+                          <div className="flex flex-col gap-2.5 pl-3 border-l border-slate-100 py-1 animate-fade-in-down">
+                            {cat.sectorList ? (
+                              cat.sectorList.map(sector => (
+                                <button 
+                                  key={sector.label} 
+                                  onClick={() => { handleSectorClick(sector.value, cat.level); setIsMenuOpen(false); }} 
+                                  className="text-left text-[10px] font-bold text-slate-600 hover:text-emerald-600 transition-colors flex items-center gap-2"
+                                >
+                                  <i className={`fa-solid ${sector.icon} text-[8px] opacity-40`}></i>
+                                  {sector.label}
+                                </button>
+                              ))
+                            ) : (
+                              groupedCourses[cat.label]?.map(course => (
+                                <button 
+                                  key={course.id} 
+                                  onClick={() => { handleCourseClick(course.id); setIsMenuOpen(false); }} 
+                                  className="text-left text-[10px] font-bold text-slate-600 hover:text-emerald-600 transition-colors"
+                                >
+                                  {course.name}
+                                </button>
+                              ))
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
-              ))}
+              )}
             </div>
 
             <Link to="/notices" onClick={() => setIsMenuOpen(false)} className="font-black text-xs uppercase tracking-widest text-slate-900">NOTICES</Link>

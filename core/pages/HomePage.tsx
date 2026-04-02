@@ -3,6 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { AppState, Notice } from '../types';
 import CourseCard from './Courses/CourseCard.tsx';
+import MobileCourseNavigator from '../components/MobileCourseNavigator.tsx';
 
 interface HomePageProps {
   content: AppState;
@@ -108,6 +109,9 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
         </section>
       )}
 
+      {/* Mobile Course Navigator - Only visible on mobile */}
+      <MobileCourseNavigator courses={courses.list} />
+
       {/* Global Partner Ticker - More compact height */}
       {home.sections.industryTieups && placements.partners.length > 0 && (
         <section className="py-8 bg-[#020617] border-y border-white/5 relative z-20 overflow-hidden">
@@ -168,7 +172,11 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch border-2 border-emerald-500 p-6 rounded-[3rem] bg-emerald-500/[0.02] shadow-[0_0_50px_rgba(16,185,129,0.15)] relative">
               <div className="lg:col-span-7">
                 {spotlightNotice && (
-                  <article key={spotlightNotice.id} className="h-full bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-[2.5rem] p-8 flex flex-col justify-between group hover:border-emerald-400/50 transition-all shadow-3xl">
+                  <Link 
+                    key={spotlightNotice.id} 
+                    to="/notices"
+                    className="h-full bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-[2.5rem] p-8 flex flex-col justify-between group hover:border-emerald-400/50 transition-all shadow-3xl block"
+                  >
                     <div className="space-y-8">
                       <div className={`inline-flex items-center gap-3 px-3 py-1 rounded-full ${getNoticeTheme(spotlightNotice.category).bg} ${getNoticeTheme(spotlightNotice.category).text} text-[9px] font-black uppercase tracking-widest shadow-lg`}>
                         <i className={`fa-solid ${getNoticeTheme(spotlightNotice.category).icon}`} aria-hidden="true"></i>
@@ -193,7 +201,7 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
                          </span>
                        </div>
                     </div>
-                  </article>
+                  </Link>
                 )}
               </div>
 
@@ -208,12 +216,16 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
                       {[...tickerNotices, ...tickerNotices].map((notice, idx) => {
                         const theme = getNoticeTheme(notice.category);
                         return (
-                          <div key={`${notice.id}-${idx}`} className="bg-slate-800/40 border border-white/5 rounded-2xl p-4 flex items-center gap-4 hover:bg-slate-800/60 transition-all group cursor-pointer hover:border-emerald-500/30 shadow-lg">
+                          <Link 
+                            key={`${notice.id}-${idx}`} 
+                            to="/notices"
+                            className="bg-slate-800/40 border border-white/5 rounded-2xl p-4 flex items-center gap-4 hover:bg-slate-800/60 transition-all group cursor-pointer hover:border-emerald-500/30 shadow-lg block"
+                          >
                             <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${theme.lightBg} ${theme.lightText} text-xl group-hover:scale-110 transition-transform shadow-inner`}>
                               <i className={`fa-solid ${theme.icon}`} aria-hidden="true"></i>
                             </div>
                             <h4 className="text-white font-black text-sm group-hover:text-emerald-400 transition-colors truncate">{notice.title}</h4>
-                          </div>
+                          </Link>
                         );
                       })}
                     </div>
@@ -227,7 +239,7 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
 
       {/* Featured Courses Showcase - Compacted Padding */}
       {home.sections.featuredCourses && (
-        <section className="py-16 bg-white border-t border-slate-100">
+        <section className="py-16 bg-white border-t border-slate-100 hidden lg:block">
           <div className="container mx-auto px-6">
             <div className="text-center mb-16 max-w-4xl mx-auto">
                 <span className="text-emerald-700 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">Institutional Tracks</span>
@@ -242,7 +254,7 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
 
             {/* Catalog Teaser Section */}
             {remainingCourses > 0 && (
-              <div className="mt-12 pt-12 border-t border-slate-100 flex flex-col items-center">
+              <div className="mt-12 pt-12 border-t border-slate-100 hidden lg:flex flex-col items-center">
                  <div className="flex flex-col md:flex-row items-center justify-between gap-8 w-full bg-slate-50 p-8 md:p-10 rounded-[2.5rem] shadow-sm border border-slate-100">
                     <div className="flex flex-col md:flex-row items-center gap-6">
                        <div className="flex -space-x-4">
