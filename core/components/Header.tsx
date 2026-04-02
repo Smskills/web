@@ -172,7 +172,7 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
       <div className="container mx-auto px-6 h-28 flex items-center justify-between">
         <div className="flex items-center gap-8">
           <Link to="/" className="flex items-center gap-5 group focus:outline-none rounded-xl" aria-label="Institute Home">
-            <img src={config.logo || "https://lwfiles.mycourse.app/62a6cd5-public/6efdd5e.png"} alt="Logo" className="h-20 w-auto object-contain transition-transform group-hover:scale-105" />
+            <img src={config.logo || "https://lwfiles.mycourse.app/62a6cd5-public/6efdd5e.png"} alt="Logo" className="h-24 w-auto object-contain transition-transform group-hover:scale-105" />
             <div className="hidden md:flex flex-col leading-tight border-l-2 border-slate-100 pl-5">
               <span className="font-black text-2xl text-emerald-600 tracking-tighter uppercase whitespace-nowrap transition-colors">{config.name}</span>
               <span className="text-[10px] text-emerald-600 font-bold uppercase tracking-[0.25em] mt-1 opacity-80">{config.tagline}</span>
