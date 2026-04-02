@@ -18,8 +18,23 @@ const app: Application = express();
 app.use(helmet({
   contentSecurityPolicy: false,
 }));
+
+const allowedOrigins = [
+  'https://ais-dev-fwqzcdx5racjd5xyqifq67-57272006855.asia-east1.run.app',
+  'https://ais-pre-fwqzcdx5racjd5xyqifq67-57272006855.asia-east1.run.app',
+  'https://web-1-civ6.onrender.com',
+  'http://localhost:3000',
+  'http://localhost:5173'
+];
+
 app.use(cors({
-  origin: '*', // Allow all origins for now, can be restricted to Hostinger URL later
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(null, true); // Fallback to true for development flexibility, or restrict as needed
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   credentials: true
