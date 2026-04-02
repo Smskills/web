@@ -85,19 +85,22 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[300] flex items-center justify-center bg-slate-950/90 backdrop-blur-xl p-4 md:p-8 animate-fade-in">
-      <div className="bg-white w-full max-w-3xl rounded-[2.5rem] overflow-hidden shadow-4xl flex flex-col border border-white/20">
-        <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+    <div 
+      className="fixed inset-0 z-[300] flex items-center justify-center bg-slate-950/90 backdrop-blur-xl p-4 md:p-8 animate-fade-in overflow-y-auto"
+      onClick={(e) => e.target === e.currentTarget && onCancel()}
+    >
+      <div className="bg-white w-full max-w-3xl rounded-[2.5rem] overflow-hidden shadow-4xl flex flex-col border border-white/20 my-auto max-h-[90vh]">
+        <div className="p-6 md:p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
            <div>
-             <h2 className="text-xl font-black text-slate-900 tracking-tight leading-none uppercase">Frame Program Card</h2>
-             <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-2">Reposition the subject for the catalog grid</p>
+             <h2 className="text-lg md:text-xl font-black text-slate-900 tracking-tight leading-none uppercase">Frame Program Card</h2>
+             <p className="text-[9px] md:text-[10px] text-slate-500 font-black uppercase tracking-widest mt-2">Reposition the subject for the catalog grid</p>
            </div>
-           <button onClick={onCancel} className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all">
+           <button onClick={onCancel} className="w-8 h-8 md:w-10 md:h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all">
              <i className="fa-solid fa-xmark"></i>
            </button>
         </div>
 
-        <div className="relative bg-slate-950 p-4 md:p-12 flex flex-col items-center gap-8 overflow-hidden">
+        <div className="relative bg-slate-950 p-4 md:p-12 flex flex-col items-center gap-6 md:gap-8 overflow-y-auto flex-grow">
           <img 
             src={imageSrc} 
             ref={imgRef} 
@@ -106,7 +109,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
             alt="Source" 
           />
           
-          <div className="relative group shadow-2xl">
+          <div className="relative group shadow-2xl shrink-0">
             <div className="absolute inset-0 z-10 pointer-events-none grid grid-cols-3 grid-rows-3 rounded-3xl overflow-hidden border-4 border-transparent group-hover:border-emerald-500/30 transition-all duration-500">
                <div className="border-r border-b border-white/20"></div>
                <div className="border-r border-b border-white/20"></div>
@@ -127,20 +130,20 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
-              style={{ width: '100%', maxWidth: '600px', height: 'auto' }}
+              style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
               className="rounded-3xl cursor-move border-4 border-white/10 group-hover:border-emerald-500/50 transition-all bg-black"
             />
             <div className="absolute inset-x-0 -bottom-4 flex justify-center z-20">
-               <div className="bg-[#10b981] text-white px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-widest shadow-2xl border border-white/20 flex items-center gap-2">
+               <div className="bg-[#10b981] text-white px-4 py-1.5 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-widest shadow-2xl border border-white/20 flex items-center gap-2">
                  <i className="fa-solid fa-arrows-up-down-left-right"></i> Drag to Compose
                </div>
             </div>
           </div>
 
-          <div className="w-full max-w-sm space-y-4 bg-slate-900/50 p-6 rounded-2xl border border-white/5">
+          <div className="w-full max-w-sm space-y-4 bg-slate-900/50 p-4 md:p-6 rounded-2xl border border-white/5 shrink-0">
              <div className="flex justify-between items-center">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Scaling Factor</span>
-                <span className="text-[10px] font-black text-emerald-500">{(zoom * 100).toFixed(0)}%</span>
+                <span className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">Scaling Factor</span>
+                <span className="text-[9px] md:text-[10px] font-black text-emerald-500">{(zoom * 100).toFixed(0)}%</span>
              </div>
              <input 
                type="range" 
@@ -154,16 +157,16 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
           </div>
         </div>
 
-        <div className="p-8 flex gap-4 bg-slate-50/50 border-t border-slate-100">
+        <div className="p-6 md:p-8 flex gap-3 md:gap-4 bg-slate-50/50 border-t border-slate-100 shrink-0">
           <button 
             onClick={onCancel}
-            className="flex-grow py-4 border-2 border-slate-200 text-slate-500 font-black rounded-2xl hover:bg-slate-100 transition-all uppercase tracking-widest text-[11px]"
+            className="flex-grow py-3 md:py-4 border-2 border-slate-200 text-slate-500 font-black rounded-2xl hover:bg-slate-100 transition-all uppercase tracking-widest text-[10px] md:text-[11px]"
           >
             Cancel
           </button>
           <button 
             onClick={handleSave}
-            className="flex-grow py-4 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-500 transition-all uppercase tracking-widest text-[11px] shadow-xl shadow-emerald-600/20"
+            className="flex-grow py-3 md:py-4 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-500 transition-all uppercase tracking-widest text-[10px] md:text-[11px] shadow-xl shadow-emerald-600/20"
           >
             Apply Framing <i className="fa-solid fa-check ml-2"></i>
           </button>
