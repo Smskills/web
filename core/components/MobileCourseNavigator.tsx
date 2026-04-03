@@ -87,7 +87,7 @@ const MobileCourseNavigator: React.FC<MobileCourseNavigatorProps> = ({ courses }
   };
 
   return (
-    <div className="lg:hidden bg-slate-50 py-10 px-6 border-y border-slate-200">
+    <div className="bg-slate-50 py-10 px-6 border-y border-slate-200">
       <div className="text-center mb-8">
         <span className="text-emerald-600 font-black uppercase tracking-widest text-[10px] mb-2 block">Quick Navigator</span>
         <h2 className="text-2xl font-black text-slate-900 tracking-tight">Our Top Programs</h2>

@@ -36,9 +36,6 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
   const spotlightNotice = notices.list[0];
   const tickerNotices = notices.list.length > 1 ? notices.list.slice(1) : notices.list;
 
-  const btnPrimary = "px-10 py-5 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-500 hover:scale-105 hover:shadow-[0_20px_40px_rgba(16,185,129,0.3)] focus-visible:ring-4 focus-visible:ring-emerald-500/30 transition-all shadow-2xl shadow-emerald-600/20 active:scale-95 text-[11px] uppercase tracking-widest text-center min-h-[56px] flex items-center justify-center";
-  const btnMidnight = "px-10 py-5 bg-[#020617] text-white font-black rounded-2xl hover:bg-slate-800 hover:scale-105 hover:shadow-[0_20px_40px_rgba(2,6,23,0.3)] focus-visible:ring-4 focus-visible:ring-slate-900/20 transition-all shadow-2xl active:scale-95 text-[11px] uppercase tracking-widest text-center min-h-[56px] flex items-center justify-center border border-white/10";
-
   // Logic for Featured Trades
   const featuredPrograms = courses.list.filter(c => c.status === 'Active' && c.isFeatured);
   const displayCourses = featuredPrograms.length > 0 
@@ -90,13 +87,8 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
               <p className="text-lg md:text-2xl text-slate-700 mb-12 leading-relaxed font-bold animate-fade-in-up delay-100">
                 {home.hero.subtitle}
               </p>
-              <div className="flex flex-col sm:flex-row gap-6 animate-fade-in-up delay-200">
-                <Link to={getCleanPath(home.hero.ctaLink)} className={btnPrimary}>{home.hero.ctaText}</Link>
-                {home.hero.secondaryCtaText && (
-                  <Link to={getCleanPath(home.hero.secondaryCtaLink || '/about')} className={btnMidnight}>{home.hero.secondaryCtaText}</Link>
-                )}
-              </div>
-
+              {/* Hero buttons removed as per user request */}
+====
               {/* Trust Badge */}
               <div className="mt-12 flex items-center gap-4 animate-fade-in delay-300">
                 <div className="h-px w-8 bg-emerald-600/30"></div>
