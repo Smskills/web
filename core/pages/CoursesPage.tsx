@@ -2,7 +2,6 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Course } from '../types.ts';
 import CourseCard from './Courses/CourseCard.tsx';
-import MobileCourseNavigator from '../components/MobileCourseNavigator.tsx';
 import { CardSkeleton } from '../components/Skeleton.tsx';
 import FormattedText from '../components/FormattedText.tsx';
 import { INITIAL_CONTENT } from '../data/defaultContent.ts';
@@ -201,9 +200,6 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ coursesState, isLoading = fal
   return (
     <div className="bg-white font-sans min-h-screen">
       
-      {/* Mobile Course Navigator - Only visible on mobile for quick category switching */}
-      <MobileCourseNavigator courses={list} />
-
       {/* 1. DETAIL OVERLAY VIEW (Full Screen Fit) */}
       {spotlightCourse && (
         <section className="bg-white pb-10">
