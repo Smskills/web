@@ -93,37 +93,34 @@ const MobileCourseNavigator: React.FC<MobileCourseNavigatorProps> = ({ courses }
         <h2 className="text-2xl font-black text-slate-900 tracking-tight">Our Top Programs</h2>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-6 md:gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-6 md:gap-4">
         {famousPrograms.map((item, idx) => {
           const cat = categories.find(c => c.label === item.category);
           const isExpanded = expandedCategory === item.category;
-          const isFirstRow = idx < 3;
 
           return (
-            <div key={idx} className={`bg-white rounded-[2rem] md:rounded-[2.5rem] border border-slate-200 shadow-sm relative flex flex-col ${isFirstRow ? 'md:col-span-2' : 'md:col-span-3'} col-span-1`}>
-              <div className="p-5 md:p-6 flex items-center md:flex-row gap-4 md:gap-5 text-left flex-grow">
-                <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl md:rounded-2xl overflow-hidden shrink-0 border border-slate-100 shadow-inner">
+            <div key={idx} className="bg-white rounded-[2rem] md:rounded-[1.5rem] border border-slate-200 shadow-sm relative flex flex-col md:col-span-1 col-span-1">
+              <div className="p-5 md:p-4 flex items-center md:flex-row gap-4 md:gap-3 text-left flex-grow">
+                <div className="w-16 h-16 md:w-12 md:h-12 rounded-xl md:rounded-lg overflow-hidden shrink-0 border border-slate-100 shadow-inner">
                   <img src={item.course.image} alt={item.course.name} className="w-full h-full object-cover" />
                 </div>
-                <div className="flex-grow text-center">
-                  <h3 className="text-lg md:text-xl font-black text-emerald-600 uppercase tracking-tight leading-tight">
-                    {item.category.replace(/ Course$/i, '')}
-                    <span className="block">Course</span>
-                  </h3>
+                <div className="flex-grow overflow-hidden">
+                  <h3 className="text-lg md:text-[10px] lg:text-[11px] font-black text-emerald-600 uppercase tracking-tight leading-tight md:whitespace-nowrap md:truncate">{item.category}</h3>
                 </div>
               </div>
 
-              <div className="px-5 md:px-6 pb-5 md:pb-6 relative mt-auto">
+              <div className="px-5 md:px-4 pb-5 md:pb-4 relative mt-auto">
                 <button 
                   onClick={() => setExpandedCategory(isExpanded ? null : item.category)}
-                  className={`w-full py-4 md:py-5 rounded-xl md:rounded-2xl text-sm md:text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 md:gap-3 border ${
+                  className={`w-full py-4 md:py-3 rounded-xl md:rounded-lg text-sm md:text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 md:gap-2 border ${
                     isExpanded 
                       ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
                       : 'bg-slate-50 text-slate-600 border-slate-100 hover:bg-slate-100'
                   }`}
                 >
-                  {isExpanded ? 'Close Menu' : 'View More Programs'} 
-                  <i className={`fa-solid ${isExpanded ? 'fa-chevron-up' : 'fa-chevron-down'} text-[8px] md:text-[10px]`}></i>
+                  <span className="md:hidden">{isExpanded ? 'Close Menu' : 'View More Programs'}</span>
+                  <span className="hidden md:inline">{isExpanded ? 'Close' : 'View More'}</span>
+                  <i className={`fa-solid ${isExpanded ? 'fa-chevron-up' : 'fa-chevron-down'} text-[8px] md:text-[8px]`}></i>
                 </button>
 
                 {isExpanded && cat && (
