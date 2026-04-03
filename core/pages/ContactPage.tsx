@@ -112,7 +112,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
                       <p key={idx} className="text-slate-500 font-medium">{num}</p>
                     ))}
                   </div>
-                  <p className="text-[10px] text-emerald-600 mt-3 uppercase font-black tracking-widest">Mon - Sat, 9am - 6pm</p>
+                  <p className="text-[10px] text-emerald-600 mt-3 uppercase font-black tracking-widest">Mon - Sat, 10am - 6pm</p>
                 </div>
               </div>
             </div>
