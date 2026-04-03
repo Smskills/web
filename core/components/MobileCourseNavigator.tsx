@@ -93,34 +93,34 @@ const MobileCourseNavigator: React.FC<MobileCourseNavigatorProps> = ({ courses }
         <h2 className="text-2xl font-black text-slate-900 tracking-tight">Our Top Programs</h2>
       </div>
 
-      <div className="grid grid-cols-1 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-6 md:gap-8">
         {famousPrograms.map((item, idx) => {
           const cat = categories.find(c => c.label === item.category);
           const isExpanded = expandedCategory === item.category;
+          const isFirstRow = idx < 3;
 
           return (
-            <div key={idx} className="bg-white rounded-[2rem] border border-slate-200 shadow-sm relative">
-              <div className="p-5 flex items-center gap-4">
-                <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-slate-100">
+            <div key={idx} className={`bg-white rounded-[2rem] md:rounded-[2.5rem] border border-slate-200 shadow-sm relative flex flex-col ${isFirstRow ? 'md:col-span-2' : 'md:col-span-3'} col-span-1`}>
+              <div className="p-5 md:p-6 flex items-center md:flex-row gap-4 md:gap-5 text-left flex-grow">
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl md:rounded-2xl overflow-hidden shrink-0 border border-slate-100 shadow-inner">
                   <img src={item.course.image} alt={item.course.name} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-grow">
-                  <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest block mb-1">{item.category}</span>
-                  <h3 className="text-sm font-black text-slate-900 leading-tight line-clamp-1">{item.course.name}</h3>
+                  <h3 className="text-lg md:text-xl font-black text-emerald-600 uppercase tracking-tight leading-tight">{item.category}</h3>
                 </div>
               </div>
 
-              <div className="px-5 pb-5 relative">
+              <div className="px-5 md:px-6 pb-5 md:pb-6 relative mt-auto">
                 <button 
                   onClick={() => setExpandedCategory(isExpanded ? null : item.category)}
-                  className={`w-full py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 border ${
+                  className={`w-full py-4 md:py-5 rounded-xl md:rounded-2xl text-sm md:text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 md:gap-3 border ${
                     isExpanded 
                       ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
                       : 'bg-slate-50 text-slate-600 border-slate-100 hover:bg-slate-100'
                   }`}
                 >
                   {isExpanded ? 'Close Menu' : 'View More Programs'} 
-                  <i className={`fa-solid ${isExpanded ? 'fa-chevron-up' : 'fa-chevron-down'} text-[8px]`}></i>
+                  <i className={`fa-solid ${isExpanded ? 'fa-chevron-up' : 'fa-chevron-down'} text-[8px] md:text-[10px]`}></i>
                 </button>
 
                 {isExpanded && cat && (
