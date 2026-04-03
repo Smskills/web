@@ -22,7 +22,7 @@ export const INITIAL_CONTENT: AppState = {
     roadmapTitle: "Enrollment Flow",
     roadmapSteps: [
       { id: "s1", title: "Identity Submission", description: "Provide verifiable academic and personal records for initial screening." },
-      { id: "s2", title: "Technical Review", description: "Specialists evaluate your alignment with the chosen program track." },
+      { id: "s2", title: "Technical Review", description: "Specialists evaluate your alignment with the chosen program trade." },
       { id: "s3", title: "Confirmation", description: "Official admission offer and joining protocols sent via advisor call." }
     ],
     fields: [
@@ -37,7 +37,7 @@ export const INITIAL_CONTENT: AppState = {
       { id: "f7_district", label: "District", type: "text", placeholder: "e.g. Nagaon", required: true },
       { id: "f7_state", label: "State", type: "text", placeholder: "e.g. Assam", required: true },
       { id: "f7_pin", label: "Pin code", type: "text", placeholder: "6-digit PIN", required: true },
-      { id: "f9", label: "Course interest", type: "course-select", placeholder: "Choose Program Track", required: true },
+      { id: "f9", label: "Course interest", type: "course-select", placeholder: "Choose Program Trade", required: true },
       { id: "f11", label: "Current education", type: "select", placeholder: "Select Highest Qualification", required: true, options: ["Secondary School (10th)", "Higher Secondary (12th)", "Diploma Holder", "Graduate / Bachelor's", "Post Graduate", "Other"] },
       { id: "f10", label: "Source of information", type: "select", placeholder: "How did you hear about us?", required: true, options: ["Social Media", "Friend / Student Referral", "Newspaper / Print", "Web Search", "Educational Seminar"] },
       { id: "f12", label: "Additional question", type: "textarea", placeholder: "Any specific queries for the registrar?", required: false }
@@ -48,7 +48,7 @@ export const INITIAL_CONTENT: AppState = {
     fields: [
       { id: "c1", label: "Full Name", type: "text", placeholder: "e.g. John Doe", required: true },
       { id: "c2", label: "Email Address", type: "email", placeholder: "john@institute.edu", required: true },
-      { id: "c3", label: "Course Track", type: "course-select", placeholder: "Select Track", required: false },
+      { id: "c3", label: "Course Trade", type: "course-select", placeholder: "Select Trade", required: false },
       { id: "c4", label: "Detailed Message", type: "textarea", placeholder: "How can we help you?", required: true }
     ]
   },
@@ -127,7 +127,7 @@ export const INITIAL_CONTENT: AppState = {
   },
   faqs: {
     list: [
-      { id: "q1", question: "What is the admission criteria?", answer: "We look for a basic technical aptitude and a 10th or 12th pass certificate depending on the track.", category: "Admissions" }
+      { id: "q1", question: "What is the admission criteria?", answer: "We look for a basic technical aptitude and a 10th or 12th pass certificate depending on the trade.", category: "Admissions" }
     ],
     pageMeta: { title: "Help Center", subtitle: "Common questions regarding our institute.", tagline: "ASSISTANCE" }
   },

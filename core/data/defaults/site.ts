@@ -8,8 +8,8 @@ export const siteDefaults: SiteConfig = {
   loginLabel: "DASHBOARD",
   admissionAlert: {
     enabled: true,
-    text: "2024 ADMISSIONS NOW OPEN:",
-    subtext: "SECURE YOUR FUTURE WITH OUR VOCATIONAL TRACKS.",
+    text: "ADMISSION GOING ON",
+    subtext: "FOR ACADEMIC YEAR 2026-27",
     linkText: "APPLY TODAY",
     linkPath: "/enroll"
   },

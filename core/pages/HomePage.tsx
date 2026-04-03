@@ -39,7 +39,7 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
   const btnPrimary = "px-10 py-5 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-500 hover:scale-105 hover:shadow-[0_20px_40px_rgba(16,185,129,0.3)] focus-visible:ring-4 focus-visible:ring-emerald-500/30 transition-all shadow-2xl shadow-emerald-600/20 active:scale-95 text-[11px] uppercase tracking-widest text-center min-h-[56px] flex items-center justify-center";
   const btnMidnight = "px-10 py-5 bg-[#020617] text-white font-black rounded-2xl hover:bg-slate-800 hover:scale-105 hover:shadow-[0_20px_40px_rgba(2,6,23,0.3)] focus-visible:ring-4 focus-visible:ring-slate-900/20 transition-all shadow-2xl active:scale-95 text-[11px] uppercase tracking-widest text-center min-h-[56px] flex items-center justify-center border border-white/10";
 
-  // Logic for Featured Tracks
+  // Logic for Featured Trades
   const featuredPrograms = courses.list.filter(c => c.status === 'Active' && c.isFeatured);
   const displayCourses = featuredPrograms.length > 0 
     ? featuredPrograms.slice(0, 3) 
@@ -242,7 +242,7 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
         <section className="py-16 bg-white border-t border-slate-100 hidden lg:block">
           <div className="container mx-auto px-6">
             <div className="text-center mb-16 max-w-4xl mx-auto">
-                <span className="text-emerald-700 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">Institutional Tracks</span>
+                <span className="text-emerald-700 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">Institutional Trades</span>
                 <h2 className="text-3xl md:text-5xl font-black text-[#020617] tracking-tighter leading-tight">{home.sectionLabels.coursesTitle}</h2>
             </div>
 

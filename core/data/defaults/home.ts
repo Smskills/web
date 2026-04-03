@@ -4,7 +4,7 @@ import { HomeConfig } from '../../types';
 export const homeDefaults: HomeConfig = {
   hero: {
     title: "Master Skills for the Modern Industry",
-    subtitle: "Join S M Skills for specialized vocational tracks. Build your career with veterans.",
+    subtitle: "Join S M Skills for specialized vocational trades. Build your career with veterans.",
     tagline: "The Future of Vocational Excellence",
     ctaText: "Browse Programs",
     ctaLink: "/academics",
@@ -34,7 +34,7 @@ export const homeDefaults: HomeConfig = {
   sectionLabels: {
     noticesTitle: "Institute Feed",
     noticesSubtitle: "Recent announcements regarding batches, events, and scholarships.",
-    coursesTitle: "Vocational Tracks",
+    coursesTitle: "Vocational Trades",
     coursesSubtitle: "Explore our diverse range of technical programs.",
     galleryTitle: "Campus Life",
     gallerySubtitle: "Explore our facilities, classroom interactions, and achievement galleries.",

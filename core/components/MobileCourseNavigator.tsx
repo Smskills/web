@@ -62,7 +62,7 @@ const MobileCourseNavigator: React.FC<MobileCourseNavigatorProps> = ({ courses }
   ], []);
 
   const categories = useMemo(() => [
-    { label: "Certificate Course", level: "Certificate (NSDC)", sectorList: certificateSectors },
+    { label: "Short Term Certificate Course", level: "Certificate (NSDC)", sectorList: certificateSectors },
     { label: "UG Certificate Course", level: "UG Certificate (NSDC)", sectorList: vocationalSectors },
     { label: "UG Diploma Course", level: "UG Diploma", sectorList: vocationalSectors },
     { label: "UG Degree Course", level: "UG Degree", aliases: ["B. Voc"], sectorList: vocationalSectors },
@@ -99,55 +99,53 @@ const MobileCourseNavigator: React.FC<MobileCourseNavigatorProps> = ({ courses }
           const isExpanded = expandedCategory === item.category;
 
           return (
-            <div key={idx} className="space-y-3">
-              <Link 
-                to={`/academics?courseId=${item.course.id}`}
-                className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4 active:scale-95 transition-transform"
-              >
+            <div key={idx} className="bg-white rounded-[2rem] border border-slate-200 shadow-sm relative">
+              <div className="p-5 flex items-center gap-4">
                 <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-slate-100">
                   <img src={item.course.image} alt={item.course.name} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-grow">
                   <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest block mb-1">{item.category}</span>
                   <h3 className="text-sm font-black text-slate-900 leading-tight line-clamp-1">{item.course.name}</h3>
-                  <div className="flex items-center gap-2 mt-2">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">View Details</span>
-                    <i className="fa-solid fa-arrow-right text-[8px] text-emerald-600"></i>
-                  </div>
                 </div>
-              </Link>
+              </div>
 
-              <button 
-                onClick={() => setExpandedCategory(isExpanded ? null : item.category)}
-                className={`w-full py-3.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 border ${
-                  isExpanded 
-                    ? 'bg-emerald-600 text-white border-emerald-600 shadow-lg shadow-emerald-600/20' 
-                    : 'bg-white text-emerald-600 border-emerald-600/20 hover:bg-emerald-50'
-                }`}
-              >
-                {isExpanded ? 'Hide Programs' : 'More Programs'} 
-                <i className={`fa-solid ${isExpanded ? 'fa-minus' : 'fa-plus'} text-[8px]`}></i>
-              </button>
+              <div className="px-5 pb-5 relative">
+                <button 
+                  onClick={() => setExpandedCategory(isExpanded ? null : item.category)}
+                  className={`w-full py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 border ${
+                    isExpanded 
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
+                      : 'bg-slate-50 text-slate-600 border-slate-100 hover:bg-slate-100'
+                  }`}
+                >
+                  {isExpanded ? 'Close Menu' : 'View More Programs'} 
+                  <i className={`fa-solid ${isExpanded ? 'fa-chevron-up' : 'fa-chevron-down'} text-[8px]`}></i>
+                </button>
 
-              {isExpanded && cat && (
-                <div className="bg-white border border-slate-200 rounded-2xl p-2 grid grid-cols-1 gap-1 animate-fade-in-up max-h-[300px] overflow-y-auto custom-scrollbar shadow-inner">
-                  <div className="px-4 py-2 mb-1 border-b border-slate-50">
-                    <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Select Trade in {item.category}</span>
+                {isExpanded && cat && (
+                  <div className="absolute left-0 right-0 top-[calc(100%-10px)] z-[100] bg-white border border-slate-200 rounded-2xl p-2 shadow-[0_20px_50px_rgba(0,0,0,0.2)] animate-fade-in-up max-h-[280px] overflow-y-auto">
+                    <div className="px-4 py-2 mb-1 border-b border-slate-50 sticky top-0 bg-white z-10">
+                      <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Available Trades</span>
+                    </div>
+                    <div className="grid grid-cols-1 gap-1">
+                      {cat.sectorList.map((sector) => (
+                        <button
+                          key={sector.label}
+                          onClick={() => handleSectorClick(sector.value, cat.level)}
+                          className="w-full text-left px-4 py-3 text-[10px] font-bold text-slate-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl flex items-center gap-3 active:bg-emerald-100 transition-colors group"
+                        >
+                          <div className="w-7 h-7 rounded-lg bg-slate-50 flex items-center justify-center border border-slate-100 group-hover:border-emerald-200 group-hover:bg-white transition-all shadow-sm">
+                            <i className={`fa-solid ${sector.icon} text-[11px] text-emerald-600`}></i>
+                          </div>
+                          <span className="flex-grow">{sector.label}</span>
+                          <i className="fa-solid fa-chevron-right text-[7px] opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                  {cat.sectorList.map((sector) => (
-                    <button
-                      key={sector.label}
-                      onClick={() => handleSectorClick(sector.value, cat.level)}
-                      className="w-full text-left px-4 py-3 text-[10px] font-bold text-slate-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl flex items-center gap-3 active:bg-emerald-100 transition-colors"
-                    >
-                      <div className="w-6 h-6 rounded bg-slate-50 flex items-center justify-center border border-slate-100">
-                        <i className={`fa-solid ${sector.icon} text-[10px] text-emerald-600`}></i>
-                      </div>
-                      {sector.label}
-                    </button>
-                  ))}
-                </div>
-              )}
+                )}
+              </div>
             </div>
           );
         })}

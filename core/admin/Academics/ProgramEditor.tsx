@@ -63,7 +63,7 @@ const ProgramEditor: React.FC<ProgramEditorProps> = ({
                   <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${course.isFeatured ? 'right-1' : 'left-1'}`}></div>
                 </button>
              </div>
-             <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest text-center">Toggle to show in "Vocational Tracks" on Home</p>
+             <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest text-center">Toggle to show in "Vocational Trades" on Home</p>
           </div>
         </div>
 
@@ -77,7 +77,7 @@ const ProgramEditor: React.FC<ProgramEditorProps> = ({
                 placeholder="Course Name" 
               />
               {course.isFeatured && (
-                <span className="bg-emerald-500 text-white text-[8px] font-black uppercase px-2 py-1 rounded tracking-[0.2em] shrink-0 shadow-lg animate-pulse">TOP TRACK</span>
+                <span className="bg-emerald-500 text-white text-[8px] font-black uppercase px-2 py-1 rounded tracking-[0.2em] shrink-0 shadow-lg animate-pulse">TOP TRADE</span>
               )}
             </div>
             <button onClick={() => onDelete(course.id, course.name)} className="text-red-500 hover:text-red-600 hover:bg-red-900/30 p-2 rounded-lg transition-colors">

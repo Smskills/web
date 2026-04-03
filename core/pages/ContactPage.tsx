@@ -154,7 +154,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ config, social = [], content 
                         ) : field.type === 'course-select' ? (
                           <div className="relative">
                             <select id={`field-${field.id}`} required={field.required} value={formData[field.id] || ''} onChange={(e) => handleChange(field.id, e.target.value)} className="w-full px-8 py-5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:outline-none focus:border-emerald-500 transition-all font-black text-[11px] text-slate-900 uppercase tracking-widest appearance-none pr-12 shadow-sm cursor-pointer">
-                              <option value="">{field.placeholder || 'Select Track'}</option>
+                              <option value="">{field.placeholder || 'Select Trade'}</option>
                               {coursesList.filter(c => c.status === 'Active').map(course => (
                                 <option key={course.id} value={course.name}>{course.name}</option>
                               ))}
