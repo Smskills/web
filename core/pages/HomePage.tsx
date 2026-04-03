@@ -242,7 +242,7 @@ const HomePage: React.FC<HomePageProps> = ({ content }) => {
         <section className="py-16 bg-white border-t border-slate-100 hidden lg:block">
           <div className="container mx-auto px-6">
             <div className="text-center mb-16 max-w-4xl mx-auto">
-                <span className="text-emerald-700 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">Institutional Trades</span>
+                <span className="text-emerald-700 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">{home.sectionLabels.coursesTagline || "Institutional Trades"}</span>
                 <h2 className="text-3xl md:text-5xl font-black text-[#020617] tracking-tighter leading-tight">{home.sectionLabels.coursesTitle}</h2>
             </div>
 

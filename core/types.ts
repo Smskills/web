@@ -116,6 +116,7 @@ export interface HomeConfig {
     noticesSubtitle: string;
     coursesTitle: string;
     coursesSubtitle: string;
+    coursesTagline?: string;
     galleryTitle: string;
     gallerySubtitle: string;
     placementsTitle: string;

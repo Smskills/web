@@ -69,6 +69,58 @@ const HomeTab: React.FC<HomeTabProps> = ({
       </div>
 
       <div className="space-y-8 bg-slate-800/50 p-8 rounded-[2.5rem] border border-slate-700 shadow-sm">
+        <h3 className="text-emerald-400 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-tags"></i> SECTION LABELS</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Vocational Section Tagline</label>
+              <input 
+                value={data.sectionLabels.coursesTagline || ''} 
+                onChange={e => updateHomeSubField('sectionLabels', 'coursesTagline', e.target.value)} 
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-5 py-3 text-white font-black shadow-sm outline-none focus:border-emerald-500" 
+                placeholder="e.g. Institutional Trades" 
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Vocational Section Title</label>
+              <input 
+                value={data.sectionLabels.coursesTitle} 
+                onChange={e => updateHomeSubField('sectionLabels', 'coursesTitle', e.target.value)} 
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-5 py-3 text-white font-black shadow-sm outline-none focus:border-emerald-500" 
+                placeholder="e.g. Vocational Trades" 
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Vocational Section Subtitle</label>
+              <input 
+                value={data.sectionLabels.coursesSubtitle} 
+                onChange={e => updateHomeSubField('sectionLabels', 'coursesSubtitle', e.target.value)} 
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-5 py-3 text-white font-black shadow-sm outline-none focus:border-emerald-500" 
+              />
+            </div>
+          </div>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Notice Feed Title</label>
+              <input 
+                value={data.sectionLabels.noticesTitle} 
+                onChange={e => updateHomeSubField('sectionLabels', 'noticesTitle', e.target.value)} 
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-5 py-3 text-white font-black shadow-sm outline-none focus:border-emerald-500" 
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Gallery Title</label>
+              <input 
+                value={data.sectionLabels.galleryTitle} 
+                onChange={e => updateHomeSubField('sectionLabels', 'galleryTitle', e.target.value)} 
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-5 py-3 text-white font-black shadow-sm outline-none focus:border-emerald-500" 
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-8 bg-slate-800/50 p-8 rounded-[2.5rem] border border-slate-700 shadow-sm">
         <h3 className="text-emerald-400 font-black text-lg flex items-center gap-3"><i className="fa-solid fa-wand-magic-sparkles"></i> MAIN HERO BANNERS</h3>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div onClick={onHeroBgClick} className="relative aspect-video rounded-3xl overflow-hidden border-2 border-slate-700 bg-slate-800 group cursor-pointer shadow-lg">
