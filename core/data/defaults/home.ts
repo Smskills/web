@@ -36,6 +36,7 @@ export const homeDefaults: HomeConfig = {
     noticesSubtitle: "Recent announcements regarding batches, events, and scholarships.",
     coursesTitle: "Vocational Trades",
     coursesSubtitle: "Explore our diverse range of technical programs.",
+    coursesTagline: "Institutional Trades",
     galleryTitle: "Campus Life",
     gallerySubtitle: "Explore our facilities, classroom interactions, and achievement galleries.",
     placementsTitle: "Our Placement Record",
