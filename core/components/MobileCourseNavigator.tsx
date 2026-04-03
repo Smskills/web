@@ -105,11 +105,8 @@ const MobileCourseNavigator: React.FC<MobileCourseNavigatorProps> = ({ courses }
                 <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl md:rounded-2xl overflow-hidden shrink-0 border border-slate-100 shadow-inner">
                   <img src={item.course.image} alt={item.course.name} className="w-full h-full object-cover" />
                 </div>
-                <div className="flex-grow text-center">
-                  <h3 className="text-lg md:text-xl font-black text-emerald-600 uppercase tracking-tight leading-tight">
-                    {item.category.replace(/ Course$/i, '')}
-                    <span className="block">Course</span>
-                  </h3>
+                <div className="flex-grow">
+                  <h3 className="text-lg md:text-xl font-black text-emerald-600 uppercase tracking-tight leading-tight">{item.category}</h3>
                 </div>
               </div>
 
