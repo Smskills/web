@@ -128,7 +128,7 @@ const App: React.FC = () => {
     }
   };
 
-  const headerHeightClass = content.site.admissionAlert?.enabled ? 'pt-36 md:pt-40' : 'pt-24 md:pt-32';
+  const headerHeightClass = content.site.admissionAlert?.enabled ? 'pt-40 md:pt-44' : 'pt-24 md:pt-32';
 
   if (isInitializing) {
     return (

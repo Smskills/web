@@ -21,7 +21,7 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
   const location = useLocation();
 
   /**
-   * Specific sectors for the "Certificate Course" category (11 Sectors)
+   * Specific sectors for the "Short Term Certificate Course" category (11 Sectors)
    */
   const certificateSectors = useMemo(() => [
     { label: "Apparel", value: "Apparel", icon: "fa-shirt" },
@@ -79,7 +79,7 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
   ], []);
 
   const categories = useMemo(() => [
-    { label: "Certificate Course", level: "Certificate (NSDC)", sectorList: certificateSectors },
+    { label: "Short Term Certificate Course", level: "Certificate (NSDC)", sectorList: certificateSectors },
     { label: "UG Certificate Course", level: "UG Certificate (NSDC)", sectorList: vocationalSectors },
     { label: "UG Diploma Course", level: "UG Diploma", sectorList: vocationalSectors },
     { label: "UG Degree Course", level: "UG Degree", aliases: ["B. Voc"], sectorList: vocationalSectors },
@@ -156,15 +156,15 @@ const Header: React.FC<HeaderProps> = ({ config, courses = [] }) => {
     <header className="fixed top-0 left-0 right-0 bg-white border-b border-slate-200 z-[100] font-sans">
       {alert?.enabled && (
         <div className="bg-slate-50 border-b border-slate-100 py-3">
-          <div className="container mx-auto px-6 flex items-center justify-between">
+          <div className="container mx-auto px-6 flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 sm:gap-0">
             <div className="flex items-center gap-3">
               <span className="w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)] shrink-0"></span>
-              <div className="flex flex-wrap items-center gap-x-2 text-[10px] md:text-[11px] font-black uppercase tracking-widest leading-none">
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-2 text-[10px] md:text-[11px] font-black uppercase tracking-widest leading-none text-center sm:text-left">
                 <span className="text-emerald-600">{alert.text}</span>
-                <span className="text-slate-900 hidden sm:inline">{alert.subtext}</span>
+                <span className="text-slate-900">{alert.subtext}</span>
               </div>
             </div>
-            <Link to={alert.linkPath || "/enroll"} className="text-[10px] md:text-[11px] font-black text-emerald-600 uppercase tracking-widest hover:text-emerald-700 transition-colors flex items-center gap-1.5 shrink-0 border-b border-emerald-600/30 hover:border-emerald-600">
+            <Link to={alert.linkPath || "/enroll"} className="text-[10px] md:text-[11px] font-black text-emerald-600 uppercase tracking-widest hover:text-emerald-700 transition-colors flex items-center gap-1.5 shrink-0 border-b border-emerald-600/30 hover:border-emerald-600 sm:ml-4">
               {alert.linkText || "APPLY TODAY"} <i className="fa-solid fa-chevron-right text-[8px]"></i>
             </Link>
           </div>

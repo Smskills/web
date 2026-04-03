@@ -185,7 +185,7 @@ export const generateCourses = (): Course[] => {
           mode: 'Offline',
           status: 'Active',
           image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800",
-          description: `Comprehensive academic track in ${specName} aligned with ${industry} industry standards.`,
+          description: `Comprehensive academic trade in ${specName} aligned with ${industry} industry standards.`,
           price: level === 'Certificate (NSDC)' ? "Rs. 12,000" : "Rs. 50,000 / year",
           certification: `${level} (Government Verified)`,
           eligibility: "12th Pass",
@@ -199,4 +199,4 @@ export const generateCourses = (): Course[] => {
   return list;
 };
 
-export const coursesPageMeta: PageMeta = { title: "Vocational Programs", subtitle: "Industry-verified technical tracks optimized for global employability." };
+export const coursesPageMeta: PageMeta = { title: "Vocational Programs", subtitle: "Industry-verified technical trades optimized for global employability." };
